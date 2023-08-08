@@ -81,12 +81,10 @@ const StContainer = styled.div<{ inputStatus: InputStatusType }>`
   span {
     color: ${({ theme, inputStatus }) => {
       switch (inputStatus) {
-        case "default":
-          return theme.colors.text02;
         case "warning":
           return theme.colors.error;
         default:
-          break;
+          return theme.colors.text02;
       }
     }};
     line-height: ${calcRem(20)};
@@ -100,6 +98,7 @@ const StInputContainer = styled.div<{ inputStatus: InputStatusType }>`
   border-radius: 4px;
   display: flex;
   align-items: center;
+  background-color: ${({ theme }) => theme.colors.white};
   padding: ${calcRem(12)} ${calcRem(12)} ${calcRem(12)} ${calcRem(16)};
   gap: ${calcRem(16)};
   border: ${({ inputStatus }) => {
@@ -158,12 +157,10 @@ const StDesc = styled.div<{ inputStatus: InputStatusType }>`
   font-weight: 400;
   color: ${({ theme, inputStatus }) => {
     switch (inputStatus) {
-      case "default":
-        return theme.colors.text02;
       case "warning":
         return theme.colors.error;
       default:
-        break;
+        return theme.colors.text02;
     }
   }};
 `;

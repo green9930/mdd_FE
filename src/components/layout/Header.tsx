@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import LogoMDD from "../../assets/logo_mdd.png";
+import LogoMDD from "../../assets/img/logo_mdd.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
 import { ReactComponent as Setting } from "../../assets/svg/setting.svg";
 import { MOBILE_MAX_W, calcRem } from "../../styles/GlobalStyle";

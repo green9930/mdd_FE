@@ -50,7 +50,6 @@ const TestPage = () => {
         }
       ></Input>
       <Button
-        buttonText="button"
         btnStatus="primary02"
         clickHandler={() => {
           if (value.length > 5) {
@@ -94,7 +93,11 @@ const TestPage = () => {
         <span>SCROLL TEST</span>
       </StScrollContainer>
       {modalOpen ? (
-        <ModalLayout width={`calc(${WINDOW_W}px - 24px)`} height="300px" bgc={isLightTheme ? lightTheme.colors.bg : darkTheme.colors.bg}>
+        <ModalLayout
+          width={`calc(${WINDOW_W}px - 24px)`}
+          height="300px"
+          bgc={isLightTheme ? lightTheme.colors.bg : darkTheme.colors.bg}
+        >
           <StTestModal>
             <div>MODAL TEST</div>
             <button onClick={() => setModalOpen(false)}>CLOSE</button>
