@@ -9,11 +9,20 @@ export const WINDOW_H = window.innerHeight;
 export const calcRem = (size: number) => `${size / 14}rem`;
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'NanumSquareNeo';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  } 
 
   * {
     font-size: 14px;    
     box-sizing: border-box;
-
+    -webkit-tap-highlight-color: transparent;
+    ::-webkit-scrollbar {
+      display: none;
+    }
     /* @media screen and (max-width: 360px){
       font-size: 12px;
     } */
