@@ -8,11 +8,12 @@ export const lightTheme: DefaultTheme = {
     text01: "#0F0B21",
     text02: "#9585EF",
     text03: "#6C63FF",
-    bg: "#D2D2D2",
+    bg: "#F3F2FF",
     error: "#D02B20",
     transparent01: "rgba(15, 11, 33, 0.8)",
     transparent02: "rgba(15, 11, 33, 0.5)",
     transparent03: "rgba(15, 11, 33, 0.3)",
+    white: "#FFFFFF",
   },
 };
 
@@ -29,5 +30,6 @@ export const darkTheme: DefaultTheme = {
     transparent01: "rgba(15, 11, 33, 0.8)",
     transparent02: "rgba(15, 11, 33, 0.5)",
     transparent03: "rgba(15, 11, 33, 0.3)",
+    white: "#FFFFFF",
   },
 };
