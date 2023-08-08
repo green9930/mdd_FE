@@ -1,9 +1,22 @@
 import { createGlobalStyle } from "styled-components";
 
+export const MOBILE_MAX_W = 601;
+export const TABLET_MAX_W = 1024;
+export const WINDOW_W =
+  window.innerWidth > MOBILE_MAX_W ? MOBILE_MAX_W : window.innerWidth;
+export const WINDOW_H = window.innerHeight;
+
+export const calcRem = (size: number) => `${size / 14}rem`;
+
 const GlobalStyle = createGlobalStyle`
 
   * {
-    font-size: 14px;
+    font-size: 14px;    
+    box-sizing: border-box;
+
+    /* @media screen and (max-width: 360px){
+      font-size: 12px;
+    } */
   }
 
   html, body {
