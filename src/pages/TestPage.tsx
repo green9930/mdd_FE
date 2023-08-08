@@ -9,9 +9,11 @@ import styled from "styled-components";
 import Header from "../components/layout/Header";
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
+import { InputStatusType } from "../types/etcTypes";
 
 const TestPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [status, setStatus] = useState<InputStatusType>("default");
   const [value, setValue] = useState("");
   const isLightTheme = useRecoilValue(lightThemeState);
 
@@ -20,8 +22,44 @@ const TestPage = () => {
       <Header isMyDisk={true} jc="flex-end" userName="testname"></Header>
       {/* <Header isMyDisk={false} userName="testname"></Header> */}
       <h1>TEST PAGE</h1>
-      <Input labelText="test" type="" value={value} setValue={setValue} />
-      <Button buttonText="button" btnStatus="primary02" clickHandler={() => {}}>
+      <Input
+        labelText="닉네임"
+        bottomText="직접 수정할 수 있어요"
+        status={status}
+        setStatus={setStatus}
+        value={value}
+        setValue={setValue}
+        maxLength={10}
+        placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
+        jc="flex-start"
+        TopChildren={<span>선택사항</span>}
+      ></Input>
+      <Input
+        labelText="닉네임"
+        bottomText="직접 수정할 수 있어요"
+        status={status}
+        setStatus={setStatus}
+        value={value}
+        setValue={setValue}
+        maxLength={10}
+        placeholder="비밀번호를 입력해주세요"
+        TopChildren={
+          <div>
+            <span>랜덤 추천</span>ㅁ{/* 주사위 자리 */}
+          </div>
+        }
+      ></Input>
+      <Button
+        buttonText="button"
+        btnStatus="primary02"
+        clickHandler={() => {
+          if (value.length > 5) {
+            setStatus("default");
+          } else {
+            setStatus("warning");
+          }
+        }}
+      >
         <span>HELLO</span>
       </Button>
       <button onClick={() => setModalOpen(true)}>MODAL</button>
@@ -56,11 +94,7 @@ const TestPage = () => {
         <span>SCROLL TEST</span>
       </StScrollContainer>
       {modalOpen ? (
-        <ModalLayout
-          width={`calc(${WINDOW_W}px - 24px)`}
-          height="300px"
-          bgc={isLightTheme ? lightTheme.colors.bg : darkTheme.colors.bg}
-        >
+        <ModalLayout width={`calc(${WINDOW_W}px - 24px)`} height="300px" bgc={isLightTheme ? lightTheme.colors.bg : darkTheme.colors.bg}>
           <StTestModal>
             <div>MODAL TEST</div>
             <button onClick={() => setModalOpen(false)}>CLOSE</button>
