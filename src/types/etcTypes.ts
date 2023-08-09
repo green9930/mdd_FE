@@ -13,5 +13,5 @@ export type StepType = {
 };
 export type ValidationType = {
   text: string;
-  validation: RegExp | boolean;
+  validation: RegExp;
 };

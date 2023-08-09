@@ -12,7 +12,5 @@ export const signUpData = atom<SignUpDataType>({
   default: {
     memberName: "",
     password: "",
-    nickname: "",
-    introduce: "",
   },
 });

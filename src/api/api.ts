@@ -4,8 +4,6 @@ import axios from "axios";
 export interface SignUpDataType {
   memberName: string;
   password: string;
-  nickname: string;
-  introduce: string;
 }
 export interface LoginDataType {
   memberName: string;

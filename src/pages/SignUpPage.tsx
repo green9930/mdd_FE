@@ -30,11 +30,10 @@ const SignUpPage = () => {
               setPercent={setPercent}
             />
           )}
-          {(step === 2 || step === 3) && (
+          {step !== 1 && (
             <SignUpPassword
               step={step}
               setStep={setStep}
-              percent={percent}
               setPercent={setPercent}
             />
           )}

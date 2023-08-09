@@ -4,13 +4,12 @@ import { fontTheme } from "../../styles/theme";
 import { calcRem } from "../../styles/theme";
 
 import Input from "../elements/Input";
-import { InputStatusType } from "../../types/etcTypes";
-import { lightThemeState } from "../../state/atom";
-import { useRecoilValue } from "recoil";
+import { InputStatusType, ValidationType } from "../../types/etcTypes";
+import { useRecoilState } from "recoil";
 
 import { ReactComponent as CheckCircle } from "../../assets/svg/check_circle.svg";
-import { lightTheme } from "../../styles/colors";
 import Button from "../elements/Button";
+import { signUpData } from "../../state/atom";
 
 export interface SignUpHeaderProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -20,11 +19,6 @@ export interface SignUpHeaderProps
   percent: number;
   setPercent: Dispatch<SetStateAction<number>>;
 }
-
-type ValidationType = {
-  text: string;
-  validation: RegExp | boolean;
-};
 
 const VALIDATION: ValidationType[] = [
   {
@@ -39,11 +33,11 @@ const VALIDATION: ValidationType[] = [
     text: "8-20자 이내",
     validation: /^.{8,20}$/,
   },
-  {
-    text: "중복되지 않은 아이디",
-    validation: false,
-  },
 ];
+
+type ValidType = {
+  valid: boolean;
+};
 
 const SignUpId = ({
   children,
@@ -52,11 +46,17 @@ const SignUpId = ({
   percent = 0,
   setPercent,
 }: SignUpHeaderProps) => {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [duplicated, setDupliceted] = useState(true);
   const [status, setStatus] = useState<InputStatusType>("default");
   const [value, setValue] = useState("");
 
-  useEffect(() => {}, []);
+  const [data, setData] = useRecoilState(signUpData);
+
+  const checkValidation = () => {
+    return (
+      VALIDATION.every((item) => item.validation.test(value)) && duplicated
+    );
+  };
 
   return (
     <StContainer>
@@ -73,15 +73,15 @@ const SignUpId = ({
         ></Input>
         <StValidContainer>
           {VALIDATION.map((item) => (
-            <StValidFlex key={item.text}>
-              <CheckCircle
-                width="16px"
-                height="16px"
-                fill={lightTheme.colors.primary01}
-              />
+            <StValidFlex key={item.text} valid={item.validation.test(value)}>
+              <CheckCircle width="16px" height="16px" />
               <StvalidText>{item.text}</StvalidText>
             </StValidFlex>
           ))}
+          <StValidFlex valid={duplicated}>
+            <CheckCircle width="16px" height="16px" />
+            <StvalidText>중복되지 않은 아이디</StvalidText>
+          </StValidFlex>
         </StValidContainer>
       </StTop>
       <StBottom>
@@ -89,11 +89,16 @@ const SignUpId = ({
           아이디와 비밀번호는 찾을 수 없으니 주의해주세요
         </StCautionText>
         <Button
-          btnStatus="primary01"
-          // disabled
+          btnStatus={checkValidation() ? "primary01" : "disabled"}
           clickHandler={() => {
-            setStep(2);
-            setPercent(50);
+            if (checkValidation()) {
+              setData({
+                memberName: value,
+                password: "",
+              });
+              setStep(2);
+              setPercent(50);
+            }
           }}
         >
           <span>다음</span>
@@ -118,13 +123,22 @@ const StValidContainer = styled.div`
   flex-direction: row;
   gap: ${calcRem(8)};
   padding-top: ${calcRem(4)};
+  flex-wrap: wrap;
 `;
 
-const StValidFlex = styled.div`
+const StValidFlex = styled.div<ValidType>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${calcRem(4)};
+  gap: ${calcRem(3)};
+  span {
+    color: ${({ valid, theme }) =>
+      valid ? theme.colors.primary02 : theme.colors.error};
+  }
+  svg {
+    fill: ${({ valid, theme }) =>
+      valid ? theme.colors.primary02 : theme.colors.error};
+  }
 `;
 
 const StvalidText = styled.span`
@@ -132,7 +146,6 @@ const StvalidText = styled.span`
   line-height: ${fontTheme.caption.lineHeight};
   font-size: ${fontTheme.caption.fontSize};
   font-weight: ${fontTheme.caption.fontWeight};
-  color: ${({ theme }) => theme.colors.primary02};
 `;
 
 const StCautionText = styled.span`

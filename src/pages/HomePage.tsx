@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, MOBILE_MAX_W } from "../styles/theme";
-
-import Button from "../components/elements/Button";
 
 import LogoMDDSimple from "../assets/img/logo_mdd_simple.png";
 import MonitorEmpty from "../assets/img/monitor_empty.png";
 import DiskMask01 from "../assets/img/disk_mask_1.png";
 import DiskMask02 from "../assets/img/disk_mask_2.png";
+
+import Button from "../components/elements/Button";
 import Guide from "../components/Guide";
 
 const MONITOR_TEXT =
   "당신의 디깅디스크를\n만들어드리는 MDD에 오신것을\n환영합니다.";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [currentIcon, setCurrentIcon] = useState(DiskMask01);
   const [displayText, setDisplayText] = useState<string[]>([]);
@@ -26,6 +28,7 @@ const HomePage = () => {
       cursor.style.display = "none";
     }
   }, 10000);
+
   let currentIndex = 0;
   let currentLine = 0;
   useEffect(() => {
@@ -92,7 +95,12 @@ const HomePage = () => {
           >
             <span>그게 뭔데?</span>
           </Button>
-          <Button btnStatus="primary01" clickHandler={() => {}}>
+          <Button
+            btnStatus="primary01"
+            clickHandler={() => {
+              navigate("/signUp");
+            }}
+          >
             <span>디스크 만들어줘</span>
           </Button>
         </StButton>
@@ -111,6 +119,7 @@ const StContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
 `;
 
@@ -118,10 +127,24 @@ const StLogo = styled.img`
   width: 129px;
   height: auto;
   padding: ${calcRem(77)} 0 ${calcRem(24)} 0;
+
+  @media screen and (max-width: ${MOBILE_MAX_W}px) {
+    padding: ${calcRem(39)} 0 ${calcRem(24)} 0;
+  }
+
+  @media screen and (max-height: 675px) {
+    padding: ${calcRem(39)} 0 ${calcRem(24)} 0;
+  }
 `;
 
 const StMonitorContainer = styled.div`
   position: relative;
+`;
+const StMiddleContainer = styled.div`
+  /* position: relative; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const StMonitor = styled.img`

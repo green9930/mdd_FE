@@ -1,82 +1,112 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
-import { fontTheme } from "../../styles/theme";
-import { calcRem } from "../../styles/theme";
+import { useNavigate } from "react-router-dom";
 
-import Input from "../elements/Input";
-import { InputStatusType, ValidationType } from "../../types/etcTypes";
-import { lightThemeState } from "../../state/atom";
-import { useRecoilValue } from "recoil";
-
-import { ReactComponent as CheckCircle } from "../../assets/svg/check_circle.svg";
+import { calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
-import Button from "../elements/Button";
+
+import { lightThemeState, signUpData } from "../../state/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 
 interface buttonStyleType {
   show?: boolean;
+  status?: string;
 }
 
-export interface SignUpHeaderProps
+export interface SignUpPasswordProps
   extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
-  percent: number;
   setPercent: Dispatch<SetStateAction<number>>;
 }
-
-const VALIDATION: ValidationType[] = [
-  {
-    text: "영문 포함",
-    validation: /[a-zA-Z]/,
-  },
-  {
-    text: "숫자 포함",
-    validation: /\d/,
-  },
-  {
-    text: "8-20자 이내",
-    validation: /^.{8,20}$/,
-  },
-  {
-    text: "중복되지 않은 아이디",
-    validation: false,
-  },
-];
 
 const NUMBER = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0"];
 
 const SignUpPassword = ({
-  children,
   step = 1,
   setStep,
-  percent = 0,
   setPercent,
-}: SignUpHeaderProps) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [status, setStatus] = useState<InputStatusType>("default");
-  const [value, setValue] = useState("");
-  const [password, setPassword] = useState(["0", "0", "0", "0", "0", "0"]);
+}: SignUpPasswordProps) => {
+  const [error, setError] = useState(false);
+  const [passwordIndex, setPasswordIndex] = useState(0);
+  const [password, setPassword] = useState(["", "", "", "", "", ""]);
+  const [data, setData] = useRecoilState(signUpData);
 
-  useEffect(() => {}, []);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (error) {
+      setPassword(["", "", "", "", "", ""]);
+      setPasswordIndex(0);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (step === 2) {
+      setError(false);
+    }
+  }, [step]);
   return (
     <StContainer>
       <StPassword>
         {password.map((item, index) => (
-          <StPasswordBox key={`${item}_${index}`}>
-            <StPasswordText>*</StPasswordText>
+          <StPasswordBox
+            status={error ? "warning" : item === "" ? "default" : "filled"}
+            key={`${item}_${index}`}
+          >
+            <StPasswordText>
+              {index === passwordIndex - 1 && item !== "" ? item : "*"}
+            </StPasswordText>
           </StPasswordBox>
         ))}
+        {error && <StErrorText>틀린 비밀번호에요!</StErrorText>}
       </StPassword>
+
       <StNumberGrid>
         {NUMBER.map((item, index) => (
           <StBottom
             show={item === ""}
             onClick={() => {
-              setPercent(80);
-              setStep(3);
+              // step2일 때
+              if (step === 2) {
+                const passwordCopy = [...password];
+                passwordCopy[passwordIndex] = item;
+                setPassword(passwordCopy);
+                setPasswordIndex(passwordIndex + 1);
+
+                // 6자릿수 일 때 다음 step
+                if (passwordCopy.join("").length === 6) {
+                  setPasswordIndex(0);
+                  setPassword(["", "", "", "", "", ""]);
+                  setPercent(80);
+                  setStep(3);
+                  setData((prev) => ({
+                    ...prev,
+                    password: password.join(""),
+                  }));
+                }
+                // step3일 때
+              } else if (step === 3) {
+                setError(false);
+                const passwordCopy = [...password];
+                passwordCopy[passwordIndex] = item;
+                setPassword(passwordCopy);
+                setPasswordIndex(passwordIndex + 1);
+                if (passwordCopy.join("").length === 6) {
+                  //기존 password 동일 여부 확인
+                  if (data.password === password.join("")) {
+                    setStep(4);
+                    setPercent(100);
+                    setTimeout(() => {
+                      navigate("/", { state: { signUp: true } });
+                    }, 800);
+                  } else {
+                    setError(true);
+                  }
+                }
+              }
             }}
             key={`${item}_${index}`}
           >
@@ -86,8 +116,12 @@ const SignUpPassword = ({
 
         <StBottom
           onClick={() => {
-            setPercent(80);
-            setStep(3);
+            if (passwordIndex !== 0) {
+              const passwordCopy = [...password];
+              passwordCopy[passwordIndex - 1] = "";
+              setPassword(passwordCopy);
+              setPasswordIndex(passwordIndex - 1);
+            }
           }}
         >
           <Arrow
@@ -116,19 +150,23 @@ const StContainer = styled.div`
   height: 100%;
 `;
 
-const StValidFlex = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: ${calcRem(4)};
-`;
-
 const StPasswordText = styled.span`
   letter-spacing: ${fontTheme.display02.letterSpacing};
   line-height: ${fontTheme.display02.lineHeight};
   font-size: ${fontTheme.display02.fontSize};
   font-weight: ${fontTheme.headline01.fontWeight};
-  color: ${({ theme }) => theme.colors.primary02};
+`;
+
+const StErrorText = styled.span`
+  position: absolute;
+  top: ${calcRem(64)};
+  left: 50%;
+  transform: translate(-50%, 0);
+  letter-spacing: ${fontTheme.caption.letterSpacing};
+  line-height: ${fontTheme.caption.lineHeight};
+  font-size: ${fontTheme.caption.fontSize};
+  font-weight: ${fontTheme.caption.fontWeight};
+  color: ${({ theme }) => theme.colors.error};
 `;
 
 const StNumberGrid = styled.div`
@@ -152,7 +190,6 @@ const StBottom = styled.div<buttonStyleType>`
   cursor: ${({ show }) => (show ? "default" : "pointer")};
   box-shadow: 0px 14px 21px -1px rgba(6, 25, 56, 0.08);
 
-  :hover,
   :active {
     span {
       color: ${({ theme }) => theme.colors.white};
@@ -165,6 +202,7 @@ const StBottom = styled.div<buttonStyleType>`
     }
     background-color: ${({ theme }) => theme.colors.primary01};
   }
+  background-color: ${({ theme }) => theme.colors.primary03};
 `;
 
 const StNumberText = styled.span`
@@ -179,15 +217,43 @@ const StPassword = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${calcRem(12)};
+  position: relative;
 `;
 
-const StPasswordBox = styled.div`
+const StPasswordBox = styled.div<buttonStyleType>`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 34px;
   height: 48px;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.primary02};
+  border-bottom: 2px solid;
+  /* ${({ theme }) => theme.colors.primary02} */
+  border-color: ${({ theme, status }) => {
+    switch (status) {
+      case "default":
+        return theme.colors.primary02;
+      case "filled":
+        return theme.colors.primary01;
+      case "warning":
+        return theme.colors.error;
+      default:
+        break;
+    }
+  }};
+  span {
+    color: ${({ theme, status }) => {
+      switch (status) {
+        case "default":
+          return theme.colors.primary02;
+        case "filled":
+          return theme.colors.primary01;
+        case "warning":
+          return theme.colors.error;
+        default:
+          break;
+      }
+    }};
+  }
 `;
 
 const StCautionText = styled.span`
