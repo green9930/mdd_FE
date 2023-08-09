@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
 import { InputStatusType } from "../types/etcTypes";
 
-import { WINDOW_W, calcRem } from "../styles/GlobalStyle";
+import { WINDOW_W, calcRem } from "../styles/theme";
 import { darkTheme, lightTheme } from "../styles/colors";
 
 import Button from "./elements/Button";

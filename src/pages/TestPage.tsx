@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppLayout from "../components/layout/AppLayout";
 import ModalLayout from "../components/layout/ModalLayout";
-import { WINDOW_W } from "../styles/GlobalStyle";
+import { WINDOW_W } from "../styles/theme";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
 import { darkTheme, lightTheme } from "../styles/colors";
@@ -10,18 +10,33 @@ import Header from "../components/layout/Header";
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import { InputStatusType } from "../types/etcTypes";
+import { useNavigate } from "react-router-dom";
 
 const TestPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [status, setStatus] = useState<InputStatusType>("default");
   const [value, setValue] = useState("");
+
   const isLightTheme = useRecoilValue(lightThemeState);
+
+  const navigate = useNavigate();
+
+  // status bar theme-color 변경
+  useEffect(() => {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute("content", `${lightTheme.colors.primary02}`); // 원하는 색상으로 변경
+      return () =>
+        themeColorMeta.setAttribute("content", `${lightTheme.colors.bg}`);
+    }
+  }, []);
 
   return (
     <AppLayout>
       <Header isMyDisk={true} jc="flex-end" userName="testname"></Header>
       {/* <Header isMyDisk={false} userName="testname"></Header> */}
       <h1>TEST PAGE</h1>
+      <button onClick={() => navigate("/")}>GO HOME</button>
       <Input
         labelText="닉네임"
         bottomText="직접 수정할 수 있어요"

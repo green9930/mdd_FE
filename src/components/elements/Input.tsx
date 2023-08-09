@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { InputStatusType } from "../../types/etcTypes";
-import { calcRem } from "../../styles/GlobalStyle";
+import { calcRem } from "../../styles/theme";
 
 interface InputProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: string;

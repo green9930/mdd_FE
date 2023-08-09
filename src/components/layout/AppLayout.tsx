@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { MOBILE_MAX_W, TABLET_MAX_W, WINDOW_W } from "../../styles/GlobalStyle";
+import { MOBILE_MAX_W, TABLET_MAX_W, WINDOW_W } from "../../styles/theme";
 
 interface IAppLayout extends React.HTMLAttributes<HTMLDivElement> {}
 

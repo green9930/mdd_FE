@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { calcRem } from "../../styles/GlobalStyle";
+import { calcRem } from "../../styles/theme";
 import { BtnStatusType } from "../../types/etcTypes";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
