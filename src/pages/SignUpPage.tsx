@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 
 import AppLayout from "../components/layout/AppLayout";
-import { calcRem, MOBILE_MAX_W } from "../styles/GlobalStyle";
+import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 
 import Button from "../components/elements/Button";
 
