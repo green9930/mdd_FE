@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
-import { InputStatusType } from "../types/etcTypes";
+import { GuideText, InputStatusType } from "../types/etcTypes";
 
 import { WINDOW_W, calcRem } from "../styles/theme";
 import { darkTheme, lightTheme } from "../styles/colors";
@@ -14,10 +14,6 @@ import DiskMask01 from "../assets/img/disk_mask_1.png";
 import DiskMask02 from "../assets/img/disk_mask_2.png";
 import CloseCircle from "../assets/svg/close_circle.svg";
 import { ReactComponent as ArrowBox } from "../assets/svg/arrow_box.svg";
-
-type GuideText = {
-  [key: number]: string[];
-};
 
 const GUIDE_TEXT: GuideText = {
   1: [

@@ -12,6 +12,7 @@ interface InputProps extends React.HTMLAttributes<HTMLDivElement> {
   status: InputStatusType;
   setStatus: React.Dispatch<React.SetStateAction<InputStatusType>>;
   maxLength?: number;
+  maxLengthView?: boolean;
   placeholder: string;
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
@@ -25,7 +26,8 @@ const Input = ({
   setStatus,
   value,
   setValue,
-  maxLength = 0,
+  maxLength,
+  maxLengthView = true,
   placeholder,
   jc = "space-between",
   TopChildren,
@@ -51,7 +53,7 @@ const Input = ({
           maxLength={maxLength}
           inputStatus={status}
         />
-        {maxLength && (
+        {maxLength && maxLengthView && (
           <StTextLength>
             {value.length}/{maxLength}
           </StTextLength>
@@ -101,14 +103,7 @@ const StInputContainer = styled.div<{ inputStatus: InputStatusType }>`
   background-color: ${({ theme }) => theme.colors.white};
   padding: ${calcRem(12)} ${calcRem(12)} ${calcRem(12)} ${calcRem(16)};
   gap: ${calcRem(16)};
-  border: ${({ inputStatus }) => {
-    switch (inputStatus) {
-      case "focused":
-        return "2px solid";
-      default:
-        return "1px solid";
-    }
-  }};
+  border: 1px solid;
   border-color: ${({ theme, inputStatus }) => {
     switch (inputStatus) {
       case "default":

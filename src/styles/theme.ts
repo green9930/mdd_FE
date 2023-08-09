@@ -19,6 +19,12 @@ export const fontTheme = {
     fontSize: `${calcRem(16)}`,
     fontWeight: 500,
   },
+  display02: {
+    letterSpacing: `${calcRem(0.15)}`,
+    lineHeight: `${calcRem(24)}`,
+    fontSize: `${calcRem(20)}`,
+    fontWeight: 500,
+  },
   body01: {
     letterSpacing: `${calcRem(0.44)}`,
     lineHeight: `${calcRem(28)}`,

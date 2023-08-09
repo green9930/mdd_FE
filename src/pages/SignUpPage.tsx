@@ -2,22 +2,44 @@ import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 
 import AppLayout from "../components/layout/AppLayout";
-import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 
-import Button from "../components/elements/Button";
+import SignUpHeader from "../components/signUp/SignUpHeader";
+import SignUpId from "../components/signUp/SignUpId";
+import SignUpPassword from "../components/signUp/SignUpPassword";
 
-import LogoMDDSimple from "../assets/img/logo_mdd_simple.png";
-import MonitorEmpty from "../assets/img/monitor_empty.png";
-import DiskMask01 from "../assets/img/disk_mask_1.png";
-import DiskMask02 from "../assets/img/disk_mask_2.png";
-
-const MONITOR_TEXT =
-  "당신의 디깅디스크를\n만들어드리는 MDD에 오신것을\n환영합니다.";
+import { postJoin } from "../api/api";
 
 const SignUpPage = () => {
+  const [step, setStep] = useState<number>(1);
+  const [percent, setPercent] = useState<number>(12);
+
   return (
     <AppLayout>
-      <StContainer></StContainer>
+      <StContainer>
+        <SignUpHeader
+          step={step}
+          setStep={setStep}
+          percent={percent}
+          setPercent={setPercent}
+        >
+          {step === 1 && (
+            <SignUpId
+              step={step}
+              setStep={setStep}
+              percent={percent}
+              setPercent={setPercent}
+            />
+          )}
+          {(step === 2 || step === 3) && (
+            <SignUpPassword
+              step={step}
+              setStep={setStep}
+              percent={percent}
+              setPercent={setPercent}
+            />
+          )}
+        </SignUpHeader>
+      </StContainer>
     </AppLayout>
   );
 };
