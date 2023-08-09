@@ -104,7 +104,13 @@ const HomePage = () => {
             <span>디스크 만들어줘</span>
           </Button>
         </StButton>
-        <StLoginText>로그인 하기</StLoginText>
+        <StLoginText
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
+          로그인 하기
+        </StLoginText>
       </StContainer>
       <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
     </AppLayout>
@@ -119,7 +125,7 @@ const StContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  /* justify-content: space-around; */
   align-items: center;
 `;
 

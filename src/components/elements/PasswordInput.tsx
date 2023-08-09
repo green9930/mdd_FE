@@ -3,38 +3,54 @@ import styled from "styled-components";
 import { InputStatusType } from "../../types/etcTypes";
 import { calcRem } from "../../styles/theme";
 
-interface InputProps extends React.HTMLAttributes<HTMLDivElement> {
+import Eye from "../../assets/svg/eye.svg";
+import EyeSlash from "../../assets/svg/eye_slash.svg";
+
+interface PasswordInputProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: string;
   labelText: string;
-  bottomText?: string;
+  bottomChildren?: React.ReactNode;
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
   status: InputStatusType;
   setStatus: React.Dispatch<React.SetStateAction<InputStatusType>>;
   maxLength?: number;
-  maxLengthView?: boolean;
   placeholder: string;
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const Input = ({
+const PasswordInput = ({
   type = "text",
   labelText,
-  bottomText,
+  bottomChildren,
   status,
   setStatus,
   value,
   setValue,
-  maxLength,
-  maxLengthView = true,
+  maxLength = 0,
   placeholder,
   jc = "space-between",
   TopChildren,
-}: InputProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value.substring(0, maxLength));
+  children,
+}: PasswordInputProps) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Backspace") {
+      setValue(value.slice(0, -1)); // removes last character from value
+    } else if (!isNaN(parseInt(event.key)) && value.length < maxLength) {
+      setValue(value + event.key);
+    } else {
+      return;
+    }
   };
+  const [isMasked, setIsMasked] = useState(true);
+
+  const handleMaskToggle = () => {
+    setIsMasked(!isMasked);
+  };
+
+  const maskedValue = Array(value.length).fill("•").join("");
 
   return (
     <StContainer inputStatus={status}>
@@ -46,27 +62,25 @@ const Input = ({
         <StInput
           placeholder={placeholder}
           type={type}
-          value={value}
-          onChange={(e) => handleChange(e)}
+          value={isMasked ? maskedValue : value}
+          onChange={() => {}}
           onFocus={() => setStatus("focused")}
           onBlur={() => setStatus("default")}
+          onKeyDown={handleKeyDown}
           maxLength={maxLength}
           inputStatus={status}
         />
-        {maxLength && maxLengthView && (
-          <StTextLength>
-            {value.length}/{maxLength}
-          </StTextLength>
-        )}
+        <StEye onClick={handleMaskToggle} src={isMasked ? EyeSlash : Eye} />
       </StInputContainer>
-      <StDesc inputStatus={status}>{bottomText}</StDesc>
+      {bottomChildren}
     </StContainer>
   );
 };
 
-export default Input;
+export default PasswordInput;
 
 const StContainer = styled.div<{ inputStatus: InputStatusType }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -79,21 +93,6 @@ const StContainer = styled.div<{ inputStatus: InputStatusType }>`
     font-size: ${calcRem(14)};
     font-weight: 700;
   }
-
-  /* span {
-    color: ${({ theme, inputStatus }) => {
-    switch (inputStatus) {
-      case "warning":
-        return theme.colors.error;
-      default:
-        return theme.colors.text02;
-    }
-  }};
-    line-height: ${calcRem(20)};
-    letter-spacing: 0.25px;
-    font-size: ${calcRem(14)};
-    font-weight: 400;
-  } */
 `;
 
 const StInputContainer = styled.div<{ inputStatus: InputStatusType }>`
@@ -145,7 +144,7 @@ const StInput = styled.input<{ inputStatus: InputStatusType }>`
   }
 `;
 
-const StDesc = styled.span<{ inputStatus: InputStatusType }>`
+const StDesc = styled.div<{ inputStatus: InputStatusType }>`
   line-height: ${calcRem(16)};
   letter-spacing: 0.24px;
   font-size: ${calcRem(12)};
@@ -169,10 +168,7 @@ const StFlex = styled.div<{ jc: string }>`
   gap: ${calcRem(4)};
 `;
 
-const StTextLength = styled.div`
-  color: ${({ theme }) => theme.colors.text02};
-  line-height: ${calcRem(20)};
-  letter-spacing: 0.25px;
-  font-size: ${calcRem(14)};
-  font-weight: 400;
+const StEye = styled.img`
+  width: 16px;
+  height: 16px;
 `;
