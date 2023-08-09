@@ -4,3 +4,4 @@ export type BtnStatusType =
   | "primary02"
   | "disabled"
   | "transparent";
+export type DiskHeaderPageType = "diskDetail" | "newDisk" | "setting";
