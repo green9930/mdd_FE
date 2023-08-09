@@ -4,7 +4,7 @@ import { calcRem } from "../../styles/GlobalStyle";
 import { BtnStatusType } from "../../types/etcTypes";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  buttonText: string;
+  buttonText?: string;
   btnStatus: BtnStatusType;
   clickHandler: () => void;
   children: React.ReactNode;
