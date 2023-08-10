@@ -1,10 +1,9 @@
 import React, { useState } from "react";
+
 import AppLayout from "../components/layout/AppLayout";
 import DiskHeader from "../components/layout/DiskHeader";
 import NewDiskCover from "../components/newDisk/NewDiskCover";
 import NewDiskContent from "../components/newDisk/NewDiskContent";
-import { useRecoilValue } from "recoil";
-import { newDiskState } from "../state/atom";
 
 const TEST_DATA = {
   isMe: false,
@@ -27,15 +26,11 @@ const TITLE_LIST = {
 const NewDiskPage = () => {
   const [step, setStep] = useState<StepType>("newDisk1");
 
-  const newDisk = useRecoilValue(newDiskState);
-
-  console.log("NEW DISK >> ", newDisk);
-  console.log("STEP >> ", step);
   return (
     <AppLayout>
       <DiskHeader
         isMyDisk={TEST_DATA.isMe}
-        pageType="diskDetailVertical"
+        pageType="diskListFeed"
         titleText="디스크 생성하기"
       />
       {step === "newDiskSignUp1" || step === "newDisk1" ? (

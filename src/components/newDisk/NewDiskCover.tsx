@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -6,19 +8,17 @@ import "slick-carousel/slick/slick-theme.css";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
 import Disk from "../elements/Disk";
-import { DISK_COLOR_LIST, newDiskProps } from "../../types/diskTypes";
-import { lightTheme } from "../../styles/colors";
+import Button from "../elements/Button";
 import Input from "../elements/Input";
+import { newDiskState } from "../../state/atom";
+import { DISK_COLOR_LIST, newDiskProps } from "../../types/diskTypes";
+import { DISK_NAME_MAX_LENGTH } from "../../utils/validations";
 import { InputStatusType } from "../../types/etcTypes";
+import { lightTheme } from "../../styles/colors";
 
 import { ReactComponent as ShortArrowBox } from "../../assets/svg/short_arrow_box.svg";
 import { ReactComponent as Dice } from "../../assets/svg/dice.svg";
-import Button from "../elements/Button";
-import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
-import { newDiskState } from "../../state/atom";
 
-const DISK_NAME_MAX_LENGTH = 30;
 const RANDOM_DISK_NAME_LIST = [
   `상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡`,
   `내가 좋아한 음악 앨범 Top4 (๑′ᴗ‵๑)`,
@@ -155,7 +155,6 @@ const StContainer = styled.div`
 `;
 
 const StCarouselContainer = styled.div`
-  /* background-color: pink; */
   display: flex;
   align-items: center;
   justify-content: center;

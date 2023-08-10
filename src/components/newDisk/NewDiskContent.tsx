@@ -1,62 +1,21 @@
-import React, {
-  ChangeEvent,
-  RefObject,
-  TextareaHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { DiskColorType, newDiskProps } from "../../types/diskTypes";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+
+import PreviewList from "./PreviewList";
+import Button from "../elements/Button";
+import { newDiskState } from "../../state/atom";
+import { DiskColorType, newDiskProps } from "../../types/diskTypes";
+import { InputStatusType } from "../../types/etcTypes";
+import {
+  DISK_CONTENT_MAX_LENGTH,
+  DISK_IMG_MAX_LENGTH,
+} from "../../utils/validations";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 import { diskTheme } from "../../styles/colors";
-import { useRecoilState } from "recoil";
-import { newDiskState } from "../../state/atom";
-import { ReactComponent as GalleryAdd } from "../../assets/svg/gallery_add.svg";
+
 import { ReactComponent as EmptyRegisterDisk } from "../../assets/svg/empty_register_disk.svg";
-import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
-import Input from "../elements/Input";
-import { InputStatusType } from "../../types/etcTypes";
-import Button from "../elements/Button";
-import { useNavigate } from "react-router-dom";
-
-const DISK_IMG_MAX_LENGTH = 4;
-const DISK_CONTENT_MAX_LENGTH = 300;
-
-const PreviewList = (
-  list: any[],
-  handleAddImg: (e: ChangeEvent<HTMLInputElement>) => Promise<void>,
-  handleDeleteImg: (target: number) => void,
-  handleMainImg: (target: number) => void
-) => {
-  const arr = [];
-  for (let i = 0; i < DISK_IMG_MAX_LENGTH; i++) {
-    arr.push(
-      <li key={`${i}-${list[i]}`}>
-        {list[i] ? (
-          <StPreview onClick={() => handleMainImg(i)}>
-            <button onClick={() => handleDeleteImg(i)}>
-              <CloseCircle />
-            </button>
-            <img src={list[i]} alt={`preview-${i}`} />
-          </StPreview>
-        ) : (
-          <StAddImage htmlFor="disk-img">
-            <GalleryAdd />
-            <input
-              type="file"
-              id="disk-img"
-              accept=".png, .jpg, .jpeg"
-              onChange={handleAddImg}
-              multiple
-            />
-          </StAddImage>
-        )}
-      </li>
-    );
-  }
-  return arr;
-};
 
 const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
   const [newDisk, setNewDisk] = useRecoilState(newDiskState);
@@ -66,11 +25,8 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
   const [contentStatus, setContentStatus] =
     useState<InputStatusType>("default");
 
-  const navigate = useNavigate();
-  console.log(newDisk);
-  console.log(files);
-
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     handleMainImg(0);
@@ -119,6 +75,16 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
         contentRef.current.scrollHeight > 284
           ? "284px"
           : `${contentRef.current.scrollHeight}px`;
+    }
+  };
+
+  const handleSubmit = async () => {
+    console.log("SUBMIT DISK");
+    try {
+      // POST DISK
+      navigate("/disk-list");
+    } catch (err) {
+      console.log("POST DISK ERROR >> ", err);
     }
   };
 
@@ -174,7 +140,7 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
       <StBtnContainer>
         <Button
           btnStatus={files.length ? "primary01" : "disabled"}
-          clickHandler={() => {}}
+          clickHandler={() => handleSubmit()}
           disabled={!files.length}
         >
           <span>디스크 굽기</span>
@@ -298,46 +264,6 @@ const StImgList = styled.ul`
     background-color: ${({ theme }) => theme.colors.primary03};
     border-radius: ${calcRem(8)};
     overflow: hidden;
-  }
-`;
-
-const StPreview = styled.div`
-  display: flex;
-  width: 100%;
-  aspect-ratio: 1;
-  position: relative;
-  cursor: pointer;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  button {
-    display: flex;
-    align-items: center;
-    width: ${calcRem(24)};
-    position: absolute;
-    top: ${calcRem(4)};
-    left: ${calcRem(4)};
-    z-index: 11;
-
-    svg {
-      width: ${calcRem(24)};
-      height: ${calcRem(24)};
-    }
-  }
-`;
-
-const StAddImage = styled.label`
-  cursor: pointer;
-  input {
-    display: none;
-  }
-  svg {
-    width: ${calcRem(32)};
-    height: ${calcRem(32)};
   }
 `;
 
