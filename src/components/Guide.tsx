@@ -2,22 +2,18 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
-import { InputStatusType } from "../types/etcTypes";
+import { GuideText, InputStatusType } from "../types/etcTypes";
 
 import { WINDOW_W, calcRem } from "../styles/theme";
 import { darkTheme, lightTheme } from "../styles/colors";
-
-import Button from "./elements/Button";
-import ModalLayout from "./layout/ModalLayout";
 
 import DiskMask01 from "../assets/img/disk_mask_1.png";
 import DiskMask02 from "../assets/img/disk_mask_2.png";
 import CloseCircle from "../assets/svg/close_circle.svg";
 import { ReactComponent as ArrowBox } from "../assets/svg/arrow_box.svg";
 
-type GuideText = {
-  [key: number]: string[];
-};
+import Button from "./elements/Button";
+import ModalLayout from "./layout/ModalLayout";
 
 const GUIDE_TEXT: GuideText = {
   1: [
@@ -73,8 +69,8 @@ const Guide = ({ modalOpen, setModalOpen }: GuideProps) => {
               <StDiskMask src={currentIcon} />
             </StModal>
             <StTextContainer>
-              {GUIDE_TEXT[`${page}`].map((item, index) => (
-                <span>{item}</span>
+              {GUIDE_TEXT[`${page}`].map((item) => (
+                <span key={item}>{item}</span>
               ))}
             </StTextContainer>
             <StArrowFlex>
@@ -164,6 +160,9 @@ const StArrowFlex = styled.div`
   flex-direction: row;
   align-items: center;
   gap: ${calcRem(16)};
+  svg {
+    cursor: pointer;
+  }
 `;
 
 const StDiskMask = styled.img`
