@@ -4,13 +4,20 @@ export type BtnStatusType =
   | "primary02"
   | "disabled"
   | "transparent";
-export type DiskHeaderPageType = "diskDetail" | "newDisk" | "setting";
+export type DiskHeaderPageType =
+  | "diskDetailVertical"
+  | "diskDetailGallery"
+  | "newDisk"
+  | "setting";
+
 export type GuideText = {
   [key: number]: string[];
 };
+
 export type StepType = {
   [key: number]: string;
 };
+
 export type ValidationType = {
   text: string;
   validation: RegExp;

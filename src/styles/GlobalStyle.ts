@@ -31,6 +31,7 @@ const GlobalStyle = createGlobalStyle`
 
   ul, ol, li {
     list-style: none;
+    margin: 0;
     padding: 0;
   }
 
@@ -44,7 +45,17 @@ const GlobalStyle = createGlobalStyle`
   }
 
   button {
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border: none;
     cursor: pointer;
+  }
+
+  input, textarea {
+    :focus {
+      outline: none;
+    }
   }
 
   .a11y-hidden {
