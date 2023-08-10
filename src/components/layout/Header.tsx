@@ -72,13 +72,6 @@ const StHeader = styled.div<{ jc: string }>`
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
     padding: 0 16px;
   }
-
-  button {
-    margin: 0;
-    padding: 0;
-    border: none;
-    background-color: transparent;
-  }
 `;
 
 const StLogo = styled.img`

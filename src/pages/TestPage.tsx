@@ -66,6 +66,7 @@ const TestPage = () => {
       ></Input>
       <Button
         btnStatus="primary02"
+        disabled={false}
         clickHandler={() => {
           if (value.length > 5) {
             setStatus("default");

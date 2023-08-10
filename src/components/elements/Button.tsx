@@ -1,23 +1,27 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { calcRem } from "../../styles/theme";
+import { calcRem, fontTheme } from "../../styles/theme";
 import { BtnStatusType } from "../../types/etcTypes";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  buttonText?: string;
   btnStatus: BtnStatusType;
   clickHandler: () => void;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
 const Button = ({
-  buttonText,
   btnStatus,
   clickHandler,
+  disabled = false,
   children,
 }: ButtonProps) => {
   return (
-    <StButton btnStatus={btnStatus} onClick={() => clickHandler()}>
+    <StButton
+      btnStatus={btnStatus}
+      onClick={() => clickHandler()}
+      disabled={disabled}
+    >
       <StContent btnStatus={btnStatus}>{children}</StContent>
     </StButton>
   );
@@ -30,8 +34,9 @@ const StButton = styled.button<{ btnStatus: BtnStatusType }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 16px;
-  gap: 10px;
+  padding: ${({ btnStatus }) =>
+    btnStatus === "transparent" ? calcRem(6) : calcRem(16)};
+  gap: ${calcRem(10)};
   border: none;
   background-color: ${({ theme, btnStatus }) => {
     switch (btnStatus) {
@@ -40,12 +45,12 @@ const StButton = styled.button<{ btnStatus: BtnStatusType }>`
       case "primary02":
         return theme.colors.primary02;
       case "disabled":
-        return "#C8C5FF";
+        return theme.colors.primary04;
       case "transparent":
         return "transparent";
     }
   }};
-  border-radius: 12px;
+  border-radius: ${calcRem(12)};
 `;
 
 const StContent = styled.div<{ btnStatus: BtnStatusType }>`
@@ -68,9 +73,11 @@ const StContent = styled.div<{ btnStatus: BtnStatusType }>`
       }
     }};
     text-align: center;
-    line-height: ${calcRem(17)};
-    letter-spacing: 1.35px;
-    font-size: ${calcRem(16)};
-    font-weight: 700;
+    text-decoration: ${({ btnStatus }) =>
+      btnStatus === "transparent" ? "underline" : "normal"};
+    line-height: ${fontTheme.button.lineHeight};
+    letter-spacing: ${fontTheme.button.letterSpacing};
+    font-size: ${fontTheme.button.fontSize};
+    font-weight: ${fontTheme.button.fontWeight};
   }
 `;

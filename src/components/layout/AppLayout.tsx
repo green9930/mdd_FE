@@ -1,6 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { MOBILE_MAX_W, TABLET_MAX_W, WINDOW_W } from "../../styles/theme";
+import {
+  MOBILE_MAX_W,
+  TABLET_MAX_W,
+  WINDOW_H,
+  WINDOW_W,
+} from "../../styles/theme";
 
 interface IAppLayout extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -12,6 +17,7 @@ export default AppLayout;
 
 const StAppLayout = styled.div`
   max-width: ${MOBILE_MAX_W}px;
+  min-height: ${WINDOW_H};
   margin: auto;
 
   @media screen and (max-width: ${TABLET_MAX_W}px) {
