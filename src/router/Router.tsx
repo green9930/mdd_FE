@@ -3,6 +3,7 @@ import HomePage from "../pages/HomePage";
 import TestPage from "../pages/TestPage";
 import SignUpPage from "../pages/SignUpPage";
 import NewDiskPage from "../pages/NewDiskPage";
+import LoginPage from "../pages/LoginPage";
 
 const Router = () => {
   return (
@@ -11,6 +12,7 @@ const Router = () => {
       <Route path="/new-disk" element={<NewDiskPage />} />
       <Route path="/test" element={<TestPage />} />
       <Route path="/signUp" element={<SignUpPage />} />
+      <Route path="/login" element={<LoginPage />} />
     </Routes>
   );
 };

@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { SignUpDataType } from "../api/api";
+import { AuthDataType } from "../api/api";
 
 // 라이트모드 | 다크모드
 export const lightThemeState = atom<boolean>({
@@ -7,7 +7,7 @@ export const lightThemeState = atom<boolean>({
   default: true,
 });
 
-export const signUpData = atom<SignUpDataType>({
+export const signUpData = atom<AuthDataType>({
   key: "signUpData",
   default: {
     memberName: "",
