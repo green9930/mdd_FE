@@ -43,7 +43,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
   // console.log(image);s
   const imageList = image.map((val: any) => val.imageUrl);
 
-  const iconHandler = (name: DiskBtnType, mode: DiskModeType) => {
+  const clickHandler = (name: DiskBtnType, mode: DiskModeType) => {
     switch (name) {
       case "like":
         console.log(name);
@@ -86,7 +86,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
             return (
               <li
                 key={`${val}-${idx}`}
-                onClick={() => iconHandler(val as DiskBtnType, mode)}
+                onClick={() => clickHandler(val as DiskBtnType, mode)}
               >
                 <StIconContainer isTextMode={false}>
                   {IconConverter(val as DiskBtnType, isBookmark)}

@@ -46,6 +46,8 @@ const StButton = styled.button<{ btnStatus: BtnStatusType }>`
         return theme.colors.primary02;
       case "disabled":
         return theme.colors.primary04;
+      case "unregister":
+        return theme.colors.primary04;
       case "transparent":
         return "transparent";
     }
@@ -68,6 +70,8 @@ const StContent = styled.div<{ btnStatus: BtnStatusType }>`
           return theme.colors.white;
         case "disabled":
           return theme.colors.primary02;
+        case "unregister":
+          return theme.colors.primary01;
         case "transparent":
           return theme.colors.primary01;
       }
