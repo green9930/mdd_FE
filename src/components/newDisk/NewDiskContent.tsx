@@ -62,9 +62,7 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
     setPreviewList(previewList.filter((_, idx) => idx !== target));
   };
 
-  const handleMainImg = (target: number) => {
-    setMainImg(previewList[target]);
-  };
+  const handleMainImg = (target: number) => setMainImg(previewList[target]);
 
   const handleContent = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value.substring(0, DISK_CONTENT_MAX_LENGTH);

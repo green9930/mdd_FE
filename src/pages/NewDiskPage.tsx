@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 
 import AppLayout from "../components/layout/AppLayout";
 import DiskHeader from "../components/layout/DiskHeader";
 import NewDiskCover from "../components/newDisk/NewDiskCover";
 import NewDiskContent from "../components/newDisk/NewDiskContent";
+import { pageState } from "../state/atom";
 
 const TEST_DATA = {
   isMe: false,
@@ -25,14 +27,15 @@ const TITLE_LIST = {
 
 const NewDiskPage = () => {
   const [step, setStep] = useState<StepType>("newDisk1");
+  const setPageState = useSetRecoilState(pageState);
+
+  useEffect(() => {
+    setPageState("newDisk");
+  }, []);
 
   return (
     <AppLayout>
-      <DiskHeader
-        isMyDisk={TEST_DATA.isMe}
-        pageType="diskListFeed"
-        titleText="디스크 생성하기"
-      />
+      <DiskHeader isMyDisk={TEST_DATA.isMe} titleText="디스크 생성하기" />
       {step === "newDiskSignUp1" || step === "newDisk1" ? (
         <NewDiskCover
           step={step}

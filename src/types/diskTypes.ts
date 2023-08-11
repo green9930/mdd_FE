@@ -22,3 +22,15 @@ export interface newDiskProps extends React.HTMLAttributes<HTMLDivElement> {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
   titleText: string;
 }
+
+export const DISK_BTN_LIST = [
+  "like",
+  "edit",
+  "delete",
+  "bookmark",
+  "mode",
+] as const;
+
+export type DiskBtnType = (typeof DISK_BTN_LIST)[number];
+
+export type DiskModeType = "gallery" | "text";

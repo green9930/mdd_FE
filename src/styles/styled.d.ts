@@ -16,6 +16,7 @@ declare module "styled-components" {
       transparent02: string;
       transparent03: string;
       white: string;
+      blue: string;
     };
   }
 }

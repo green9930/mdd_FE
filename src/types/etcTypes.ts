@@ -1,12 +1,14 @@
 export type InputStatusType = "default" | "warning" | "focused" | "disabled";
+
 export type BtnStatusType =
   | "primary01"
   | "primary02"
   | "disabled"
   | "transparent";
-export type DiskHeaderPageType =
-  | "diskDetailVertical"
-  | "diskDetailGallery"
+
+export type DiskPageType =
+  | "diskListFeed"
+  | "diskListGallery"
   | "newDisk"
   | "setting";
 
