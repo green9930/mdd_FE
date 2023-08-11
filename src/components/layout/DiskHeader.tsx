@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { DiskHeaderPageType } from "../../types/etcTypes";
 import { lightTheme } from "../../styles/colors";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
@@ -10,20 +9,22 @@ import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
 import { ReactComponent as ListCategoqy } from "../../assets/svg/list_category.svg";
 import { ReactComponent as ListVertical } from "../../assets/svg/list_vertical.svg";
+import { useRecoilState } from "recoil";
+import { pageState } from "../../state/atom";
 
 interface DiskHeaderProps {
   isMyDisk: boolean;
-  pageType: DiskHeaderPageType;
   titleText: string;
   jc?: string;
 }
 
 const DiskHeader = ({
   isMyDisk,
-  pageType,
   titleText,
   jc = "space-between",
 }: DiskHeaderProps) => {
+  const [page, setPage] = useRecoilState(pageState);
+
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -38,17 +39,23 @@ const DiskHeader = ({
         </button>
         <h1>{titleText}</h1>
       </StTitle>
-      {pageType !== "newDisk" && pageType !== "setting" ? (
+      {page === "diskListFeed" || page === "diskListGallery" ? (
         <StBtnContainer>
-          <button>
-            {pageType === "diskDetailGallery" ? (
+          <button
+            onClick={() =>
+              setPage((prev) =>
+                prev === "diskListFeed" ? "diskListGallery" : "diskListFeed"
+              )
+            }
+          >
+            {page === "diskListGallery" ? (
               <ListVertical fill={lightTheme.colors.primary01} />
             ) : (
               <ListCategoqy fill={lightTheme.colors.primary01} />
             )}
           </button>
           {isMyDisk ? (
-            <button>
+            <button onClick={() => navigate("/new-disk")}>
               <PlusFilled fill={lightTheme.colors.primary01} />
             </button>
           ) : (
