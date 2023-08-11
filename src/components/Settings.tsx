@@ -159,6 +159,7 @@ const StList = styled.ul`
       align-items: center;
       justify-content: center;
       gap: ${calcRem(8)};
+      cursor: pointer;
 
       svg {
         width: ${calcRem(36)};
@@ -193,6 +194,7 @@ const StUnregister = styled.div`
   letter-spacing: ${fontTheme.button.letterSpacing};
   font-size: ${fontTheme.button.fontSize};
   font-weight: ${fontTheme.button.fontWeight};
+  cursor: pointer;
 `;
 
 const StUnregisterModal = styled.div`

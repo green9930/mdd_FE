@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 
 import styled from "styled-components";
 import Disk from "../elements/Disk";
 import { DiskColorType } from "../../types/diskTypes";
-import { calcRem, fontTheme } from "../../styles/theme";
+import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 
 import { ReactComponent as Bookmark } from "../../assets/svg/bookmark.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
+import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
+import { ReactComponent as Pen } from "../../assets/svg/pen.svg";
 import { lightTheme } from "../../styles/colors";
 import { useNavigate } from "react-router-dom";
+import ModalLayout from "../layout/ModalLayout";
+import DiskCard from "./DiskCard";
+import Button from "../elements/Button";
 
 const TEST_DATA = [
   {
@@ -31,7 +36,7 @@ const TEST_DATA = [
         modifiedAt: "2023…",
       },
     ],
-    isMine: true,
+    isMine: false,
     createdAt: "2023-08-03",
     modifiedAt: "2023-08-03",
   },
@@ -230,6 +235,9 @@ const TEST_DATA = [
 ];
 
 const DiskListGallery = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [targetDisk, setTargetDisk] = useState(0);
+
   const navigate = useNavigate();
 
   const handleClick = (target: string) => navigate(target);
@@ -237,7 +245,7 @@ const DiskListGallery = () => {
   return (
     <StContainer>
       <StList>
-        {TEST_DATA.map((val) => {
+        {TEST_DATA.map((val, idx) => {
           const {
             diskId,
             diskName,
@@ -252,7 +260,10 @@ const DiskListGallery = () => {
           return (
             <StItem
               key={`${diskName}-${diskId}`}
-              onClick={() => handleClick(`/disk/${diskId}`)}
+              onClick={() => {
+                setOpenModal(true);
+                setTargetDisk(idx);
+              }}
             >
               <StDiskContainer>
                 <Disk diskColor={diskColor as DiskColorType} />
@@ -266,6 +277,43 @@ const DiskListGallery = () => {
           <span>새로운 디스크 생성하기</span>
         </StNewDisk>
       </StList>
+      {openModal ? (
+        <ModalLayout
+          width={WINDOW_W < MOBILE_MAX_W ? "358px" : "412px"}
+          height="auto"
+          bgc="transparent"
+        >
+          <DiskCard data={TEST_DATA[targetDisk]} />
+          <StBtnContainer>
+            <Button
+              btnStatus="primary02"
+              clickHandler={() => setOpenModal(false)}
+            >
+              <StBtnText>
+                <CloseCircle />
+                <span>닫기</span>
+              </StBtnText>
+            </Button>
+            {TEST_DATA[targetDisk].isMine ? (
+              <Button
+                btnStatus="primary01"
+                clickHandler={() => {
+                  console.log("GO TO EDIT PAGE");
+                }}
+              >
+                <StBtnText>
+                  <Pen fill={lightTheme.colors.white} />
+                  <span>편집하기</span>
+                </StBtnText>
+              </Button>
+            ) : (
+              <></>
+            )}
+          </StBtnContainer>
+        </ModalLayout>
+      ) : (
+        <></>
+      )}
     </StContainer>
   );
 };
@@ -308,6 +356,7 @@ const StList = styled.ul`
 `;
 
 const StItem = styled.li`
+  cursor: pointer;
   span {
     color: ${({ theme }) => theme.colors.text01};
   }
@@ -323,5 +372,25 @@ const StNewDisk = styled.li`
   span {
     color: ${({ theme }) => theme.colors.text03};
     word-break: keep-all;
+  }
+`;
+
+const StBtnContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${calcRem(8)};
+  margin-top: ${calcRem(16)};
+`;
+
+const StBtnText = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${calcRem(8)};
+
+  svg {
+    width: ${calcRem(24)};
+    height: ${calcRem(24)};
   }
 `;
