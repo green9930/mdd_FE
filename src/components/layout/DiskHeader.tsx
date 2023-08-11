@@ -98,6 +98,7 @@ const StTitle = styled.div`
   gap: ${calcRem(8)};
 
   h1 {
+    color: ${({ theme }) => theme.colors.text01};
     font-family: "NanumSquareNeo";
     line-height: ${fontTheme.display01.lineHeight};
     letter-spacing: ${fontTheme.display01.letterSpacing};

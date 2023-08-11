@@ -4,13 +4,14 @@ export type BtnStatusType =
   | "primary01"
   | "primary02"
   | "disabled"
+  | "unregister"
   | "transparent";
 
 export type DiskPageType =
   | "diskListFeed"
   | "diskListGallery"
   | "newDisk"
-  | "setting";
+  | "settings";
 
 export type GuideText = {
   [key: number]: string[];

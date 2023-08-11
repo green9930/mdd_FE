@@ -28,6 +28,6 @@ export const newDiskState = atom<NewDiskType>({
 });
 
 export const pageState = atom<DiskPageType>({
-  key: "diskListState",
+  key: "pageState",
   default: "diskListGallery",
 });
