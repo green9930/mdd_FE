@@ -15,6 +15,7 @@ import IconConverter from "./IconConverter";
 import Sample01 from "../../assets/sample_01.jpeg";
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
+import { ReactComponent as Text } from "../../assets/svg/text.svg";
 
 interface DiskCardProps {
   data: any;
@@ -40,10 +41,10 @@ const DiskCard = ({ data }: DiskCardProps) => {
     // setMainImg(previewList[target]);
   };
 
-  // console.log(image);s
+  console.log(diskColor === "NEONORANGE");
   const imageList = image.map((val: any) => val.imageUrl);
 
-  const clickHandler = (name: DiskBtnType, mode: DiskModeType) => {
+  const clickHandler = (name: DiskBtnType) => {
     switch (name) {
       case "like":
         console.log(name);
@@ -67,8 +68,6 @@ const DiskCard = ({ data }: DiskCardProps) => {
     }
   };
 
-  console.log(mode);
-
   return (
     <Stcontainer diskColor={diskColor as DiskColorType}>
       <StDiskName>{diskName}</StDiskName>
@@ -77,24 +76,58 @@ const DiskCard = ({ data }: DiskCardProps) => {
       </StPreviewContainer>
       <StImgList>{DiskPreviewList(imageList, handleMainImg)}</StImgList>
       <StSubContainer>
-        <StLikesCount>
-          <Like fill={lightTheme.colors.text01} />
-          <span>0</span>
-        </StLikesCount>
-        <StBtnList>
-          {DISK_BTN_LIST.map((val, idx) => {
-            return (
-              <li
-                key={`${val}-${idx}`}
-                onClick={() => clickHandler(val as DiskBtnType, mode)}
-              >
-                <StIconContainer isTextMode={false}>
-                  {IconConverter(val as DiskBtnType, isBookmark)}
-                </StIconContainer>
-              </li>
-            );
-          })}
-        </StBtnList>
+        {isMine ? (
+          <StLikesCount isMine={true} diskColor={diskColor as DiskColorType}>
+            <Like fill={lightTheme.colors.text01} />
+            <span>1234</span>
+          </StLikesCount>
+        ) : (
+          <StLikesCount
+            onClick={() => clickHandler("like")}
+            isMine={false}
+            diskColor={diskColor as DiskColorType}
+          >
+            <Like fill={lightTheme.colors.text01} />
+            <span>1234</span>
+          </StLikesCount>
+        )}
+        {isMine ? (
+          <StBtnList>
+            {DISK_BTN_LIST.map((val, idx) => {
+              return (
+                <li
+                  key={`${val}-${idx}`}
+                  onClick={() => clickHandler(val as DiskBtnType)}
+                >
+                  <StIconContainer
+                    diskColor={diskColor as DiskColorType}
+                    isTextMode={false}
+                  >
+                    {IconConverter(
+                      val as DiskBtnType,
+                      isBookmark,
+                      diskColor === "NEONORANGE"
+                    )}
+                  </StIconContainer>
+                </li>
+              );
+            })}
+          </StBtnList>
+        ) : (
+          <StIconContainer
+            diskColor={diskColor as DiskColorType}
+            isTextMode={false}
+            onClick={() => clickHandler("mode")}
+          >
+            <Text
+              fill={
+                diskColor === "NEONORANGE"
+                  ? lightTheme.colors.text01
+                  : lightTheme.colors.white
+              }
+            />
+          </StIconContainer>
+        )}
       </StSubContainer>
       {mode === "text" ? (
         <StContentContainer>
@@ -114,8 +147,18 @@ const DiskCard = ({ data }: DiskCardProps) => {
             <p>{content}</p>
             <span>첫 생성일: {createdAt}</span>
           </Stcontent>
-          <StIconContainer onClick={() => setMode("gallery")} isTextMode={true}>
-            <Gallery fill={lightTheme.colors.white} />
+          <StIconContainer
+            diskColor={diskColor as DiskColorType}
+            onClick={() => setMode("gallery")}
+            isTextMode={true}
+          >
+            <Gallery
+              fill={
+                diskColor === "NEONORANGE"
+                  ? lightTheme.colors.text01
+                  : lightTheme.colors.white
+              }
+            />
           </StIconContainer>
         </StContentContainer>
       ) : (
@@ -202,15 +245,41 @@ const StSubContainer = styled.div`
   width: 100%;
 `;
 
-const StLikesCount = styled.div`
+const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: ${calcRem(4)};
+  gap: ${({ isMine }) => (isMine ? calcRem(4) : calcRem(8))};
+
+  ${({ isMine, diskColor }) =>
+    !isMine &&
+    css`
+      padding: ${calcRem(8)} ${calcRem(16)};
+      background-color: ${diskTheme[diskColor].border}};
+      border-radius: ${calcRem(12)};
+    `};
 
   svg {
-    width: ${calcRem(16)};
-    height: ${calcRem(16)};
+    width: ${({ isMine }) => (isMine ? calcRem(16) : calcRem(24))};
+    height: ${({ isMine }) => (isMine ? calcRem(16) : calcRem(24))};
+  }
+
+  span {
+    color: ${({ theme }) => theme.colors.text01};
+    ${({ isMine }) =>
+      isMine
+        ? css`
+            line-height: ${fontTheme.body01.lineHeight};
+            letter-spacing: ${fontTheme.body01.letterSpacing};
+            font-size: ${fontTheme.body01.fontSize};
+            font-weight: ${fontTheme.body01.fontWeight};
+          `
+        : css`
+            line-height: ${fontTheme.button.lineHeight};
+            letter-spacing: ${fontTheme.button.letterSpacing};
+            font-size: ${fontTheme.button.fontSize};
+            font-weight: ${fontTheme.button.fontWeight};
+          `}
   }
 `;
 
@@ -237,15 +306,12 @@ const StContentContainer = styled.div`
 `;
 
 const Stcontent = styled.div`
-  /* background-color: pink; */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: ${calcRem(8)};
   width: 100%;
-  /* height: 60%; */
-  /* overflow: scroll; */
 
   p,
   span {
@@ -269,13 +335,16 @@ const Stcontent = styled.div`
   }
 `;
 
-const StIconContainer = styled.div<{ isTextMode: boolean }>`
+const StIconContainer = styled.div<{
+  diskColor: DiskColorType;
+  isTextMode: boolean;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: ${calcRem(40)};
   height: ${calcRem(40)};
-  background-color: ${({ theme }) => theme.colors.blue};
+  background-color: ${({ diskColor }) => diskTheme[diskColor].border};
   border-radius: ${calcRem(12)};
   cursor: pointer;
   ${({ isTextMode }) =>

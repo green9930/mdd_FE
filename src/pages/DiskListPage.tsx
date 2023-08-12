@@ -41,8 +41,6 @@ const TEST_DATA = [
 const DiskListPage = () => {
   const [page, setPage] = useRecoilState(pageState);
 
-  console.log(page);
-
   useEffect(() => {
     TEST_USER.isMe ? setPage("diskListGallery") : setPage("diskListFeed");
   }, []);
