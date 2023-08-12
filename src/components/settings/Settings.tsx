@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
-import ModalLayout from "./layout/ModalLayout";
-import IconConverter from "./settings/IconConverter";
-import Button from "./elements/Button";
-import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../styles/theme";
-import { getLoc, setLoc } from "../utils/localStorage";
-import { lightThemeState } from "../state/atom";
+import ModalLayout from "../layout/ModalLayout";
+import IconConverter from "./IconConverter";
+import Button from "../elements/Button";
+import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
+import { getLoc, setLoc } from "../../utils/localStorage";
+import { lightThemeState } from "../../state/atom";
 
-import DiskMask3 from "../assets/img/disk_mask_3.png";
+import DiskMask3 from "../../assets/img/disk_mask_3.png";
 
 export type SettingIconType = "letter" | "heart" | "candles" | "logout";
 
@@ -55,7 +55,7 @@ const Settings = () => {
         console.log("제작팀 보기");
         return;
       case "candles":
-        setIsLightTheme(!isLightTheme);
+        setIsLightTheme((prev) => !prev);
         setLoc(
           "theme",
           getLoc("theme") === "lightMode" ? "darkMode" : "lightMode"
@@ -100,6 +100,7 @@ const Settings = () => {
       </StList>
       <StUnregister onClick={() => setOpenUnregisterModal(true)}>
         <span>회원탈퇴</span>
+        {/* <span>{getLoc("theme")}</span> */}
       </StUnregister>
       {openUnregisterModal ? (
         <ModalLayout
@@ -141,7 +142,9 @@ const Settings = () => {
 
 export default Settings;
 
-const StContainer = styled.div``;
+const StContainer = styled.div`
+  padding-top: ${calcRem(50)};
+`;
 
 const StList = styled.ul`
   margin-bottom: ${calcRem(24)};

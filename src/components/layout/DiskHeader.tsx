@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { lightTheme } from "../../styles/colors";
+import { darkTheme, lightTheme } from "../../styles/colors";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
 import { ReactComponent as ListCategoqy } from "../../assets/svg/list_category.svg";
 import { ReactComponent as ListVertical } from "../../assets/svg/list_vertical.svg";
-import { useRecoilState } from "recoil";
-import { pageState } from "../../state/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { lightThemeState, pageState } from "../../state/atom";
+import { getLoc } from "../../utils/localStorage";
 
 interface DiskHeaderProps {
   isMyDisk: boolean;
@@ -24,8 +25,32 @@ const DiskHeader = ({
   jc = "space-between",
 }: DiskHeaderProps) => {
   const [page, setPage] = useRecoilState(pageState);
+  const isLightTheme = useRecoilValue(lightThemeState);
 
   const navigate = useNavigate();
+
+  // status bar theme-color 변경
+  useEffect(() => {
+    console.log("RENDERING");
+
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      console.log(getLoc("theme"));
+      themeColorMeta.setAttribute(
+        "content",
+        getLoc("theme") === "lightMode"
+          ? `${lightTheme.colors.bg}`
+          : `${darkTheme.colors.bg}`
+      ); // 원하는 색상으로 변경
+      // return () =>
+      //   themeColorMeta.setAttribute(
+      //     "content",
+      //     getLoc("theme") === "lightMode"
+      //       ? `${lightTheme.colors.bg}`
+      //       : `${darkTheme.colors.bg}`
+      //   );
+    }
+  }, [isLightTheme]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -79,7 +104,8 @@ const StHeader = styled.div<{ jc: string }>`
   height: 50px;
   padding: 0 32px;
   background-color: ${({ theme }) => theme.colors.bg};
-  position: relative;
+  position: fixed;
+  z-index: 8;
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
     padding: 0 16px;
