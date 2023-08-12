@@ -15,6 +15,7 @@ const StAppLayout = styled.div`
   min-height: ${WINDOW_H};
   margin: auto;
   background-color: ${({ theme }) => theme.colors.bg};
+  position: relative;
 
   @media screen and (max-width: ${TABLET_MAX_W}px) {
     width: 100%;

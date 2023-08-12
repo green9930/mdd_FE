@@ -44,7 +44,7 @@ const TEST_DATA = [
     diskId: 2,
     diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
     content: "content",
-    diskColor: "PINK",
+    diskColor: "YELLOW",
     isPrivate: false,
     image: [
       {
@@ -68,7 +68,7 @@ const TEST_DATA = [
     diskId: 3,
     diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
     content: "content",
-    diskColor: "PINK",
+    diskColor: "NEONORANGE",
     isPrivate: false,
     image: [
       {
@@ -92,7 +92,7 @@ const TEST_DATA = [
     diskId: 4,
     diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
     content: "content",
-    diskColor: "PINK",
+    diskColor: "PURPLE",
     isPrivate: false,
     image: [
       {
@@ -116,7 +116,7 @@ const TEST_DATA = [
     diskId: 5,
     diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
     content: "content",
-    diskColor: "PINK",
+    diskColor: "SKYBLUE",
     isPrivate: false,
     image: [
       {
@@ -212,7 +212,7 @@ const TEST_DATA = [
     diskId: 9,
     diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
     content: "content",
-    diskColor: "PINK",
+    diskColor: "NEONORANGE",
     isPrivate: false,
     image: [
       {
@@ -228,7 +228,7 @@ const TEST_DATA = [
         modifiedAt: "2023…",
       },
     ],
-    isMine: true,
+    isMine: false,
     createdAt: "2023-08-03",
     modifiedAt: "2023-08-03",
   },
@@ -324,7 +324,7 @@ const StContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: ${calcRem(24)} ${calcRem(16)} ${calcRem(36)};
+  padding: ${calcRem(74)} ${calcRem(16)} ${calcRem(36)} ${calcRem(16)};
 `;
 
 const StList = styled.ul`

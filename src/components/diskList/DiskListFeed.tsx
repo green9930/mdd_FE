@@ -270,7 +270,9 @@ const DiskListFeed = () => {
 
 export default DiskListFeed;
 
-const StContainer = styled.div``;
+const StContainer = styled.div`
+  padding-top: ${calcRem(50)};
+`;
 
 const StList = styled.ul`
   display: flex;

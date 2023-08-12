@@ -8,22 +8,58 @@ import { ReactComponent as BookmarkFilled } from "../../assets/svg/bookmark_fill
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
 import { ReactComponent as Trash } from "../../assets/svg/trash.svg";
 
-const IconConverter = (name: DiskBtnType, isBookmark: boolean) => {
+const IconConverter = (
+  name: DiskBtnType,
+  isBookmark: boolean,
+  isNeonOrange: boolean
+) => {
   switch (name) {
     case "like":
-      return <Like fill={lightTheme.colors.white} />;
+      return (
+        <Like
+          fill={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
+      );
     case "edit":
-      return <Pen fill={lightTheme.colors.white} />;
+      return (
+        <Pen
+          fill={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
+      );
     case "delete":
-      return <Trash fill={lightTheme.colors.white} />;
+      return (
+        <Trash
+          fill={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
+      );
     case "bookmark":
       return isBookmark ? (
-        <BookmarkFilled fill={lightTheme.colors.white} />
+        <BookmarkFilled
+          fill={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
       ) : (
-        <BookmarkEmpty stroke={lightTheme.colors.white} />
+        <BookmarkEmpty
+          stroke={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
       );
     case "mode":
-      return <Text fill={lightTheme.colors.white} />;
+      return (
+        <Text
+          fill={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
+      );
     default:
       return;
   }
