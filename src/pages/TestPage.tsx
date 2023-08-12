@@ -22,14 +22,14 @@ const TestPage = () => {
   const navigate = useNavigate();
 
   // status bar theme-color 변경
-  useEffect(() => {
-    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeColorMeta) {
-      themeColorMeta.setAttribute("content", `${lightTheme.colors.primary02}`); // 원하는 색상으로 변경
-      return () =>
-        themeColorMeta.setAttribute("content", `${lightTheme.colors.bg}`);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  //   if (themeColorMeta) {
+  //     themeColorMeta.setAttribute("content", `${lightTheme.colors.primary02}`); // 원하는 색상으로 변경
+  //     return () =>
+  //       themeColorMeta.setAttribute("content", `${lightTheme.colors.bg}`);
+  //   }
+  // }, []);
 
   return (
     <AppLayout>

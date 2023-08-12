@@ -3,7 +3,7 @@ import AppLayout from "../components/layout/AppLayout";
 import DiskHeader from "../components/layout/DiskHeader";
 import { useSetRecoilState } from "recoil";
 import { pageState } from "../state/atom";
-import Settings from "../components/Settings";
+import Settings from "../components/settings/Settings";
 
 const SettingsPage = () => {
   const setDiskPage = useSetRecoilState(pageState);

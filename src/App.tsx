@@ -17,17 +17,20 @@ function App() {
     const currentTheme = getLoc("theme");
     if (currentTheme) {
       setIsLightTheme(currentTheme === "lightMode");
+      document.body.style.backgroundColor =
+        currentTheme === "darkMode"
+          ? darkTheme.colors.bg
+          : lightTheme.colors.bg;
     } else {
       const isDarkMode =
         window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: dark)").matches;
       setLoc("theme", isDarkMode ? "darkMode" : "lightMode");
       setIsLightTheme(!isDarkMode);
+      document.body.style.backgroundColor = isDarkMode
+        ? darkTheme.colors.bg
+        : lightTheme.colors.bg;
     }
-
-    document.body.style.backgroundColor = isLightTheme
-      ? lightTheme.colors.bg
-      : darkTheme.colors.bg;
   }, [isLightTheme]);
 
   return (

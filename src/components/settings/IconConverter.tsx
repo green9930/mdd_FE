@@ -1,4 +1,4 @@
-import { SettingIconType } from "../Settings";
+import { SettingIconType } from "./Settings";
 
 import { ReactComponent as Letter } from "../../assets/svg/letter.svg";
 import { ReactComponent as Heart } from "../../assets/svg/heart.svg";
