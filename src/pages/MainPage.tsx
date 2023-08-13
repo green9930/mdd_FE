@@ -139,7 +139,10 @@ const StDotBackground = styled.div<StDotBackgroundProps>`
 `;
 
 const StSubContainer = styled.div`
-  padding: ${calcRem(24)} ${calcRem(16)} ${calcRem(36)} ${calcRem(16)};
+  padding: ${calcRem(24)} ${calcRem(32)} ${calcRem(36)} ${calcRem(32)};
+  @media screen and (max-width: ${MOBILE_MAX_W}px) {
+    padding: ${calcRem(24)} ${calcRem(16)} ${calcRem(36)} ${calcRem(16)};
+  }
 `;
 
 const StProfileContainer = styled.div`

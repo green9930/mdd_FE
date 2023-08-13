@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import LogoMDD from "../../assets/img/logo_mdd.png";
+import LogoMDDSimple from "../../assets/img/logo_mdd_simple.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
 import { ReactComponent as Setting } from "../../assets/svg/setting.svg";
 import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
@@ -32,7 +32,7 @@ const Header = ({
     <StHeader jc={jc}>
       <StTitle>
         {isMyDisk ? (
-          <StLogo src={LogoMDD} alt="MDD-logo" />
+          <StLogo src={LogoMDDSimple} alt="MDD-logo" />
         ) : (
           <StTitleText>{userName}님의 홈</StTitleText>
         )}
@@ -68,6 +68,7 @@ const StHeader = styled.div<{ jc: string }>`
   padding: 0 32px;
   background-color: ${({ theme }) => theme.colors.primary02};
   position: relative;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.primary01};
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
     padding: 0 16px;
