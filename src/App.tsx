@@ -19,7 +19,7 @@ function App() {
       setIsLightTheme(currentTheme === "lightMode");
       document.body.style.backgroundColor =
         currentTheme === "darkMode"
-          ? darkTheme.colors.bg
+          ? lightTheme.colors.bg
           : lightTheme.colors.bg;
     } else {
       const isDarkMode =
@@ -28,7 +28,7 @@ function App() {
       setLoc("theme", isDarkMode ? "darkMode" : "lightMode");
       setIsLightTheme(!isDarkMode);
       document.body.style.backgroundColor = isDarkMode
-        ? darkTheme.colors.bg
+        ? lightTheme.colors.bg
         : lightTheme.colors.bg;
     }
   }, [isLightTheme]);
