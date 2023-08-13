@@ -4,22 +4,21 @@ import { useNavigate } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme, MOBILE_MAX_W } from "../styles/theme";
+import { lightTheme } from "../styles/colors";
 
 import DotBackground from "../assets/img/dot_background.png";
 import DefaultProfile from "../assets/img/default_profile.png";
-import DiskMask01 from "../assets/img/disk_mask_1.png";
-import DiskMask02 from "../assets/img/disk_mask_2.png";
 import { ReactComponent as Like } from "../assets/svg/like.svg";
 import { ReactComponent as Edit } from "../assets/svg/edit.svg";
 import { ReactComponent as Share } from "../assets/svg/share.svg";
 import { ReactComponent as AllDisk } from "../assets/svg/all_disk.svg";
-import { ReactComponent as Guide } from "../assets/svg/guide.svg";
+import { ReactComponent as GuideIcon } from "../assets/svg/guide.svg";
 import { ReactComponent as Plus } from "../assets/svg/plus.svg";
 import { ReactComponent as Bookmark } from "../assets/svg/bookmark.svg";
 
 import Header from "../components/layout/Header";
-import { lightTheme } from "../styles/colors";
 import Disk from "../components/elements/Disk";
+import Guide from "../components/Guide";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -29,6 +28,9 @@ export type StProfileTextProps = {
 };
 
 const MainPage = () => {
+  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   return (
     <AppLayout>
       <Header isMyDisk={true} jc="flex-end" userName="testname"></Header>
@@ -59,9 +61,16 @@ const MainPage = () => {
             <StDiskContainer>
               <StTopBox>
                 <StDiskText>대표 디스크</StDiskText>
-                <Plus width="24px" height="24px" />
+                <Plus
+                  onClick={() => navigate("/new-disk")}
+                  width="24px"
+                  height="24px"
+                />
               </StTopBox>
-              <StDiskBoxFlex>
+              <StEmptyDisk>
+                <span>대표디스크가 없어요.</span>
+              </StEmptyDisk>
+              {/* <StDiskBoxFlex>
                 <StDiskBox>
                   <Bookmark width="22px" height="22px" />
                   <Disk diskColor="NEONORANGE" />
@@ -77,7 +86,7 @@ const MainPage = () => {
                   <Disk diskColor="NEONORANGE" />
                   <span>움치치상반기 최애 아이돌 Top4⸜</span>
                 </StDiskBox>
-              </StDiskBoxFlex>
+              </StDiskBoxFlex> */}
             </StDiskContainer>
 
             <StBottomContainer>
@@ -86,18 +95,23 @@ const MainPage = () => {
                 <span>홈 공유하기</span>
               </div>
 
-              <div>
+              <div onClick={() => navigate("/disk-list")}>
                 <AllDisk />
                 <span>전체 디깅디스크</span>
               </div>
-              <div>
-                <Guide />
+              <div
+                onClick={() => {
+                  setModalOpen(true);
+                }}
+              >
+                <GuideIcon />
                 <span>{`디깅디스크\n사용법`}</span>
               </div>
             </StBottomContainer>
           </StSubContainer>
         </StDotBackground>
       </StContainer>
+      <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
     </AppLayout>
   );
 };
@@ -184,7 +198,22 @@ const StDiskBoxFlex = styled.div`
   gap: ${calcRem(12)};
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  /* grid-template-rows: repeat(3, 1fr); */
+`;
+
+const StEmptyDisk = styled.div`
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    color: ${({ theme }) => theme.colors.primary02};
+    line-height: ${fontTheme.display01.lineHeight};
+    letter-spacing: ${fontTheme.display01.letterSpacing};
+    font-size: ${fontTheme.display01.fontSize};
+    font-weight: ${fontTheme.display01.fontWeight};
+  }
 `;
 
 const StEditBox = styled.div`
@@ -274,6 +303,7 @@ const StBottomContainer = styled.div`
   justify-content: space-between;
   padding: 0 ${calcRem(17)};
   div {
+    cursor: pointer;
     display: flex;
     align-items: center;
     flex-direction: column;
