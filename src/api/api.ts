@@ -1,6 +1,6 @@
 // REST API
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { getLoc } from "../utils/localStorage";
+import { getLoc, setLoc } from "../utils/localStorage";
 
 const accessToken = getLoc("accessToken");
 
@@ -54,10 +54,10 @@ export const postLogin = async (postData: AuthDataType) => {
       postData
     );
     console.log(data);
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("nickname", data.memberInfo.nickname);
-    localStorage.setItem("memberName", data.memberInfo.memberName);
-    localStorage.setItem("memberId", data.memberInfo.memberId);
+    setLoc("accessToken", data.accessToken);
+    setLoc("nickname", data.memberInfo.nickname);
+    setLoc("memberName", data.memberInfo.memberName);
+    setLoc("memberId", data.memberInfo.memberId);
     // return data;
   } catch (error: AxiosError | any) {
     console.log(error.response.data);

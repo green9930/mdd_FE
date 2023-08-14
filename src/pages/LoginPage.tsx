@@ -10,12 +10,13 @@ import SignUpPassword from "../components/signUp/SignUpPassword";
 import MonitorFilled from "../assets/img/monitor_filled.png";
 
 import { postJoin, postLogin } from "../api/api";
-import { calcRem, fontTheme } from "../styles/theme";
+import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 import Input from "../components/elements/Input";
 import { InputStatusType } from "../types/etcTypes";
 import Button from "../components/elements/Button";
 import { useNavigate } from "react-router-dom";
 import PasswordInput from "../components/elements/PasswordInput";
+import { useQuery } from "@tanstack/react-query";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ const LoginPage = () => {
         ></Input>
         <StInputContainer>
           <PasswordInput
+            type="number"
             labelText="비밀번호"
             status={passwordStatus}
             setStatus={setPasswordStatus}
@@ -98,7 +100,10 @@ const StContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: ${calcRem(48)} ${calcRem(16)} ${calcRem(27)} ${calcRem(16)};
+  padding: ${calcRem(48)} ${calcRem(32)} ${calcRem(27)} ${calcRem(32)};
+  @media screen and (max-width: ${MOBILE_MAX_W}px) {
+    padding: ${calcRem(48)} ${calcRem(16)} ${calcRem(27)} ${calcRem(16)};
+  }
 `;
 
 const StInputContainer = styled.div`
