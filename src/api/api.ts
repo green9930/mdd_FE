@@ -1,5 +1,33 @@
 // REST API
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import { getLoc } from "../utils/localStorage";
+
+const accessToken = getLoc("accessToken");
+
+/* REQUEST WITHOUT ACCESSTOKEN                                                */
+/* -------------------------------------------------------------------------- */
+export const instance = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    accept: "application/json",
+  },
+});
+
+/* REQUEST WITH ACCESSTOKEN                                                   */
+/* -------------------------------------------------------------------------- */
+export const tokenInstance = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    accept: "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  },
+  withCredentials: true,
+});
+
+/* INTERCEPTOR                                                                */
+/* -------------------------------------------------------------------------- */
 
 export interface AuthDataType {
   memberName: string;
