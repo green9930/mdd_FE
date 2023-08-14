@@ -1,11 +1,12 @@
 import React from "react";
-import DiskCard from "./DiskCard";
 import styled from "styled-components";
-import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
+
+import DiskCard from "./DiskCard";
 import Button from "../elements/Button";
+import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 import { ReactComponent as ArrowCircle } from "../../assets/svg/arrow_circle.svg";
-import { lightTheme } from "../../styles/colors";
 
 const TEST_DATA = [
   {

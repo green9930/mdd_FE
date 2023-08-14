@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Router from "./router/Router";
-import { useRecoilState } from "recoil";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "styled-components";
-import { darkTheme, lightTheme } from "./styles/colors";
+import { useRecoilState } from "recoil";
+
+import Router from "./router/Router";
 import { lightThemeState } from "./state/atom";
 import { getLoc, setLoc } from "./utils/localStorage";
+import { darkTheme, lightTheme } from "./styles/colors";
 
 function App() {
   const queryClient = new QueryClient();
@@ -20,7 +21,7 @@ function App() {
       document.body.style.backgroundColor =
         currentTheme === "darkMode"
           ? lightTheme.colors.bg
-          : lightTheme.colors.bg;
+          : darkTheme.colors.bg;
     } else {
       const isDarkMode =
         window.matchMedia &&
@@ -29,7 +30,7 @@ function App() {
       setIsLightTheme(!isDarkMode);
       document.body.style.backgroundColor = isDarkMode
         ? lightTheme.colors.bg
-        : lightTheme.colors.bg;
+        : darkTheme.colors.bg;
     }
   }, [isLightTheme]);
 

@@ -1,27 +1,30 @@
 import React, { useState } from "react";
+import { useSetRecoilState } from "recoil";
 import styled, { css } from "styled-components";
-import { diskTheme, lightTheme } from "../../styles/colors";
+
+import DiskPreviewList from "./DiskPreviewList";
+import IconConverter from "./IconConverter";
+import { deleteToastState } from "../../state/atom";
 import {
   DISK_BTN_LIST,
   DiskBtnType,
   DiskColorType,
   DiskModeType,
 } from "../../types/diskTypes";
+import { diskTheme, lightTheme } from "../../styles/colors";
 import { calcRem, fontTheme } from "../../styles/theme";
 
-import DiskPreviewList from "./DiskPreviewList";
-import IconConverter from "./IconConverter";
-
-// import Sample01 from "../../assets/sample_01.jpeg";
+import Sample01 from "../../assets/sample_01.jpeg";
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
 
 interface DiskCardProps {
   data: any;
+  setOpen?: () => void;
 }
 
-const DiskCard = ({ data }: DiskCardProps) => {
+const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const {
     diskId,
     diskName,
@@ -36,12 +39,13 @@ const DiskCard = ({ data }: DiskCardProps) => {
   const [mode, setMode] = useState<DiskModeType>("gallery");
   const [isBookmark, setIsBookmark] = useState(false);
 
+  const setOpenDeleteToast = useSetRecoilState(deleteToastState);
+
   const handleMainImg = (target: number) => {
     console.log("CLICK");
     // setMainImg(previewList[target]);
   };
 
-  console.log(diskColor === "NEONORANGE");
   const imageList = image.map((val: any) => val.imageUrl);
 
   const clickHandler = (name: DiskBtnType) => {
@@ -53,7 +57,11 @@ const DiskCard = ({ data }: DiskCardProps) => {
         console.log(name);
         return;
       case "delete":
-        console.log(name);
+        if (window.confirm("디스크를 삭제하실 건가요?")) {
+          console.log("DELETE DISK");
+          setOpen && setOpen();
+          setOpenDeleteToast(true);
+        }
         return;
       case "bookmark":
         console.log(name);
@@ -72,7 +80,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
     <Stcontainer diskColor={diskColor as DiskColorType}>
       <StDiskName>{diskName}</StDiskName>
       <StPreviewContainer>
-        {/* <StMainImg src={Sample01} alt="main-preview" /> */}
+        <StMainImg src={Sample01} alt="main-preview" />
       </StPreviewContainer>
       <StImgList>{DiskPreviewList(imageList, handleMainImg)}</StImgList>
       <StSubContainer>
@@ -106,7 +114,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
                     {IconConverter(
                       val as DiskBtnType,
                       isBookmark,
-                      diskColor === "NEONORANGE"
+                      diskColor === "NEON_ORANGE"
                     )}
                   </StIconContainer>
                 </li>
@@ -121,7 +129,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
           >
             <Text
               fill={
-                diskColor === "NEONORANGE"
+                diskColor === "NEON_ORANGE"
                   ? lightTheme.colors.text01
                   : lightTheme.colors.white
               }
@@ -154,7 +162,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
           >
             <Gallery
               fill={
-                diskColor === "NEONORANGE"
+                diskColor === "NEON_ORANGE"
                   ? lightTheme.colors.text01
                   : lightTheme.colors.white
               }

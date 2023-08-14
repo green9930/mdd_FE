@@ -73,17 +73,17 @@ const MainPage = () => {
               {/* <StDiskBoxFlex>
                 <StDiskBox>
                   <Bookmark width="22px" height="22px" />
-                  <Disk diskColor="NEONORANGE" />
+                  <Disk diskColor="NEON_ORANGE" />
                   <span>움치치상반기 최애 아이돌 Top4⸜( ˙ ˘ ˙)⸝♡</span>
                 </StDiskBox>
                 <StDiskBox>
                   <Bookmark width="22px" height="22px" />
-                  <Disk diskColor="NEONORANGE" />
+                  <Disk diskColor="NEON_ORANGE" />
                   <span>움치치상반기 </span>
                 </StDiskBox>
                 <StDiskBox>
                   <Bookmark width="22px" height="22px" />
-                  <Disk diskColor="NEONORANGE" />
+                  <Disk diskColor="NEON_ORANGE" />
                   <span>움치치상반기 최애 아이돌 Top4⸜</span>
                 </StDiskBox>
               </StDiskBoxFlex> */}

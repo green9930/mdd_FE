@@ -1,4 +1,6 @@
 import React from "react";
+import styled from "styled-components";
+
 import { DiskColorType } from "../../types/diskTypes";
 
 import DiskNeonOrange from "../../assets/img/disk_neonOrange.png";
@@ -6,7 +8,6 @@ import DiskPink from "../../assets/img/disk_pink.png";
 import DiskPurple from "../../assets/img/disk_purple.png";
 import DiskSkyblue from "../../assets/img/disk_skyblue.png";
 import DiskYellow from "../../assets/img/disk_yellow.png";
-import styled from "styled-components";
 
 interface DiskProps extends React.HTMLAttributes<HTMLImageElement> {
   diskColor: DiskColorType;
@@ -14,7 +15,7 @@ interface DiskProps extends React.HTMLAttributes<HTMLImageElement> {
 
 const Disk = ({ diskColor }: DiskProps) => {
   switch (diskColor) {
-    case "NEONORANGE":
+    case "NEON_ORANGE":
       return <StDisk src={DiskNeonOrange} alt="disk_neonOrange" />;
     case "PINK":
       return <StDisk src={DiskPink} alt="disk_pink" />;

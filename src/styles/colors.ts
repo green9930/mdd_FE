@@ -51,7 +51,7 @@ export const diskTheme = {
     bg: "#A4E1F2",
     border: "#57ADFB",
   },
-  NEONORANGE: {
+  NEON_ORANGE: {
     bg: "#FF7E7E",
     border: "#CEF957",
   },

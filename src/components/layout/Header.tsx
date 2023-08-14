@@ -1,10 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+
+import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
+
 import LogoMDDSimple from "../../assets/img/logo_mdd_simple.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
 import { ReactComponent as Setting } from "../../assets/svg/setting.svg";
-import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
-import { lightTheme } from "../../styles/colors";
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   isMyDisk: boolean;

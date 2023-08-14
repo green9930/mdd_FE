@@ -5,9 +5,10 @@ import styled from "styled-components";
 import ModalLayout from "../layout/ModalLayout";
 import IconConverter from "./IconConverter";
 import Button from "../elements/Button";
-import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
+
 import { getLoc, setLoc } from "../../utils/localStorage";
 import { lightThemeState } from "../../state/atom";
+import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 
 import DiskMask3 from "../../assets/img/disk_mask_3.png";
 
@@ -100,7 +101,6 @@ const Settings = () => {
       </StList>
       <StUnregister onClick={() => setOpenUnregisterModal(true)}>
         <span>회원탈퇴</span>
-        {/* <span>{getLoc("theme")}</span> */}
       </StUnregister>
       {openUnregisterModal ? (
         <ModalLayout
