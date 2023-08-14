@@ -4,7 +4,7 @@ export const DISK_COLOR_LIST = [
   "PINK",
   "YELLOW",
   "SKYBLUE",
-  "NEONORANGE",
+  "NEON_ORANGE",
   "PURPLE",
 ] as const;
 
@@ -15,6 +15,7 @@ export type NewDiskType = {
   content: string;
   diskColor: DiskColorType;
   isPrivate: boolean;
+  isBookmark: boolean;
 };
 
 export interface newDiskProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -22,6 +23,21 @@ export interface newDiskProps extends React.HTMLAttributes<HTMLDivElement> {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
   titleText: string;
 }
+
+export type DiskListType = {
+  content: string;
+  createdAt: string;
+  diskColor: DiskColorType;
+  diskId: number;
+  diskName: DiskColorType;
+  diskOwnerId: number;
+  diskOwnerNickname: string;
+  isBookmark: boolean;
+  isMine: boolean;
+  isPrivate: boolean;
+  likeCount: number;
+  modifiedAt: string;
+};
 
 export const DISK_BTN_LIST = [
   "like",

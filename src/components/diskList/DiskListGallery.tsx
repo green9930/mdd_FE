@@ -1,240 +1,22 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
+import { DiskListProps } from "../../pages/DiskListPage";
+import DiskCard from "./DiskCard";
 import Disk from "../elements/Disk";
+import Button from "../elements/Button";
+import ModalLayout from "../layout/ModalLayout";
 import { DiskColorType } from "../../types/diskTypes";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 import { ReactComponent as Bookmark } from "../../assets/svg/bookmark.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 import { ReactComponent as Pen } from "../../assets/svg/pen.svg";
-import { lightTheme } from "../../styles/colors";
-import { useNavigate } from "react-router-dom";
-import ModalLayout from "../layout/ModalLayout";
-import DiskCard from "./DiskCard";
-import Button from "../elements/Button";
 
-const TEST_DATA = [
-  {
-    diskId: 1,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜(˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "PINK",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: false,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 2,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "YELLOW",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 3,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "NEONORANGE",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 4,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "PURPLE",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 5,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "SKYBLUE",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 6,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "PINK",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 7,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "PINK",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 8,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "PINK",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: true,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-  {
-    diskId: 9,
-    diskName: "움치치상반기 최애 아이돌 Top4 ⸜( ˙ ˘ ˙)⸝♡",
-    content: "content",
-    diskColor: "NEONORANGE",
-    isPrivate: false,
-    image: [
-      {
-        imageId: 1,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-      {
-        imageId: 2,
-        imageUrl: "url",
-        createdAt: "2023…",
-        modifiedAt: "2023…",
-      },
-    ],
-    isMine: false,
-    createdAt: "2023-08-03",
-    modifiedAt: "2023-08-03",
-  },
-];
-
-const DiskListGallery = () => {
+const DiskListGallery = ({ data }: DiskListProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [targetDisk, setTargetDisk] = useState(0);
 
@@ -242,19 +24,24 @@ const DiskListGallery = () => {
 
   const handleClick = (target: string) => navigate(target);
 
+  // console.log("DATA >> ", data);
   return (
     <StContainer>
       <StList>
-        {TEST_DATA.map((val, idx) => {
+        {data.map((val, idx) => {
           const {
+            content,
+            createdAt,
+            diskColor,
             diskId,
             diskName,
-            content,
-            diskColor,
-            isPrivate,
-            image,
+            diskOwnerId,
+            diskOwnerNickname,
+            isBookmark,
             isMine,
-            createdAt,
+            isPrivate,
+            likeCount,
+            modifiedAt,
           } = val;
 
           return (
@@ -283,7 +70,10 @@ const DiskListGallery = () => {
           height="auto"
           bgc="transparent"
         >
-          <DiskCard data={TEST_DATA[targetDisk]} />
+          <DiskCard
+            data={data[targetDisk]}
+            setOpen={() => setOpenModal(false)}
+          />
           <StBtnContainer>
             <Button
               btnStatus="primary02"
@@ -294,7 +84,7 @@ const DiskListGallery = () => {
                 <span>닫기</span>
               </StBtnText>
             </Button>
-            {TEST_DATA[targetDisk].isMine ? (
+            {data[targetDisk].isMine ? (
               <Button
                 btnStatus="primary01"
                 clickHandler={() => {

@@ -17,6 +17,11 @@ export const signUpData = atom<AuthDataType>({
   },
 });
 
+export const pageState = atom<DiskPageType>({
+  key: "pageState",
+  default: "diskListGallery",
+});
+
 export const newDiskState = atom<NewDiskType>({
   key: "newDiskState",
   default: {
@@ -24,10 +29,11 @@ export const newDiskState = atom<NewDiskType>({
     content: "",
     diskColor: "PINK",
     isPrivate: false,
+    isBookmark: false,
   },
 });
 
-export const pageState = atom<DiskPageType>({
-  key: "pageState",
-  default: "diskListGallery",
+export const deleteToastState = atom<boolean>({
+  key: "deleteToastState",
+  default: false,
 });
