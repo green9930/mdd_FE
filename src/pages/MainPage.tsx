@@ -6,8 +6,11 @@ import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme, MOBILE_MAX_W } from "../styles/theme";
 import { darkTheme, lightTheme } from "../styles/colors";
 
+import { getLoc } from "../utils/localStorage";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
+import { getMyInfo } from "../api/memberApi";
+import { useQuery } from "@tanstack/react-query";
 
 import DotBackground from "../assets/img/dot_background.png";
 import DotBackgroundDark from "../assets/img/dot_background_dark.png";
@@ -23,7 +26,6 @@ import { ReactComponent as Bookmark } from "../assets/svg/bookmark.svg";
 import Header from "../components/layout/Header";
 import Disk from "../components/elements/Disk";
 import Guide from "../components/Guide";
-import { getLoc } from "../utils/localStorage";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -54,6 +56,20 @@ const MainPage = () => {
     }
   };
 
+  const { data, isLoading, isSuccess } = useQuery(
+    ["myInfo"],
+    () => getMyInfo(),
+    {
+      onSuccess: (data) => console.log("SUCCESS", data),
+      onError: (err) => console.log("GET DISK LIST FAIL", err),
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60, // <- 이전에 불렀던 데이터를 몇 초 동안 사용하고 싶은지 설정 (ex. 1시간)
+      cacheTime: 1000 * 60 * 60, // <- 캐시할 시간 설정 (ex. 1시간)
+    }
+  );
+
+  console.log(data);
+
   return (
     <AppLayout>
       <Header isMyDisk={true} jc="flex-end" userName="testname"></Header>
@@ -70,12 +86,12 @@ const MainPage = () => {
               <StEditBox>
                 <Edit />
               </StEditBox>
-              <StProfileImage src={DefaultProfile} />
+              <StProfileImage src={data ? data.profileImg : DefaultProfile} />
               <StProfileText color={lightTheme.colors.primary01}>
-                잔인한 바나나
+                {data && data.nickname}
               </StProfileText>
               <StProfileText color={lightTheme.colors.text02}>
-                뉴진스직캠보기 디깅중
+                {data && data.interest}
               </StProfileText>
               <StProfileText
                 color={
@@ -84,10 +100,10 @@ const MainPage = () => {
                     : darkTheme.colors.white
                 }
               >
-                지금 노래 뭐들으세요? 뉴진스의 하입보이요하아아아아입
+                {data && data.introduce}
               </StProfileText>
               <StVisitLike>
-                <span>방문 123,456</span>
+                <span>방문 {data && data.visitCount}</span>
                 <Like
                   fill={
                     isLightTheme
@@ -95,7 +111,7 @@ const MainPage = () => {
                       : darkTheme.colors.text02
                   }
                 />
-                <span>좋아요 345,342</span>
+                <span>좋아요 {data && data.likeCount}</span>
               </StVisitLike>
             </StProfileContainer>
 
@@ -188,7 +204,7 @@ export default MainPage;
 const StContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg};
   width: 100%;
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;

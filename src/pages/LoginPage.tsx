@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { InputStatusType } from "../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
-import { useQuery } from "@tanstack/react-query";
-import { postJoin, postLogin } from "../api/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
@@ -14,9 +13,11 @@ import PasswordInput from "../components/elements/PasswordInput";
 import AppLayout from "../components/layout/AppLayout";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
+import { postLogin } from "../api/memberApi";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [idStatus, setIdStatus] = useState<InputStatusType>("default");
   const [passwordStatus, setPasswordStatus] =
     useState<InputStatusType>("default");
@@ -26,6 +27,14 @@ const LoginPage = () => {
   const validCheck = () => {
     return id.length >= 8 && id.length <= 20 && password.length === 6;
   };
+
+  const { mutate: mutationLogin, isLoading: mutationIsLoading } = useMutation({
+    mutationFn: postLogin,
+    onSuccess(res) {
+      // queryClient.invalidateQueries(["myInfo"]);
+      navigate("/home");
+    },
+  });
 
   return (
     <AppLayout>
@@ -73,7 +82,7 @@ const LoginPage = () => {
           btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={() => {
             if (validCheck()) {
-              postLogin({
+              mutationLogin({
                 memberName: id,
                 password: password,
               });

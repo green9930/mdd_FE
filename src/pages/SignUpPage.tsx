@@ -7,7 +7,7 @@ import SignUpHeader from "../components/signUp/SignUpHeader";
 import SignUpId from "../components/signUp/SignUpId";
 import SignUpPassword from "../components/signUp/SignUpPassword";
 
-import { postJoin } from "../api/api";
+import { postJoin } from "../api/memberApi";
 
 const SignUpPage = () => {
   const [step, setStep] = useState<number>(1);
