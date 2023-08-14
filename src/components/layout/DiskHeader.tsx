@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
-import { darkTheme, lightTheme } from "../../styles/colors";
+import { getLoc } from "../../utils/localStorage";
+import { lightThemeState, pageState } from "../../state/atom";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
+import { darkTheme, lightTheme } from "../../styles/colors";
 
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
 import { ReactComponent as ListCategoqy } from "../../assets/svg/list_category.svg";
 import { ReactComponent as ListVertical } from "../../assets/svg/list_vertical.svg";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { lightThemeState, pageState } from "../../state/atom";
-import { getLoc } from "../../utils/localStorage";
 
 interface DiskHeaderProps {
   isMyDisk: boolean;
@@ -31,25 +31,24 @@ const DiskHeader = ({
 
   // status bar theme-color 변경
   useEffect(() => {
-    console.log("RENDERING");
-
-    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeColorMeta) {
-      console.log(getLoc("theme"));
-      themeColorMeta.setAttribute(
-        "content",
-        getLoc("theme") === "lightMode"
-          ? `${lightTheme.colors.bg}`
-          : `${darkTheme.colors.bg}`
-      ); // 원하는 색상으로 변경
-      // return () =>
-      //   themeColorMeta.setAttribute(
-      //     "content",
-      //     getLoc("theme") === "lightMode"
-      //       ? `${lightTheme.colors.bg}`
-      //       : `${darkTheme.colors.bg}`
-      //   );
-    }
+    // console.log("RENDERING");
+    // const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    // if (themeColorMeta) {
+    //   console.log(getLoc("theme"));
+    //   themeColorMeta.setAttribute(
+    //     "content",
+    //     getLoc("theme") === "lightMode"
+    //       ? `${lightTheme.colors.bg}`
+    //       : `${darkTheme.colors.bg}`
+    //   ); // 원하는 색상으로 변경
+    //   // return () =>
+    //   //   themeColorMeta.setAttribute(
+    //   //     "content",
+    //   //     getLoc("theme") === "lightMode"
+    //   //       ? `${lightTheme.colors.bg}`
+    //   //       : `${darkTheme.colors.bg}`
+    //   //   );
+    // }
   }, [isLightTheme]);
 
   const handleGoBack = () => {

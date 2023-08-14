@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { calcRem, fontTheme } from "../../styles/theme";
 import { BtnStatusType } from "../../types/etcTypes";
+import { calcRem, fontTheme } from "../../styles/theme";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   btnStatus: BtnStatusType;

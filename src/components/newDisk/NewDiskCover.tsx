@@ -11,8 +11,8 @@ import Disk from "../elements/Disk";
 import Button from "../elements/Button";
 import Input from "../elements/Input";
 import { newDiskState } from "../../state/atom";
-import { DISK_COLOR_LIST, newDiskProps } from "../../types/diskTypes";
 import { DISK_NAME_MAX_LENGTH } from "../../utils/validations";
+import { DISK_COLOR_LIST, newDiskProps } from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { lightTheme } from "../../styles/colors";
 
