@@ -4,9 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme, MOBILE_MAX_W } from "../styles/theme";
-import { lightTheme } from "../styles/colors";
+import { darkTheme, lightTheme } from "../styles/colors";
+
+import { getLoc } from "../utils/localStorage";
+import { useRecoilValue } from "recoil";
+import { lightThemeState } from "../state/atom";
+import { getMyInfo } from "../api/memberApi";
+import { useQuery } from "@tanstack/react-query";
 
 import DotBackground from "../assets/img/dot_background.png";
+import DotBackgroundDark from "../assets/img/dot_background_dark.png";
 import DefaultProfile from "../assets/img/default_profile.png";
 import { ReactComponent as Like } from "../assets/svg/like.svg";
 import { ReactComponent as Edit } from "../assets/svg/edit.svg";
@@ -23,6 +30,7 @@ import Guide from "../components/Guide";
 export type StDotBackgroundProps = {
   image: string;
 };
+//안씀
 export type StProfileTextProps = {
   color: string;
 };
@@ -30,47 +38,116 @@ export type StProfileTextProps = {
 const MainPage = () => {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const isLightTheme = useRecoilValue(lightThemeState);
+
+  const handleShare = () => {
+    if (navigator.share) {
+      const nickname = getLoc("nickname");
+      navigator
+        .share({
+          title: "My Digging Disk",
+          text: `${nickname} 님의 디스크를 공유했습니다.`,
+          url: "url입니다",
+        })
+        .then(() => {})
+        .catch((error) => console.error(error));
+    } else {
+      alert("현재 브라우저에서는 공유 기능을 지원하지 않습니다.");
+    }
+  };
+
+  const { data, isLoading, isSuccess } = useQuery(
+    ["myInfo"],
+    () => getMyInfo(),
+    {
+      onSuccess: (data) => console.log("SUCCESS", data),
+      onError: (err) => console.log("GET DISK LIST FAIL", err),
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60, // <- 이전에 불렀던 데이터를 몇 초 동안 사용하고 싶은지 설정 (ex. 1시간)
+      cacheTime: 1000 * 60 * 60, // <- 캐시할 시간 설정 (ex. 1시간)
+    }
+  );
+
+  console.log(data);
 
   return (
     <AppLayout>
       <Header isMyDisk={true} jc="flex-end" userName="testname"></Header>
       <StContainer>
-        <StDotBackground image={DotBackground}>
+        <StDotBackground
+          image={isLightTheme ? DotBackground : DotBackgroundDark}
+        >
           <StSubContainer>
-            <StProfileContainer>
+            <StProfileContainer
+              color={
+                isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
+              }
+            >
               <StEditBox>
                 <Edit />
               </StEditBox>
-              <StProfileImage src={DefaultProfile} />
+              <StProfileImage src={data ? data.profileImg : DefaultProfile} />
               <StProfileText color={lightTheme.colors.primary01}>
-                잔인한 바나나
+                {data && data.nickname}
               </StProfileText>
-              <StProfileText color={lightTheme.colors.primary02}>
-                뉴진스직캠보기 디깅중
+              <StProfileText color={lightTheme.colors.text02}>
+                {data && data.interest}
               </StProfileText>
-              <StProfileText color={lightTheme.colors.text01}>
-                지금 노래 뭐들으세요? 뉴진스의 하입보이요하아아아아입
+              <StProfileText
+                color={
+                  isLightTheme
+                    ? lightTheme.colors.text02
+                    : darkTheme.colors.white
+                }
+              >
+                {data && data.introduce}
               </StProfileText>
               <StVisitLike>
-                <span>방문 123,456</span>
-                <Like fill={lightTheme.colors.primary02} />
-                <span>좋아요 345,342</span>
+                <span>방문 {data && data.visitCount}</span>
+                <Like
+                  fill={
+                    isLightTheme
+                      ? lightTheme.colors.text02
+                      : darkTheme.colors.text02
+                  }
+                />
+                <span>좋아요 {data && data.likeCount}</span>
               </StVisitLike>
             </StProfileContainer>
 
-            <StDiskContainer>
+            <StDiskContainer
+              color={
+                isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
+              }
+            >
               <StTopBox>
-                <StDiskText>대표 디스크</StDiskText>
+                <StDiskText
+                  color={
+                    isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
+                  }
+                >
+                  대표 디스크
+                </StDiskText>
                 <Plus
                   onClick={() => navigate("/new-disk")}
                   width="24px"
                   height="24px"
                 />
               </StTopBox>
-              <StEmptyDisk>
+
+              {/* <StEmptyDisk
+                color={
+                  isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
+                }
+              >
                 <span>대표디스크가 없어요.</span>
-              </StEmptyDisk>
-              {/* <StDiskBoxFlex>
+              </StEmptyDisk> */}
+
+              <StDiskBoxFlex
+                color={
+                  isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
+                }
+              >
                 <StDiskBox>
                   <Bookmark width="22px" height="22px" />
                   <Disk diskColor="NEON_ORANGE" />
@@ -86,11 +163,17 @@ const MainPage = () => {
                   <Disk diskColor="NEON_ORANGE" />
                   <span>움치치상반기 최애 아이돌 Top4⸜</span>
                 </StDiskBox>
-              </StDiskBoxFlex> */}
+              </StDiskBoxFlex>
             </StDiskContainer>
 
-            <StBottomContainer>
-              <div>
+            <StBottomContainer
+              color={
+                isLightTheme
+                  ? lightTheme.colors.primary02
+                  : darkTheme.colors.text02
+              }
+            >
+              <div onClick={handleShare}>
                 <Share />
                 <span>홈 공유하기</span>
               </div>
@@ -121,7 +204,7 @@ export default MainPage;
 const StContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg};
   width: 100%;
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -150,7 +233,8 @@ const StProfileContainer = styled.div`
   display: flex;
   padding: ${calcRem(24)} ${calcRem(16)};
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ color }) => color};
+  /* background-color: ${({ theme }) => theme.colors.white}; */
   border: 2px solid ${({ theme }) => theme.colors.primary01};
   flex-direction: column;
   align-items: center;
@@ -158,7 +242,7 @@ const StProfileContainer = styled.div`
   position: relative;
 `;
 
-const StProfileText = styled.span<StProfileTextProps>`
+const StProfileText = styled.span`
   text-align: center;
   font-family: "NanumSquareNeo";
   color: ${({ color }) => color};
@@ -175,7 +259,7 @@ const StVisitLike = styled.div`
 
   span {
     text-align: center;
-    color: ${({ theme }) => theme.colors.primary02};
+    color: ${({ theme }) => theme.colors.text02};
     line-height: ${fontTheme.caption.lineHeight};
     letter-spacing: ${fontTheme.caption.letterSpacing};
     font-size: ${fontTheme.caption.fontSize};
@@ -197,6 +281,7 @@ const StProfileImage = styled.img`
 `;
 
 const StDiskBoxFlex = styled.div`
+  color: ${({ color }) => color};
   width: 100%;
   gap: ${calcRem(12)};
   display: grid;
@@ -211,7 +296,7 @@ const StEmptyDisk = styled.div`
   justify-content: center;
 
   span {
-    color: ${({ theme }) => theme.colors.primary02};
+    color: ${({ color }) => color};
     line-height: ${fontTheme.display01.lineHeight};
     letter-spacing: ${fontTheme.display01.letterSpacing};
     font-size: ${fontTheme.display01.fontSize};
@@ -245,7 +330,7 @@ const StDiskContainer = styled.div`
   gap: ${calcRem(16)};
   padding: ${calcRem(24)} ${calcRem(16)};
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ color }) => color};
   border: 2px solid ${({ theme }) => theme.colors.primary01};
 `;
 
@@ -290,6 +375,7 @@ const StDiskBox = styled.div`
     top: 0;
   }
   span {
+    color: ${({ color }) => color};
     text-align: center;
     line-height: ${fontTheme.caption.lineHeight};
     letter-spacing: ${fontTheme.caption.letterSpacing};
@@ -316,7 +402,7 @@ const StBottomContainer = styled.div`
     white-space: pre-line;
     text-align: center;
     font-family: "NanumSquareNeo";
-    color: ${({ theme }) => theme.colors.primary02};
+    color: ${({ color }) => color};
     line-height: ${fontTheme.display01.lineHeight};
     letter-spacing: ${fontTheme.display01.letterSpacing};
     font-size: ${fontTheme.display01.fontSize};

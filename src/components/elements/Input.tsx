@@ -2,7 +2,8 @@ import React, { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 
 import { InputStatusType } from "../../types/etcTypes";
-import { calcRem } from "../../styles/theme";
+import { calcRem, fontTheme } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 interface InputProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: string;
@@ -74,11 +75,11 @@ const StContainer = styled.div<{ inputStatus: InputStatusType }>`
   gap: ${calcRem(4)};
 
   label {
-    color: ${({ theme }) => theme.colors.text01};
-    line-height: ${calcRem(24)};
-    letter-spacing: 0.1px;
-    font-size: ${calcRem(14)};
-    font-weight: 700;
+    color: ${({ theme }) => theme.colors.primary05};
+    letter-spacing: ${fontTheme.subtitle02.letterSpacing};
+    line-height: ${fontTheme.subtitle02.lineHeight};
+    font-size: ${fontTheme.subtitle02.fontSize};
+    font-weight: ${fontTheme.subtitle02.fontWeight};
   }
 
   /* span {
@@ -130,27 +131,27 @@ const StInput = styled.input<{ inputStatus: InputStatusType }>`
   color: ${({ theme, inputStatus }) => {
     switch (inputStatus) {
       case "default":
-        return theme.colors.text01;
+        return lightTheme.colors.primary05;
       case "warning":
         return theme.colors.error;
       default:
         break;
     }
   }};
-  line-height: ${calcRem(20)};
-  letter-spacing: 0.25px;
-  font-size: ${calcRem(14)};
-  font-weight: 400;
+  letter-spacing: ${fontTheme.body02.letterSpacing};
+  line-height: ${fontTheme.body02.lineHeight};
+  font-size: ${fontTheme.body02.fontSize};
+  font-weight: ${fontTheme.body02.fontWeight};
   ::placeholder {
     color: ${({ theme }) => theme.colors.text02};
   }
 `;
 
 const StDesc = styled.span<{ inputStatus: InputStatusType }>`
-  line-height: ${calcRem(16)};
-  letter-spacing: 0.24px;
-  font-size: ${calcRem(12)};
-  font-weight: 400;
+  letter-spacing: ${fontTheme.caption.letterSpacing};
+  line-height: ${fontTheme.caption.lineHeight};
+  font-size: ${fontTheme.caption.fontSize};
+  font-weight: ${fontTheme.caption.fontWeight};
   color: ${({ theme, inputStatus }) => {
     switch (inputStatus) {
       case "warning":
@@ -172,8 +173,8 @@ const StFlex = styled.div<{ jc: string }>`
 
 const StTextLength = styled.div`
   color: ${({ theme }) => theme.colors.text02};
-  line-height: ${calcRem(20)};
-  letter-spacing: 0.25px;
-  font-size: ${calcRem(14)};
-  font-weight: 400;
+  letter-spacing: ${fontTheme.body02.letterSpacing};
+  line-height: ${fontTheme.body02.lineHeight};
+  font-size: ${fontTheme.body02.fontSize};
+  font-weight: ${fontTheme.body02.fontWeight};
 `;

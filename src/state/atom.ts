@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { AuthDataType } from "../api/api";
+import { AuthData } from "../api/memberApi";
 import { NewDiskType } from "../types/diskTypes";
 import { DiskPageType } from "../types/etcTypes";
 
@@ -9,7 +9,7 @@ export const lightThemeState = atom<boolean>({
   default: true,
 });
 
-export const signUpData = atom<AuthDataType>({
+export const signUpData = atom<AuthData>({
   key: "signUpData",
   default: {
     memberName: "",

@@ -1,30 +1,40 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
+import { useNavigate } from "react-router-dom";
 
+import { InputStatusType } from "../types/etcTypes";
+import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import Input from "../components/elements/Input";
+import Button from "../components/elements/Button";
+import PasswordInput from "../components/elements/PasswordInput";
 import AppLayout from "../components/layout/AppLayout";
 
-import SignUpHeader from "../components/signUp/SignUpHeader";
-import SignUpId from "../components/signUp/SignUpId";
-import SignUpPassword from "../components/signUp/SignUpPassword";
-
 import MonitorFilled from "../assets/img/monitor_filled.png";
-
-import { postJoin, postLogin } from "../api/api";
-import { calcRem, fontTheme } from "../styles/theme";
-import Input from "../components/elements/Input";
-import { InputStatusType } from "../types/etcTypes";
-import Button from "../components/elements/Button";
-import { useNavigate } from "react-router-dom";
-import PasswordInput from "../components/elements/PasswordInput";
+import { postLogin } from "../api/memberApi";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [duplicated, setDupliceted] = useState(true);
+  const queryClient = useQueryClient();
   const [idStatus, setIdStatus] = useState<InputStatusType>("default");
   const [passwordStatus, setPasswordStatus] =
     useState<InputStatusType>("default");
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [id, setId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const validCheck = () => {
+    return id.length >= 8 && id.length <= 20 && password.length === 6;
+  };
+
+  const { mutate: mutationLogin, isLoading: mutationIsLoading } = useMutation({
+    mutationFn: postLogin,
+    onSuccess(res) {
+      // queryClient.invalidateQueries(["myInfo"]);
+      navigate("/home");
+    },
+  });
 
   return (
     <AppLayout>
@@ -69,16 +79,17 @@ const LoginPage = () => {
           ></PasswordInput>
         </StInputContainer>
         <Button
-          btnStatus="disabled"
-          // btnStatus="primary01"
+          btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={() => {
-            // navigate("/signUp");
-            setPasswordStatus("warning");
-            setIdStatus("warning");
-            postLogin({
-              memberName: id,
-              password: password,
-            });
+            if (validCheck()) {
+              mutationLogin({
+                memberName: id,
+                password: password,
+              });
+            } else {
+              // setPasswordStatus("warning");
+              // setIdStatus("warning");
+            }
           }}
         >
           <span>접속하기</span>
@@ -98,7 +109,10 @@ const StContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: ${calcRem(48)} ${calcRem(16)} ${calcRem(27)} ${calcRem(16)};
+  padding: ${calcRem(48)} ${calcRem(32)} ${calcRem(27)} ${calcRem(32)};
+  @media screen and (max-width: ${MOBILE_MAX_W}px) {
+    padding: ${calcRem(48)} ${calcRem(16)} ${calcRem(27)} ${calcRem(16)};
+  }
 `;
 
 const StInputContainer = styled.div`
