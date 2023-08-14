@@ -1,17 +1,19 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 import PreviewList from "./PreviewList";
 import Button from "../elements/Button";
+import { postDisk } from "../../api/diskApi";
 import { newDiskState } from "../../state/atom";
-import { DiskColorType, newDiskProps } from "../../types/diskTypes";
-import { InputStatusType } from "../../types/etcTypes";
 import {
   DISK_CONTENT_MAX_LENGTH,
   DISK_IMG_MAX_LENGTH,
 } from "../../utils/validations";
+import { DiskColorType, newDiskProps } from "../../types/diskTypes";
+import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 import { diskTheme } from "../../styles/colors";
 
@@ -75,15 +77,37 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
           : `${contentRef.current.scrollHeight}px`;
     }
   };
+  const { mutate: addDisk, isLoading } = useMutation(postDisk, {
+    onSuccess: (data) => {
+      console.log(data);
+      // navigate("/");
+    },
+    onError: (err: any) => {
+      alert("ERROR");
+      // alert(err.response.data.errorMessage);
+    },
+  });
 
   const handleSubmit = async () => {
+    const frm = new FormData();
+    console.log(files);
+    files.map((file) => frm.append("file", file[0]));
+    frm.append(
+      "data",
+      new Blob([JSON.stringify(newDisk)], {
+        type: "application/json",
+      })
+    );
+    console.log(newDisk);
     console.log("SUBMIT DISK");
-    try {
-      // POST DISK
-      navigate("/disk-list");
-    } catch (err) {
-      console.log("POST DISK ERROR >> ", err);
-    }
+
+    addDisk(frm);
+    // try {
+    //   // POST DISK
+    //   navigate("/disk-list");
+    // } catch (err) {
+    //   console.log("POST DISK ERROR >> ", err);
+    // }
   };
 
   return (

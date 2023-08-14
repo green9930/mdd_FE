@@ -7,6 +7,7 @@ import { lightTheme } from "../../styles/colors";
 import LogoMDDSimple from "../../assets/img/logo_mdd_simple.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
 import { ReactComponent as Setting } from "../../assets/svg/setting.svg";
+import { useNavigate } from "react-router-dom";
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   isMyDisk: boolean;
@@ -21,13 +22,11 @@ const Header = ({
   jc = "space-between",
   children,
 }: HeaderProps) => {
+  const navigate = useNavigate();
+
   const handleGoHome = () => {
     // 로그인 한 유저일경우 -> 내 홈으로 이동
     // 없을 경우 -> 로그인 화면으로 이동
-  };
-
-  const handleGoSetting = () => {
-    // 환경 설정으로 이동
   };
 
   return (
@@ -40,7 +39,7 @@ const Header = ({
         )}
       </StTitle>
       {isMyDisk ? (
-        <button onClick={() => handleGoSetting()}>
+        <button onClick={() => navigate("/settings")}>
           <Setting
             fill={lightTheme.colors.primary01}
             stroke={lightTheme.colors.primary01}

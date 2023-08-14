@@ -26,6 +26,7 @@ import { ReactComponent as Bookmark } from "../assets/svg/bookmark.svg";
 import Header from "../components/layout/Header";
 import Disk from "../components/elements/Disk";
 import Guide from "../components/Guide";
+import ProfileModal from "../components/home/ProfileModal";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -38,6 +39,8 @@ export type StProfileTextProps = {
 const MainPage = () => {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
+
   const isLightTheme = useRecoilValue(lightThemeState);
 
   const handleShare = () => {
@@ -68,7 +71,7 @@ const MainPage = () => {
     }
   );
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <AppLayout>
@@ -83,7 +86,7 @@ const MainPage = () => {
                 isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
               }
             >
-              <StEditBox>
+              <StEditBox onClick={() => setOpenProfileModal(true)}>
                 <Edit />
               </StEditBox>
               <StProfileImage src={data ? data.profileImg : DefaultProfile} />
@@ -194,6 +197,11 @@ const MainPage = () => {
           </StSubContainer>
         </StDotBackground>
       </StContainer>
+      {openProfileModal ? (
+        <ProfileModal setOpen={() => setOpenProfileModal(true)} />
+      ) : (
+        <></>
+      )}
       <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
     </AppLayout>
   );
