@@ -23,6 +23,7 @@ import { ReactComponent as Bookmark } from "../assets/svg/bookmark.svg";
 import Header from "../components/layout/Header";
 import Disk from "../components/elements/Disk";
 import Guide from "../components/Guide";
+import { getLoc } from "../utils/localStorage";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -36,6 +37,22 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const isLightTheme = useRecoilValue(lightThemeState);
+
+  const handleShare = () => {
+    if (navigator.share) {
+      const nickname = getLoc("nickname");
+      navigator
+        .share({
+          title: "My Digging Disk",
+          text: `${nickname} 님의 디스크를 공유했습니다.`,
+          url: "url입니다",
+        })
+        .then(() => {})
+        .catch((error) => console.error(error));
+    } else {
+      alert("현재 브라우저에서는 공유 기능을 지원하지 않습니다.");
+    }
+  };
 
   return (
     <AppLayout>
@@ -140,7 +157,7 @@ const MainPage = () => {
                   : darkTheme.colors.text02
               }
             >
-              <div onClick={() => {}}>
+              <div onClick={handleShare}>
                 <Share />
                 <span>홈 공유하기</span>
               </div>
