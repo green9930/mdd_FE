@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { InputStatusType } from "../../types/etcTypes";
 import { calcRem, fontTheme } from "../../styles/theme";
@@ -9,7 +9,6 @@ import EyeSlash from "../../assets/svg/eye_slash.svg";
 import { lightTheme } from "../../styles/colors";
 
 interface PasswordInputProps extends React.HTMLAttributes<HTMLDivElement> {
-  type?: string;
   labelText: string;
   bottomChildren?: React.ReactNode;
   value: string;
@@ -24,7 +23,6 @@ interface PasswordInputProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const PasswordInput = ({
-  type = "text",
   labelText,
   bottomChildren,
   status,
@@ -37,23 +35,11 @@ const PasswordInput = ({
   TopChildren,
   children,
 }: PasswordInputProps) => {
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Backspace") {
-      setValue(value.slice(0, -1)); // removes last character from value
-    } else if (!isNaN(parseInt(event.key)) && value.length < maxLength) {
-      setValue(value + event.key);
-    } else {
-      return;
-    }
-  };
   const [isMasked, setIsMasked] = useState(true);
 
   const handleMaskToggle = () => {
     setIsMasked(!isMasked);
   };
-
-  const maskedValue = Array(value.length).fill("•").join("");
-
   return (
     <StContainer inputStatus={status}>
       <StFlex jc={jc}>
@@ -62,13 +48,19 @@ const PasswordInput = ({
       </StFlex>
       <StInputContainer id="input-element" inputStatus={status}>
         <StInput
+          isMasked={isMasked}
           placeholder={placeholder}
-          type={type}
-          value={isMasked ? maskedValue : value}
-          onChange={() => {}}
+          type="number"
+          value={value}
+          onChange={(e) => {
+            const validation = /^[0-9\b]+$/;
+            const input = e.target.value;
+            if (validation.test(input)) {
+              setValue(input);
+            }
+          }}
           onFocus={() => setStatus("focused")}
           onBlur={() => setStatus("default")}
-          onKeyDown={handleKeyDown}
           maxLength={maxLength}
           inputStatus={status}
         />
@@ -119,7 +111,10 @@ const StInputContainer = styled.div<{ inputStatus: InputStatusType }>`
   }};
 `;
 
-const StInput = styled.input<{ inputStatus: InputStatusType }>`
+const StInput = styled.input<{
+  inputStatus: InputStatusType;
+  isMasked: boolean;
+}>`
   border: none;
   outline: none;
   background-color: transparent;
@@ -148,6 +143,13 @@ const StInput = styled.input<{ inputStatus: InputStatusType }>`
     -webkit-appearance: none;
     margin: 0;
   }
+  ${({ isMasked }) =>
+    isMasked &&
+    css`
+      -webkit-text-security: disc;
+      -moz-webkit-text-security: disc;
+      -moz-text-security: disc;
+    `};
 `;
 
 const StFlex = styled.div<{ jc: string }>`

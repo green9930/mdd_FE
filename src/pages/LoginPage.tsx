@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
+import { useNavigate } from "react-router-dom";
 
+import { InputStatusType } from "../types/etcTypes";
+import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
+
+import { useQuery } from "@tanstack/react-query";
+import { postJoin, postLogin } from "../api/api";
+
+import Input from "../components/elements/Input";
+import Button from "../components/elements/Button";
+import PasswordInput from "../components/elements/PasswordInput";
 import AppLayout from "../components/layout/AppLayout";
-
-import SignUpHeader from "../components/signUp/SignUpHeader";
-import SignUpId from "../components/signUp/SignUpId";
-import SignUpPassword from "../components/signUp/SignUpPassword";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
 
-import { postJoin, postLogin } from "../api/api";
-import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
-import Input from "../components/elements/Input";
-import { InputStatusType } from "../types/etcTypes";
-import Button from "../components/elements/Button";
-import { useNavigate } from "react-router-dom";
-import PasswordInput from "../components/elements/PasswordInput";
-import { useQuery } from "@tanstack/react-query";
-
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [duplicated, setDupliceted] = useState(true);
   const [idStatus, setIdStatus] = useState<InputStatusType>("default");
   const [passwordStatus, setPasswordStatus] =
     useState<InputStatusType>("default");
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [id, setId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const validCheck = () => {
+    return id.length >= 8 && id.length <= 20 && password.length === 6;
+  };
 
   return (
     <AppLayout>
@@ -48,7 +48,6 @@ const LoginPage = () => {
         ></Input>
         <StInputContainer>
           <PasswordInput
-            type="number"
             labelText="비밀번호"
             status={passwordStatus}
             setStatus={setPasswordStatus}
@@ -71,16 +70,17 @@ const LoginPage = () => {
           ></PasswordInput>
         </StInputContainer>
         <Button
-          btnStatus="disabled"
-          // btnStatus="primary01"
+          btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={() => {
-            // navigate("/signUp");
-            setPasswordStatus("warning");
-            setIdStatus("warning");
-            postLogin({
-              memberName: id,
-              password: password,
-            });
+            if (validCheck()) {
+              postLogin({
+                memberName: id,
+                password: password,
+              });
+            } else {
+              // setPasswordStatus("warning");
+              // setIdStatus("warning");
+            }
           }}
         >
           <span>접속하기</span>
