@@ -12,7 +12,7 @@ import { calcRem, fontTheme } from "../../styles/theme";
 import DiskPreviewList from "./DiskPreviewList";
 import IconConverter from "./IconConverter";
 
-import Sample01 from "../../assets/sample_01.jpeg";
+// import Sample01 from "../../assets/sample_01.jpeg";
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
@@ -72,7 +72,7 @@ const DiskCard = ({ data }: DiskCardProps) => {
     <Stcontainer diskColor={diskColor as DiskColorType}>
       <StDiskName>{diskName}</StDiskName>
       <StPreviewContainer>
-        <StMainImg src={Sample01} alt="main-preview" />
+        {/* <StMainImg src={Sample01} alt="main-preview" /> */}
       </StPreviewContainer>
       <StImgList>{DiskPreviewList(imageList, handleMainImg)}</StImgList>
       <StSubContainer>

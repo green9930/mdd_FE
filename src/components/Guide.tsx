@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
 import { GuideText, InputStatusType } from "../types/etcTypes";
 
-import { WINDOW_W, calcRem } from "../styles/theme";
+import { WINDOW_W, calcRem, fontTheme } from "../styles/theme";
 import { darkTheme, lightTheme } from "../styles/colors";
 
 import DiskMask01 from "../assets/img/disk_mask_1.png";
@@ -65,7 +65,7 @@ const Guide = ({ modalOpen, setModalOpen }: GuideProps) => {
         >
           <StModalContainer>
             <StModal>
-              <div>디깅디스크 사용법</div>
+              <span>디깅디스크 사용법</span>
               <StDiskMask src={currentIcon} />
             </StModal>
             <StTextContainer>
@@ -133,6 +133,7 @@ const StModalContainer = styled.div`
   height: 100%;
   margin-bottom: ${calcRem(16)};
   padding: ${calcRem(24)};
+  border: 2px solid ${({ theme }) => theme.colors.primary01};
 `;
 
 const StTextContainer = styled.div`
@@ -143,16 +144,30 @@ const StTextContainer = styled.div`
   gap: ${calcRem(16)};
   height: 100%;
   span {
+    color: ${({ theme }) => theme.colors.primary01};
+    font-family: "NanumSquareNeo";
     white-space: pre-line;
     text-align: center;
-    font-size: 16px;
+    line-height: ${fontTheme.display01.lineHeight};
+    letter-spacing: ${fontTheme.display01.letterSpacing};
+    font-size: ${fontTheme.display01.fontSize};
+    font-weight: ${fontTheme.display01.fontWeight};
   }
 `;
+
 const StModal = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${calcRem(16)};
+  span {
+    color: ${({ theme }) => theme.colors.text01};
+    font-family: "NanumSquareNeo";
+    line-height: ${fontTheme.display01.lineHeight};
+    letter-spacing: ${fontTheme.display01.letterSpacing};
+    font-size: ${fontTheme.display01.fontSize};
+    font-weight: ${fontTheme.display01.fontWeight};
+  }
 `;
 
 const StArrowFlex = styled.div`
@@ -168,7 +183,6 @@ const StArrowFlex = styled.div`
 const StDiskMask = styled.img`
   width: 44px;
   height: auto;
-  margin-bottom: ${calcRem(15)};
 `;
 
 const StClose = styled.img`
