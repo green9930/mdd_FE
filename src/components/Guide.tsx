@@ -134,6 +134,7 @@ const StModalContainer = styled.div`
   margin-bottom: ${calcRem(16)};
   padding: ${calcRem(24)};
   border: 2px solid ${({ theme }) => theme.colors.primary01};
+  border-radius: 12px;
 `;
 
 const StTextContainer = styled.div`

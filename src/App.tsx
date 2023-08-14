@@ -20,8 +20,8 @@ function App() {
       setIsLightTheme(currentTheme === "lightMode");
       document.body.style.backgroundColor =
         currentTheme === "darkMode"
-          ? lightTheme.colors.bg
-          : darkTheme.colors.bg;
+          ? darkTheme.colors.bg
+          : lightTheme.colors.bg;
     } else {
       const isDarkMode =
         window.matchMedia &&
