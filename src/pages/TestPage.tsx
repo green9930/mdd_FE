@@ -60,7 +60,8 @@ const TestPage = () => {
         placeholder="비밀번호를 입력해주세요"
         TopChildren={
           <div>
-            <span>랜덤 추천</span>ㅁ{/* 주사위 자리 */}
+            <span>랜덤 추천</span>
+            {/* 주사위 자리 */}
           </div>
         }
       ></Input>

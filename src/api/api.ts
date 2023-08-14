@@ -26,6 +26,17 @@ export const tokenInstance = axios.create({
   withCredentials: true,
 });
 
+/* REQUEST WITH IMG                                                           */
+/* -------------------------------------------------------------------------- */
+export const formInstance = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    "Content-Type": "multipart/form-data",
+    responseType: "blob",
+    Authorization: `Bearer ${accessToken}`,
+  },
+});
+
 /* INTERCEPTOR                                                                */
 /* -------------------------------------------------------------------------- */
 tokenInstance.interceptors.request.use(

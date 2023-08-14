@@ -29,8 +29,8 @@ function App() {
       setLoc("theme", isDarkMode ? "darkMode" : "lightMode");
       setIsLightTheme(!isDarkMode);
       document.body.style.backgroundColor = isDarkMode
-        ? lightTheme.colors.bg
-        : darkTheme.colors.bg;
+        ? darkTheme.colors.bg
+        : lightTheme.colors.bg;
     }
   }, [isLightTheme]);
 
