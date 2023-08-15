@@ -62,6 +62,15 @@ export const getMyInfo = async () => {
   }
 };
 
+export const getMemberInfo = async (memberId: string) => {
+  try {
+    const res = await tokenInstance.get(`/api/v1/members/${memberId}`);
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const patchMyInfo = async (data: any) => {
   try {
     await tokenInstance.patch("/api/v1/members", data, {

@@ -39,7 +39,7 @@ const Router = () => {
       <Route path="/disk-list" element={<DiskListPage />} />
       <Route path="/new-disk" element={<NewDiskPage />} />
       <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/home" element={<MainPage />} />
+      <Route path="/home/:id" element={<MainPage />} />
       <Route path="/test" element={<TestPage />} />
     </Routes>
   );
