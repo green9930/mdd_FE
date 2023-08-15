@@ -198,7 +198,7 @@ const MainPage = () => {
         </StDotBackground>
       </StContainer>
       {openProfileModal ? (
-        <ProfileModal setOpen={() => setOpenProfileModal(true)} />
+        <ProfileModal data={data} setOpen={() => setOpenProfileModal(false)} />
       ) : (
         <></>
       )}

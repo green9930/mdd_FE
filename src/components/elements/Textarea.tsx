@@ -2,7 +2,7 @@ import React, { ChangeEvent, Dispatch, SetStateAction, useRef } from "react";
 import styled from "styled-components";
 
 import { InputStatusType } from "../../types/etcTypes";
-import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
+import { calcRem, fontTheme } from "../../styles/theme";
 
 interface TextareaProps {
   labelText: string;
@@ -15,6 +15,7 @@ interface TextareaProps {
   placeholder: string;
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
+  isMultiLine: boolean;
 }
 
 const Textarea = ({
@@ -28,6 +29,7 @@ const Textarea = ({
   placeholder,
   jc = "flex-start",
   TopChildren,
+  isMultiLine,
 }: TextareaProps) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,10 +39,17 @@ const Textarea = ({
 
     if (contentRef.current) {
       contentRef.current.style.height = "auto";
-      contentRef.current.style.height =
-        contentRef.current.scrollHeight > 284
-          ? "284px"
-          : `${contentRef.current.scrollHeight}px`;
+      if (isMultiLine) {
+        contentRef.current.style.height =
+          contentRef.current.scrollHeight > 284
+            ? "284px"
+            : `${contentRef.current.scrollHeight}px`;
+      } else {
+        contentRef.current.style.height =
+          contentRef.current.scrollHeight > 38
+            ? "38px"
+            : `${contentRef.current.scrollHeight}px`;
+      }
     }
   };
 
@@ -80,11 +89,6 @@ const StContainer = styled.div`
   flex-direction: column;
   gap: ${calcRem(4)};
   width: 100%;
-  padding: ${calcRem(24)} ${calcRem(32)} ${calcRem(60)};
-
-  @media screen and (max-width: ${MOBILE_MAX_W}px) {
-    padding: ${calcRem(24)} ${calcRem(0)} ${calcRem(24)};
-  }
 `;
 
 const StFlex = styled.div<{ jc: string }>`
