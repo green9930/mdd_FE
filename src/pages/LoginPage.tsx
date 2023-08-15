@@ -15,6 +15,7 @@ import AppLayout from "../components/layout/AppLayout";
 import MonitorFilled from "../assets/img/monitor_filled.png";
 import { postLogin } from "../api/memberApi";
 import { AxiosError } from "axios";
+import { getCookie, setCookie } from "../utils/cookie";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -53,6 +54,9 @@ const LoginPage = () => {
 
         // 로그인 시도 5회 초과 시 : 429 => 1분간 서버 에러
       } else if (errerStatus === 429) {
+        window.alert(errorMessage);
+        const expiresIn = new Date(Date.now() + 60000);
+        setCookie("loginOver", "true", expiresIn);
       }
     },
   });
@@ -104,10 +108,16 @@ const LoginPage = () => {
           btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={() => {
             if (validCheck()) {
-              mutationLogin({
-                memberName: id,
-                password: password,
-              });
+              if (getCookie("loginOver") !== "true") {
+                mutationLogin({
+                  memberName: id,
+                  password: password,
+                });
+              } else {
+                window.alert(
+                  "너무 많은 로그인 시도를 했습니다. 잠시 후 다시 시도해주세요."
+                );
+              }
             }
           }}
         >
