@@ -100,7 +100,7 @@ const SignUpPassword = ({
                     setStep(4);
                     setPercent(100);
                     setTimeout(() => {
-                      navigate("/", { state: { signUp: true } });
+                      navigate("/new-disk", { state: { signUp: true } });
                     }, 800);
                   } else {
                     setError(true);

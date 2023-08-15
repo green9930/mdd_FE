@@ -8,6 +8,8 @@ import SignUpId from "../components/signUp/SignUpId";
 import SignUpPassword from "../components/signUp/SignUpPassword";
 
 import { postJoin } from "../api/memberApi";
+import { signUpData } from "../state/atom";
+import { useRecoilState } from "recoil";
 
 const SignUpPage = () => {
   const [step, setStep] = useState<number>(1);
