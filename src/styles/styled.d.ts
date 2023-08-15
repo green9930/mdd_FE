@@ -6,6 +6,8 @@ declare module "styled-components" {
       primary01: string;
       primary02: string;
       primary03: string;
+      primary04: string;
+      primary05: string;
       text01: string;
       text02: string;
       text03: string;
@@ -14,6 +16,8 @@ declare module "styled-components" {
       transparent01: string;
       transparent02: string;
       transparent03: string;
+      white: string;
+      blue: string;
     };
   }
 }
