@@ -13,6 +13,12 @@ export type DiskPageType =
   | "newDisk"
   | "settings";
 
+export type NewDiskStepType =
+  | "newDiskSignUp1"
+  | "newDiskSignUp2"
+  | "newDisk1"
+  | "newDisk2";
+
 export type GuideText = {
   [key: number]: string[];
 };
