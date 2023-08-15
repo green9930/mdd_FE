@@ -53,15 +53,6 @@ export const postLogin = async (postData: AuthData) => {
   }
 };
 
-export const getMyInfo = async () => {
-  try {
-    const res = await tokenInstance.get("/api/v1/members/mypage");
-    return res.data;
-  } catch (err) {
-    throw err;
-  }
-};
-
 export const getMemberInfo = async (memberId: string) => {
   try {
     const res = await tokenInstance.get(`/api/v1/members/${memberId}`);

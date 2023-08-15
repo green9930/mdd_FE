@@ -28,6 +28,8 @@ import Disk from "../components/elements/Disk";
 import Guide from "../components/Guide";
 import ProfileModal from "../components/home/ProfileModal";
 import Button from "../components/elements/Button";
+import { getBookmarkDiskList } from "../api/diskApi";
+import { DiskListType } from "../types/diskTypes";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -62,19 +64,28 @@ const MainPage = () => {
   const { id } = useParams();
 
   const { data, isLoading, isSuccess } = useQuery(
-    ["myInfo"],
+    ["myInfo", id],
     () => getMemberInfo(id ? id : ""),
     {
       onSuccess: (data) => console.log("SUCCESS", data),
       onError: (err) => console.log("GET DISK LIST FAIL", err),
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 60, // <- 이전에 불렀던 데이터를 몇 초 동안 사용하고 싶은지 설정 (ex. 1시간)
-      cacheTime: 1000 * 60 * 60, // <- 캐시할 시간 설정 (ex. 1시간)
-      enabled: id ? true : false,
+      staleTime: 1000 * 60 * 60,
+      cacheTime: 1000 * 60 * 60,
     }
   );
 
-  // console.log(data);
+  const { data: bookmarkData } = useQuery(
+    ["myBookmarkDisk", id],
+    () => getBookmarkDiskList(id ? id : ""),
+    {
+      onSuccess: (data) => console.log("SUCCESS", data),
+      onError: (err) => console.log("GET DISK LIST FAIL", err),
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60,
+      cacheTime: 1000 * 60 * 60,
+    }
+  );
 
   return (
     <AppLayout>
@@ -148,7 +159,9 @@ const MainPage = () => {
                     height="24px"
                   />
                 ) : (
-                  <StMoreText>더보기</StMoreText>
+                  <StMoreText onClick={() => navigate("/disk-list")}>
+                    더보기
+                  </StMoreText>
                 )}
               </StTopBox>
 
@@ -160,27 +173,31 @@ const MainPage = () => {
                 <span>대표디스크가 없어요.</span>
               </StEmptyDisk> */}
 
-              <StDiskBoxFlex
-                color={
-                  isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
-                }
-              >
-                <StDiskBox>
-                  <Bookmark width="22px" height="22px" />
-                  <Disk diskColor="NEON_ORANGE" />
-                  <span>움치치상반기 최애 아이돌 Top4⸜( ˙ ˘ ˙)⸝♡</span>
-                </StDiskBox>
-                <StDiskBox>
-                  <Bookmark width="22px" height="22px" />
-                  <Disk diskColor="NEON_ORANGE" />
-                  <span>움치치상반기 </span>
-                </StDiskBox>
-                <StDiskBox>
-                  <Bookmark width="22px" height="22px" />
-                  <Disk diskColor="NEON_ORANGE" />
-                  <span>움치치상반기 최애 아이돌 Top4⸜</span>
-                </StDiskBox>
-              </StDiskBoxFlex>
+              {bookmarkData.length > 0 ? (
+                <StDiskBoxFlex
+                  color={
+                    isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
+                  }
+                >
+                  {bookmarkData.map((item: DiskListType) => (
+                    <StDiskBox key={item.diskId}>
+                      <Bookmark width="22px" height="22px" />
+                      <Disk diskColor={item.diskColor} />
+                      <span>{item.diskName}</span>
+                    </StDiskBox>
+                  ))}
+                </StDiskBoxFlex>
+              ) : (
+                <StEmptyDisk
+                  color={
+                    isLightTheme
+                      ? lightTheme.colors.primary02
+                      : lightTheme.colors.white
+                  }
+                >
+                  <span>대표디스크가 없어요.</span>
+                </StEmptyDisk>
+              )}
             </StDiskContainer>
             {data && data.isMe ? (
               <StBottomContainer
@@ -389,6 +406,7 @@ const StDiskText = styled.span`
 `;
 
 const StMoreText = styled.span`
+  cursor: pointer;
   color: ${({ theme }) => theme.colors.primary01};
   line-height: ${fontTheme.button.lineHeight};
   letter-spacing: ${fontTheme.button.letterSpacing};

@@ -26,6 +26,19 @@ export const postDisk = async (data: any): Promise<AxiosResponse<any>> => {
   }
 };
 
+export const getBookmarkDiskList = async (memberId: string) => {
+  try {
+    const res = await tokenInstance.get(
+      `/api/v1/disks/all/bookmarked/${memberId}`
+    );
+    if (res.status === 200) {
+      return res.data;
+    }
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
 // data :
 // {
 //   "diskName": "diskName",
