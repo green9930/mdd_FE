@@ -26,17 +26,6 @@ export const tokenInstance = axios.create({
   withCredentials: true,
 });
 
-/* REQUEST WITH IMG                                                           */
-/* -------------------------------------------------------------------------- */
-export const formInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-  headers: {
-    "Content-Type": "multipart/form-data",
-    responseType: "blob",
-    Authorization: `Bearer ${accessToken}`,
-  },
-});
-
 /* INTERCEPTOR                                                                */
 /* -------------------------------------------------------------------------- */
 tokenInstance.interceptors.request.use(
@@ -54,10 +43,10 @@ tokenInstance.interceptors.request.use(
 
 tokenInstance.interceptors.response.use(
   (response) => {
-    console.log(response);
     return response;
   },
   async (error) => {
+    console.log(error);
     const status = error.response.status;
     const removeInstance = () => {
       delete axios.defaults.headers.common.Authorization;

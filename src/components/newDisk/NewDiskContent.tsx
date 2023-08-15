@@ -1,10 +1,11 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 import PreviewList from "./PreviewList";
+import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
 import { postDisk } from "../../api/diskApi";
 import { newDiskState } from "../../state/atom";
@@ -24,10 +25,10 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
   const [files, setFiles] = useState<any[]>([]);
   const [previewList, setPreviewList] = useState<any[]>([]);
   const [mainImg, setMainImg] = useState<string>("");
+  const [content, setContent] = useState("");
   const [contentStatus, setContentStatus] =
     useState<InputStatusType>("default");
 
-  const contentRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,17 +67,6 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
 
   const handleMainImg = (target: number) => setMainImg(previewList[target]);
 
-  const handleContent = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value.substring(0, DISK_CONTENT_MAX_LENGTH);
-    setNewDisk((prev) => ({ ...prev, content: text }));
-    if (contentRef.current) {
-      contentRef.current.style.height = "auto";
-      contentRef.current.style.height =
-        contentRef.current.scrollHeight > 284
-          ? "284px"
-          : `${contentRef.current.scrollHeight}px`;
-    }
-  };
   const { mutate: addDisk, isLoading } = useMutation(postDisk, {
     onSuccess: (data) => {
       console.log(data);
@@ -134,31 +124,17 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
           )}
         </StImgList>
       </StGallery>
-      <StContentContainer>
-        <StContentHeader>
-          <label>디스크 메모</label>
-          <span>선택사항</span>
-        </StContentHeader>
-        <StTextareaContainer contentStatus={contentStatus}>
-          <textarea
-            ref={contentRef}
-            placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
-            value={newDisk.content}
-            onChange={(e) => handleContent(e)}
-            onFocus={() => setContentStatus("focused")}
-            onBlur={() => setContentStatus("default")}
-            maxLength={DISK_CONTENT_MAX_LENGTH}
-            rows={1}
-          />
-          {newDisk.content.length ? (
-            <StTextLength>
-              {newDisk.content.length}/{DISK_CONTENT_MAX_LENGTH}
-            </StTextLength>
-          ) : (
-            <></>
-          )}
-        </StTextareaContainer>
-      </StContentContainer>
+      <Textarea
+        labelText="디스크 메모"
+        value={content}
+        setValue={setContent}
+        status={contentStatus}
+        setStatus={setContentStatus}
+        maxLength={DISK_CONTENT_MAX_LENGTH}
+        placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
+        jc="flex-start"
+        TopChildren={<StOptionText>선택사항</StOptionText>}
+      />
       <StBtnContainer>
         <Button
           btnStatus={files.length ? "primary01" : "disabled"}
@@ -289,75 +265,7 @@ const StImgList = styled.ul`
   }
 `;
 
-const StContentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${calcRem(4)};
-  width: 100%;
-  padding: ${calcRem(24)} ${calcRem(32)} ${calcRem(60)};
-
-  @media screen and (max-width: ${MOBILE_MAX_W}px) {
-    padding: ${calcRem(24)} ${calcRem(0)} ${calcRem(24)};
-  }
-`;
-
-const StContentHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${calcRem(4)};
-
-  label {
-    color: ${({ theme }) => theme.colors.text01};
-    line-height: ${fontTheme.subtitle02.lineHeight};
-    letter-spacing: ${fontTheme.subtitle02.letterSpacing};
-    font-size: ${fontTheme.subtitle02.fontSize};
-    font-weight: ${fontTheme.subtitle02.fontWeight};
-  }
-
-  span {
-    color: ${({ theme }) => theme.colors.text02};
-    line-height: ${fontTheme.body02.lineHeight};
-    letter-spacing: ${fontTheme.body02.letterSpacing};
-    font-size: ${fontTheme.body02.fontSize};
-    font-weight: ${fontTheme.body02.fontWeight};
-  }
-`;
-
-const StTextareaContainer = styled.div<{ contentStatus: InputStatusType }>`
-  display: flex;
-  align-items: center;
-  gap: ${calcRem(12)};
-  width: 100%;
-  padding: ${calcRem(12)} ${calcRem(12)} ${calcRem(12)} ${calcRem(16)};
-  background-color: ${({ theme }) => theme.colors.white};
-  border: 1px solid;
-  border-color: ${({ theme, contentStatus }) => {
-    switch (contentStatus) {
-      case "default":
-        return theme.colors.primary03;
-      case "warning":
-        return theme.colors.error;
-      case "focused":
-        return theme.colors.primary01;
-      default:
-        return;
-    }
-  }};
-  border-radius: ${calcRem(4)};
-
-  textarea {
-    flex-grow: 1;
-    background-color: ${({ theme }) => theme.colors.white};
-    border: none;
-    resize: none;
-
-    ::placeholder {
-      color: ${({ theme }) => theme.colors.text02};
-    }
-  }
-`;
-
-const StTextLength = styled.div`
+const StOptionText = styled.span`
   color: ${({ theme }) => theme.colors.text02};
   line-height: ${fontTheme.body02.lineHeight};
   letter-spacing: ${fontTheme.body02.letterSpacing};

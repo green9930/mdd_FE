@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { getLoc, setLoc } from "../utils/localStorage";
+import axios, { AxiosError } from "axios";
+import { setLoc } from "../utils/localStorage";
 import { instance, tokenInstance } from "./api";
 
 export interface AuthData {
@@ -39,10 +39,21 @@ export const postLogin = async (postData: AuthData) => {
 export const getMyInfo = async () => {
   try {
     const res = await tokenInstance.get("/api/v1/members/mypage");
-    console.log(res);
     return res.data;
-  } catch (err: AxiosError | any) {
-    console.log(err);
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const patchMyInfo = async (data: any) => {
+  try {
+    await tokenInstance.patch("/api/v1/members", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        responseType: "blob",
+      },
+    });
+  } catch (err) {
     throw err;
   }
 };
