@@ -31,10 +31,9 @@ const DiskListPage = () => {
     {
       onSuccess: (data) => console.log("SUCCESS", data),
       onError: (err) => console.log("GET DISK LIST FAIL", err),
+      staleTime: Infinity,
     }
   );
-
-  console.log("LOADING", isLoading, isSuccess);
 
   useEffect(() => {
     TEST_USER.isMe ? setPage("diskListGallery") : setPage("diskListFeed");
@@ -42,9 +41,7 @@ const DiskListPage = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (openDeleteToast) {
-        setOpenDeleteToast(false);
-      }
+      if (openDeleteToast) setOpenDeleteToast(false);
     }, 2000);
   }, [openDeleteToast]);
 
@@ -60,12 +57,8 @@ const DiskListPage = () => {
       />
       {!isLoading && isSuccess ? (
         <>
-          {page === "diskListFeed" ? <DiskListFeed /> : <></>}
-          {page === "diskListGallery" ? (
-            <DiskListGallery data={data as DiskListType[]} />
-          ) : (
-            <></>
-          )}
+          {page === "diskListFeed" ? <DiskListFeed data={data} /> : <></>}
+          {page === "diskListGallery" ? <DiskListGallery data={data} /> : <></>}
         </>
       ) : (
         <></>

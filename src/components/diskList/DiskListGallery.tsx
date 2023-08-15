@@ -43,6 +43,7 @@ const DiskListGallery = ({ data }: DiskListProps) => {
             likeCount,
             modifiedAt,
           } = val;
+          console.log(val);
 
           return (
             <StItem
@@ -158,6 +159,7 @@ const StDiskContainer = styled.div`
 
 const StNewDisk = styled.li`
   background-color: ${({ theme }) => theme.colors.primary03};
+  cursor: pointer;
 
   span {
     color: ${({ theme }) => theme.colors.text03};
