@@ -29,9 +29,7 @@ export const postJoin = async (postData: AuthData) => {
 
 export const getDuplicatedId = async (memberName: string) => {
   try {
-    const { data } = await tokenInstance.get(
-      `/api/v1/members/check/${memberName}`
-    );
+    const { data } = await instance.get(`/api/v1/members/check/${memberName}`);
     return data;
   } catch (err: AxiosError | any) {
     throw err;
