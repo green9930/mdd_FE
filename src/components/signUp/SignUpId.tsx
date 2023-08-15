@@ -23,7 +23,7 @@ export interface SignUpHeaderProps
 const VALIDATION: ValidationType[] = [
   {
     text: "영문 포함",
-    validation: /[a-zA-Z]/,
+    validation: /^[a-zA-Z0-9]*[a-zA-Z][a-zA-Z0-9]*$/,
   },
   {
     text: "숫자 포함",
@@ -49,7 +49,6 @@ const SignUpId = ({
   const [duplicated, setDupliceted] = useState(true);
   const [status, setStatus] = useState<InputStatusType>("default");
   const [value, setValue] = useState("");
-
   const [data, setData] = useRecoilState(signUpData);
 
   const checkValidation = () => {
@@ -57,6 +56,12 @@ const SignUpId = ({
       VALIDATION.every((item) => item.validation.test(value)) && duplicated
     );
   };
+
+  useEffect(() => {
+    if (data.memberName) {
+      setValue(data.memberName);
+    }
+  }, []);
 
   return (
     <StContainer>
@@ -70,10 +75,14 @@ const SignUpId = ({
           maxLengthView={false}
           maxLength={20}
           placeholder="아이디를 입력해주세요"
+          inputType="memberName"
         ></Input>
         <StValidContainer>
           {VALIDATION.map((item) => (
-            <StValidFlex key={item.text} valid={item.validation.test(value)}>
+            <StValidFlex
+              key={item.text}
+              valid={value.length > 0 ? item.validation.test(value) : true}
+            >
               <CheckCircle width="16px" height="16px" />
               <StvalidText>{item.text}</StvalidText>
             </StValidFlex>

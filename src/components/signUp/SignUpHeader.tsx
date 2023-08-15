@@ -8,6 +8,8 @@ import { StepType } from "../../types/etcTypes";
 
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 import { lightTheme } from "../../styles/colors";
+import { signUpData } from "../../state/atom";
+import { useRecoilState } from "recoil";
 
 export interface SignUpHeaderProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,11 +39,25 @@ const SignUpHeader = ({
   percent = 0,
   setPercent,
 }: SignUpHeaderProps) => {
+  const [data, setData] = useRecoilState(signUpData);
+
   return (
     <StContainer>
       {step !== 1 && (
         <StBack
           onClick={() => {
+            // if (step === 2) {
+            //   setData({
+            //     memberName: "",
+            //     password: "",
+            //   });
+            // }
+            if (step === 3) {
+              setData((prev) => ({
+                ...prev,
+                password: "",
+              }));
+            }
             setStep(step - 1);
             setPercent(step === 2 ? 12 : 50);
           }}
