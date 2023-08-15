@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 import { AuthData } from "../api/memberApi";
 import { NewDiskType } from "../types/diskTypes";
-import { DiskPageType } from "../types/etcTypes";
+import { DiskPageType, NewDiskStepType } from "../types/etcTypes";
 
 // 라이트모드 | 다크모드
 export const lightThemeState = atom<boolean>({
@@ -22,6 +22,11 @@ export const pageState = atom<DiskPageType>({
   default: "diskListGallery",
 });
 
+export const newDiskStepState = atom<NewDiskStepType>({
+  key: "newDiskStepState",
+  default: "newDiskSignUp1",
+});
+
 export const newDiskState = atom<NewDiskType>({
   key: "newDiskState",
   default: {
@@ -35,5 +40,10 @@ export const newDiskState = atom<NewDiskType>({
 
 export const deleteToastState = atom<boolean>({
   key: "deleteToastState",
+  default: false,
+});
+
+export const logoutToastState = atom<boolean>({
+  key: "logoutToastState",
   default: false,
 });

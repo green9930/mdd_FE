@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import ModalLayout from "../layout/ModalLayout";
 import IconConverter from "./IconConverter";
 import Button from "../elements/Button";
 
-import { getLoc, setLoc } from "../../utils/localStorage";
-import { lightThemeState } from "../../state/atom";
+import { clearLoc, getLoc, setLoc } from "../../utils/localStorage";
+import { lightThemeState, logoutToastState } from "../../state/atom";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 
 import DiskMask3 from "../../assets/img/disk_mask_3.png";
+import { useNavigate } from "react-router-dom";
 
 export type SettingIconType = "letter" | "heart" | "candles" | "logout";
 
@@ -47,6 +48,10 @@ const Settings = () => {
   const [openUnregisterModal, setOpenUnregisterModal] = useState(false);
   const [isLightTheme, setIsLightTheme] = useRecoilState(lightThemeState);
 
+  const setOpenLogoutToast = useSetRecoilState(logoutToastState);
+
+  const navigate = useNavigate();
+
   const clickHandler = (name: SettingIconType) => {
     switch (name) {
       case "letter":
@@ -63,7 +68,9 @@ const Settings = () => {
         );
         return;
       case "logout":
-        console.log("로그아웃");
+        clearLoc();
+        setOpenLogoutToast(true);
+        navigate("/");
         return;
       default:
         return;

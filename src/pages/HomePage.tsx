@@ -12,6 +12,8 @@ import DiskMask02 from "../assets/img/disk_mask_2.png";
 
 import Button from "../components/elements/Button";
 import Guide from "../components/Guide";
+import { useRecoilState } from "recoil";
+import { logoutToastState } from "../state/atom";
 
 const MONITOR_TEXT =
   "당신의 디깅디스크를\n만들어드리는 MDD에 오신것을\n환영합니다.";
@@ -21,6 +23,14 @@ const HomePage = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [currentIcon, setCurrentIcon] = useState(DiskMask01);
   const [displayText, setDisplayText] = useState<string[]>([]);
+  const [openLogoutToast, setOpenLogoutToast] =
+    useRecoilState(logoutToastState);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (openLogoutToast) setOpenLogoutToast(false);
+    }, 2000);
+  }, [openLogoutToast]);
 
   setTimeout(() => {
     const cursor = document.querySelector(".cursor") as HTMLElement | null;
@@ -31,6 +41,7 @@ const HomePage = () => {
 
   let currentIndex = 0;
   let currentLine = 0;
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const interval = setInterval(() => {
