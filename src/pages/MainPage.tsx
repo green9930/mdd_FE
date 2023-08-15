@@ -46,6 +46,7 @@ const MainPage = () => {
 
   const isLightTheme = useRecoilValue(lightThemeState);
 
+  const memberId = getLoc("memberId");
   const handleShare = () => {
     if (navigator.share) {
       const nickname = getLoc("nickname");
@@ -53,7 +54,7 @@ const MainPage = () => {
         .share({
           title: "My Digging Disk",
           text: `${nickname} 님의 디스크를 공유했습니다.`,
-          url: "url입니다",
+          url: `mydiggingdisk.com/home/${memberId}`,
         })
         .then(() => {})
         .catch((error) => console.error(error));
@@ -128,14 +129,18 @@ const MainPage = () => {
               </StProfileText>
               <StVisitLike>
                 <span>방문 {data && data.visitCount}</span>
-                <Like
-                  fill={
-                    isLightTheme
-                      ? lightTheme.colors.text02
-                      : darkTheme.colors.text02
-                  }
-                />
-                <span>좋아요 {data && data.likeCount}</span>
+                {data && data.isMe && (
+                  <>
+                    <Like
+                      fill={
+                        isLightTheme
+                          ? lightTheme.colors.text02
+                          : darkTheme.colors.text02
+                      }
+                    />
+                    <span>좋아요 {data && data.likeCount}</span>
+                  </>
+                )}
               </StVisitLike>
             </StProfileContainer>
 
@@ -173,7 +178,7 @@ const MainPage = () => {
                 <span>대표디스크가 없어요.</span>
               </StEmptyDisk> */}
 
-              {bookmarkData.length > 0 ? (
+              {bookmarkData && bookmarkData.length > 0 ? (
                 <StDiskBoxFlex
                   color={
                     isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
