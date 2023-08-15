@@ -18,6 +18,7 @@ interface InputProps extends React.HTMLAttributes<HTMLDivElement> {
   placeholder: string;
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
+  inputType?: string;
 }
 
 const Input = ({
@@ -33,9 +34,14 @@ const Input = ({
   placeholder,
   jc = "space-between",
   TopChildren,
+  inputType = "",
 }: InputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value.substring(0, maxLength));
+    if (inputType === "memberName" || inputType === "nickname") {
+      setValue(e.target.value.replace(/\s+/g, "").substring(0, maxLength));
+    } else {
+      setValue(e.target.value.substring(0, maxLength));
+    }
   };
 
   return (
