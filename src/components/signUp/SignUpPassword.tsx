@@ -9,6 +9,8 @@ import { lightThemeState, signUpData } from "../../state/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
+import { postJoin } from "../../api/memberApi";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 interface buttonStyleType {
   show?: boolean;
@@ -48,6 +50,21 @@ const SignUpPassword = ({
       setError(false);
     }
   }, [step]);
+
+  const { mutate: mutationSignUp, isLoading: mutationIsLoading } = useMutation(
+    () => postJoin(data),
+    {
+      onSuccess(res) {
+        // queryClient.invalidateQueries(["myInfo"]);
+        setStep(4);
+        setPercent(100);
+        setTimeout(() => {
+          navigate("/new-disk", { state: { signUp: true } });
+        }, 800);
+      },
+    }
+  );
+
   return (
     <StContainer>
       <StPassword>
@@ -84,7 +101,7 @@ const SignUpPassword = ({
                   setStep(3);
                   setData((prev) => ({
                     ...prev,
-                    password: password.join(""),
+                    password: passwordCopy.join(""),
                   }));
                 }
                 // step3일 때
@@ -96,12 +113,8 @@ const SignUpPassword = ({
                 setPasswordIndex(passwordIndex + 1);
                 if (passwordCopy.join("").length === 6) {
                   //기존 password 동일 여부 확인
-                  if (data.password === password.join("")) {
-                    setStep(4);
-                    setPercent(100);
-                    setTimeout(() => {
-                      navigate("/new-disk", { state: { signUp: true } });
-                    }, 800);
+                  if (data.password === passwordCopy.join("")) {
+                    mutationSignUp();
                   } else {
                     setError(true);
                   }

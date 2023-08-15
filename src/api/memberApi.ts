@@ -9,7 +9,30 @@ export interface AuthData {
 
 export const postJoin = async (postData: AuthData) => {
   try {
-    const { data } = await tokenInstance.post("/api/v1/members/join", postData);
+    const res = await instance.post("/api/v1/members/join", {
+      memberName: postData.memberName,
+      password: postData.password,
+    });
+    const accessToken = res.headers.accesstoken;
+    const refreshToken = res.headers.refreshtoken;
+    const data = res.data.memberInfo;
+    setLoc("accessToken", accessToken);
+    setLoc("refreshToken", refreshToken);
+    setLoc("nickname", data.nickname);
+    setLoc("memberName", data.memberName);
+    setLoc("memberId", data.memberId);
+    return res.data;
+  } catch (err: AxiosError | any) {
+    console.log(err.response.data);
+    throw err;
+  }
+};
+
+export const getDuplicatedId = async (memberName: string) => {
+  try {
+    const { data } = await tokenInstance.post(
+      `/api/v1/members/check/${memberName}`
+    );
     console.log(data);
     // return data;
   } catch (err: AxiosError | any) {
