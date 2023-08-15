@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
-import styled, { keyframes } from "styled-components";
+import React, { useState } from "react";
+import styled from "styled-components";
 
 import AppLayout from "../components/layout/AppLayout";
 
 import SignUpHeader from "../components/signUp/SignUpHeader";
 import SignUpId from "../components/signUp/SignUpId";
 import SignUpPassword from "../components/signUp/SignUpPassword";
-
-import { postJoin } from "../api/memberApi";
-import { signUpData } from "../state/atom";
-import { useRecoilState } from "recoil";
 
 const SignUpPage = () => {
   const [step, setStep] = useState<number>(1);

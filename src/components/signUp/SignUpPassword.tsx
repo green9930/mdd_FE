@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
-import { lightThemeState, signUpData } from "../../state/atom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { signUpData } from "../../state/atom";
+import { useRecoilState } from "recoil";
 
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 import { postJoin } from "../../api/memberApi";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 interface buttonStyleType {
   show?: boolean;
@@ -88,32 +88,32 @@ const SignUpPassword = ({
             onClick={() => {
               // step2일 때
               if (step === 2) {
-                const passwordCopy = [...password];
-                passwordCopy[passwordIndex] = item;
-                setPassword(passwordCopy);
+                const passwordCurrent = [...password];
+                passwordCurrent[passwordIndex] = item;
+                setPassword(passwordCurrent);
                 setPasswordIndex(passwordIndex + 1);
 
                 // 6자릿수 일 때 다음 step
-                if (passwordCopy.join("").length === 6) {
+                if (passwordCurrent.join("").length === 6) {
                   setPasswordIndex(0);
                   setPassword(["", "", "", "", "", ""]);
                   setPercent(80);
                   setStep(3);
                   setData((prev) => ({
                     ...prev,
-                    password: passwordCopy.join(""),
+                    password: passwordCurrent.join(""),
                   }));
                 }
                 // step3일 때
               } else if (step === 3) {
                 setError(false);
-                const passwordCopy = [...password];
-                passwordCopy[passwordIndex] = item;
-                setPassword(passwordCopy);
+                const passwordCurrent = [...password];
+                passwordCurrent[passwordIndex] = item;
+                setPassword(passwordCurrent);
                 setPasswordIndex(passwordIndex + 1);
-                if (passwordCopy.join("").length === 6) {
+                if (passwordCurrent.join("").length === 6) {
                   //기존 password 동일 여부 확인
-                  if (data.password === passwordCopy.join("")) {
+                  if (data.password === passwordCurrent.join("")) {
                     mutationSignUp();
                   } else {
                     setError(true);

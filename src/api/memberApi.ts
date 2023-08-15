@@ -23,20 +23,17 @@ export const postJoin = async (postData: AuthData) => {
     setLoc("memberId", data.memberId);
     return res.data;
   } catch (err: AxiosError | any) {
-    console.log(err.response.data);
     throw err;
   }
 };
 
 export const getDuplicatedId = async (memberName: string) => {
   try {
-    const { data } = await tokenInstance.post(
+    const { data } = await tokenInstance.get(
       `/api/v1/members/check/${memberName}`
     );
-    console.log(data);
-    // return data;
+    return data;
   } catch (err: AxiosError | any) {
-    console.log(err.response.data);
     throw err;
   }
 };
@@ -54,7 +51,6 @@ export const postLogin = async (postData: AuthData) => {
     setLoc("memberId", data.memberId);
     return res;
   } catch (err: AxiosError | any) {
-    console.log(err);
     throw err;
   }
 };
