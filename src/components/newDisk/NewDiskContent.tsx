@@ -22,7 +22,7 @@ import { ReactComponent as EmptyRegisterDisk } from "../../assets/svg/empty_regi
 
 const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
   const [newDisk, setNewDisk] = useRecoilState(newDiskState);
-  const [files, setFiles] = useState<any[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [previewList, setPreviewList] = useState<any[]>([]);
   const [mainImg, setMainImg] = useState<string>("");
   const [content, setContent] = useState("");
@@ -36,15 +36,17 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
   }, [previewList]);
 
   const handleAddImg = async (e: ChangeEvent<HTMLInputElement>) => {
-    const imgList = e.target.files;
+    const target = e.target.files;
 
-    if (imgList && imgList.length) {
-      if (imgList.length + previewList.length > DISK_IMG_MAX_LENGTH) {
+    if (target && target.length) {
+      if (target.length + previewList.length > DISK_IMG_MAX_LENGTH) {
         window.alert("사진은 최대 4개까지 등록할 수 있습니다.");
       } else {
-        [...(imgList as any)].map(async (file) => {
+        const newFiles: File[] = Array.from(target);
+        newFiles.map(async (file) => {
           try {
-            setFiles([...files, imgList]);
+            setFiles([...files, ...newFiles]);
+            // setFiles(prev => [...prev, target]);
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
@@ -70,34 +72,25 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
   const { mutate: addDisk, isLoading } = useMutation(postDisk, {
     onSuccess: (data) => {
       console.log(data);
-      // navigate("/");
+      navigate("/disk-list");
     },
-    onError: (err: any) => {
-      alert("ERROR");
-      // alert(err.response.data.errorMessage);
+    onError: (err) => {
+      alert("디스크 생성에 실패했습니다.");
+      console.log(err);
     },
   });
 
   const handleSubmit = async () => {
     const frm = new FormData();
-    console.log(files);
-    files.map((file) => frm.append("file", file[0]));
+    files.map((file) => frm.append("file", file));
     frm.append(
       "data",
       new Blob([JSON.stringify(newDisk)], {
         type: "application/json",
       })
     );
-    console.log(newDisk);
-    console.log("SUBMIT DISK");
 
     addDisk(frm);
-    // try {
-    //   // POST DISK
-    //   navigate("/disk-list");
-    // } catch (err) {
-    //   console.log("POST DISK ERROR >> ", err);
-    // }
   };
 
   return (
@@ -124,17 +117,20 @@ const NewDiskContent = ({ step, setStep, titleText }: newDiskProps) => {
           )}
         </StImgList>
       </StGallery>
-      <Textarea
-        labelText="디스크 메모"
-        value={content}
-        setValue={setContent}
-        status={contentStatus}
-        setStatus={setContentStatus}
-        maxLength={DISK_CONTENT_MAX_LENGTH}
-        placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
-        jc="flex-start"
-        TopChildren={<StOptionText>선택사항</StOptionText>}
-      />
+      <StContent>
+        <Textarea
+          labelText="디스크 메모"
+          value={content}
+          setValue={setContent}
+          status={contentStatus}
+          setStatus={setContentStatus}
+          maxLength={DISK_CONTENT_MAX_LENGTH}
+          placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
+          jc="flex-start"
+          TopChildren={<StOptionText>선택사항</StOptionText>}
+          isMultiLine={true}
+        />
+      </StContent>
       <StBtnContainer>
         <Button
           btnStatus={files.length ? "primary01" : "disabled"}
@@ -265,6 +261,14 @@ const StImgList = styled.ul`
   }
 `;
 
+const StContent = styled.div`
+  width: 100%;
+  padding: ${calcRem(24)} ${calcRem(32)} ${calcRem(60)};
+
+  @media screen and (max-width: ${MOBILE_MAX_W}px) {
+    padding: ${calcRem(24)} ${calcRem(0)} ${calcRem(24)};
+  }
+`;
 const StOptionText = styled.span`
   color: ${({ theme }) => theme.colors.text02};
   line-height: ${fontTheme.body02.lineHeight};
