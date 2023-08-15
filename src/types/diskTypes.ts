@@ -32,10 +32,18 @@ export type DiskListType = {
   diskName: DiskColorType;
   diskOwnerId: number;
   diskOwnerNickname: string;
+  image: DiskImgType[];
   isBookmark: boolean;
   isMine: boolean;
   isPrivate: boolean;
   likeCount: number;
+  modifiedAt: string;
+};
+
+export type DiskImgType = {
+  createdAt: string;
+  imgId: number;
+  imgUrl: string;
   modifiedAt: string;
 };
 

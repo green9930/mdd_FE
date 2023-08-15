@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import styled, { css } from "styled-components";
 
@@ -14,7 +14,6 @@ import {
 import { diskTheme, lightTheme } from "../../styles/colors";
 import { calcRem, fontTheme } from "../../styles/theme";
 
-import Sample01 from "../../assets/sample_01.jpeg";
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
@@ -39,14 +38,13 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const [mode, setMode] = useState<DiskModeType>("gallery");
   const [isBookmark, setIsBookmark] = useState(false);
 
+  useEffect(() => {
+    setMainImg(image[0].imgUrl);
+  }, []);
+
   const setOpenDeleteToast = useSetRecoilState(deleteToastState);
 
-  const handleMainImg = (target: number) => {
-    console.log("CLICK");
-    // setMainImg(previewList[target]);
-  };
-
-  const imageList = image.map((val: any) => val.imageUrl);
+  const handleMainImg = (target: number) => setMainImg(image[target].imgUrl);
 
   const clickHandler = (name: DiskBtnType) => {
     switch (name) {
@@ -75,14 +73,13 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
         return;
     }
   };
-
   return (
     <Stcontainer diskColor={diskColor as DiskColorType}>
       <StDiskName>{diskName}</StDiskName>
       <StPreviewContainer>
-        <StMainImg src={Sample01} alt="main-preview" />
+        <StMainImg src={mainImg} alt="main-preview" />
       </StPreviewContainer>
-      <StImgList>{DiskPreviewList(imageList, handleMainImg)}</StImgList>
+      <StImgList>{DiskPreviewList(image, handleMainImg)}</StImgList>
       <StSubContainer>
         {isMine ? (
           <StLikesCount isMine={true} diskColor={diskColor as DiskColorType}>
@@ -140,18 +137,6 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       {mode === "text" ? (
         <StContentContainer>
           <Stcontent>
-            {/* <p>
-              지금 노래 뭐들으세요? 뉴진스의 하입보이요 하아아아아입 지금 노래
-              뭐들으세요? 뉴진스의 하입보이요 하아아아아입 지금 노래 뭐들으세요?
-              뉴진스의 하입보이요 하아아아아입 지금 노래 뭐들으세요? 뉴진스의
-              하입보이요 하아아아아입 지금 노래 뭐들으세요? 뉴진스의 하입보이요
-              하아아아아입 지금 노래 뭐들으세요? 뉴진스의 하입보이요
-              하아아아아입 지금 노래 뭐들으세요? 뉴진스의 하입보이요
-              하아아아아입
-              <br /> 지금 노래 뭐들으세요? 뉴진스의 하입보이요 하아아아아입 지금
-              노래 뭐들으세요? 뉴진스의 하입보이요 하아아아아입 하아아아아입
-              하아아아아입 하아아아아입 하아아아아입아아입
-            </p> */}
             <p>{content}</p>
             <span>첫 생성일: {createdAt}</span>
           </Stcontent>
@@ -223,7 +208,8 @@ const StMainImg = styled.img`
 const StImgList = styled.ul`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  /* justify-content: space-between; */
   gap: ${calcRem(8)};
   width: 100%;
   height: auto;
@@ -234,7 +220,7 @@ const StImgList = styled.ul`
     justify-content: center;
     width: 100%;
     aspect-ratio: 1;
-    background-color: ${({ theme }) => theme.colors.primary03};
+    background-color: transparent;
     border-radius: ${calcRem(8)};
     overflow: hidden;
 

@@ -53,6 +53,8 @@ const StButton = styled.button<{ btnStatus: BtnStatusType }>`
     }
   }};
   border-radius: ${calcRem(12)};
+  cursor: ${({ btnStatus }) =>
+    btnStatus === "disabled" ? "not-allowed" : "pointer"};
 `;
 
 const StContent = styled.div<{ btnStatus: BtnStatusType }>`
