@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosResponse } from "axios";
-import { tokenInstance } from "./api";
+import { instance, tokenInstance } from "./api";
 
 export const getDiskList = async () => {
   try {
@@ -14,7 +14,7 @@ export const getDiskList = async () => {
 
 export const postDisk = async (data: any): Promise<AxiosResponse<any>> => {
   try {
-    const res = await tokenInstance.post("/api/v1/disks", data, {
+    const res = await instance.post("/api/v1/disks", data, {
       headers: {
         "Content-Type": "multipart/form-data",
         responseType: "blob",
@@ -28,9 +28,7 @@ export const postDisk = async (data: any): Promise<AxiosResponse<any>> => {
 
 export const getBookmarkDiskList = async (memberId: string) => {
   try {
-    const res = await tokenInstance.get(
-      `/api/v1/disks/all/bookmarked/${memberId}`
-    );
+    const res = await instance.get(`/api/v1/disks/all/bookmarked/${memberId}`);
     if (res.status === 200) {
       return res.data;
     }
