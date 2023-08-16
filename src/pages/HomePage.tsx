@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 
 import AppLayout from "../components/layout/AppLayout";
-import { calcRem, MOBILE_MAX_W } from "../styles/theme";
-
-import { useRecoilState } from "recoil";
-import { logoutToastState } from "../state/atom";
-
 import Button from "../components/elements/Button";
 import Guide from "../components/Guide";
 import ToastModal from "../components/elements/ToastModal";
+import { logoutToastState, unregisterToastState } from "../state/atom";
+import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 
 import LogoMDDSimple from "../assets/img/logo_mdd_simple.png";
 import MonitorEmpty from "../assets/img/monitor_empty.png";
@@ -27,12 +25,15 @@ const HomePage = () => {
   const [displayText, setDisplayText] = useState<string[]>([]);
   const [openLogoutToast, setOpenLogoutToast] =
     useRecoilState(logoutToastState);
+  const [openUnregisterToast, setOpenUnregisterToast] =
+    useRecoilState(unregisterToastState);
 
   useEffect(() => {
     setTimeout(() => {
       if (openLogoutToast) setOpenLogoutToast(false);
+      if (openUnregisterToast) setOpenUnregisterToast(false);
     }, 2000);
-  }, [openLogoutToast]);
+  }, [openLogoutToast, openUnregisterToast]);
 
   setTimeout(() => {
     const cursor = document.querySelector(".cursor") as HTMLElement | null;
@@ -129,6 +130,13 @@ const HomePage = () => {
       {openLogoutToast ? (
         <ToastModal>
           <span>로그아웃 되었습니다.</span>
+        </ToastModal>
+      ) : (
+        <></>
+      )}
+      {openUnregisterToast ? (
+        <ToastModal>
+          <span>회원 탈퇴 처리가 완료됐어요.</span>
         </ToastModal>
       ) : (
         <></>
