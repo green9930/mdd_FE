@@ -1,5 +1,3 @@
-import { StepType } from "../pages/NewDiskPage";
-
 export const DISK_COLOR_LIST = [
   "PINK",
   "YELLOW",
@@ -17,12 +15,6 @@ export type NewDiskType = {
   isPrivate: boolean;
   isBookmark: boolean;
 };
-
-export interface newDiskProps extends React.HTMLAttributes<HTMLDivElement> {
-  step: StepType;
-  setStep: React.Dispatch<React.SetStateAction<StepType>>;
-  titleText: string;
-}
 
 export type DiskListType = {
   content: string;

@@ -7,7 +7,7 @@ import DiskCard from "./DiskCard";
 import Disk from "../elements/Disk";
 import Button from "../elements/Button";
 import ModalLayout from "../layout/ModalLayout";
-import { DiskColorType } from "../../types/diskTypes";
+import { DiskColorType, DiskListType } from "../../types/diskTypes";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
@@ -15,14 +15,21 @@ import { ReactComponent as Bookmark } from "../../assets/svg/bookmark.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 import { ReactComponent as Pen } from "../../assets/svg/pen.svg";
+import { useSetRecoilState } from "recoil";
+import { newDiskStepState } from "../../state/atom";
 
 const DiskListGallery = ({ data }: DiskListProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [targetDisk, setTargetDisk] = useState(0);
 
+  const setStep = useSetRecoilState(newDiskStepState);
+
   const navigate = useNavigate();
 
-  const handleClick = (target: string) => navigate(target);
+  const handleNewDisk = () => {
+    setStep("newDisk1");
+    navigate("/new-disk", { state: "newDisk" });
+  };
 
   // console.log("DATA >> ", data);
   return (
@@ -50,17 +57,18 @@ const DiskListGallery = ({ data }: DiskListProps) => {
               key={`${diskName}-${diskId}`}
               onClick={() => {
                 setOpenModal(true);
-                setTargetDisk(idx);
+                setTargetDisk(diskId);
               }}
             >
               <StDiskContainer>
                 <Disk diskColor={diskColor as DiskColorType} />
               </StDiskContainer>
               <span>{diskName}</span>
+              {isBookmark ? <Bookmark /> : <></>}
             </StItem>
           );
         })}
-        <StNewDisk onClick={() => handleClick("/new-disk")}>
+        <StNewDisk onClick={handleNewDisk}>
           <PlusFilled fill={lightTheme.colors.primary01} />
           <span>새로운 디스크 생성하기</span>
         </StNewDisk>
@@ -72,7 +80,7 @@ const DiskListGallery = ({ data }: DiskListProps) => {
           bgc="transparent"
         >
           <DiskCard
-            data={data[targetDisk]}
+            data={data.find((val) => val.diskId === targetDisk) as DiskListType}
             setOpen={() => setOpenModal(false)}
           />
           <StBtnContainer>
@@ -85,7 +93,8 @@ const DiskListGallery = ({ data }: DiskListProps) => {
                 <span>닫기</span>
               </StBtnText>
             </Button>
-            {data[targetDisk].isMine ? (
+            {(data.find((val) => val.diskId === targetDisk) as DiskListType)
+              .isMine ? (
               <Button
                 btnStatus="primary01"
                 clickHandler={() => {
@@ -147,9 +156,18 @@ const StList = styled.ul`
 `;
 
 const StItem = styled.li`
+  position: relative;
   cursor: pointer;
   span {
     color: ${({ theme }) => theme.colors.text01};
+  }
+
+  svg {
+    position: absolute;
+    top: ${calcRem(6)};
+    left: ${calcRem(8)};
+    width: ${calcRem(22)};
+    height: ${calcRem(22)};
   }
 `;
 

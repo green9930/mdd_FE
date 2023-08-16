@@ -159,7 +159,7 @@ const MainPage = () => {
                 </StDiskText>
                 {data && data.isMe ? (
                   <Plus
-                    onClick={() => navigate("/new-disk")}
+                    onClick={() => navigate("/new-disk", { state: "newDisk" })}
                     width="24px"
                     height="24px"
                   />

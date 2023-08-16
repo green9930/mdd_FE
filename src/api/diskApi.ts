@@ -26,6 +26,30 @@ export const postDisk = async (data: any): Promise<AxiosResponse<any>> => {
   }
 };
 
+export const deleteDisk = async (diskId: number) => {
+  try {
+    await tokenInstance.delete(`/api/v1/disks/${diskId}`);
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const bookmarkDisk = async (diskId: number) => {
+  try {
+    await tokenInstance.post(`/api/v1/disks/bookmark/${diskId}`);
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const likeDisk = async (diskId: number) => {
+  try {
+    await tokenInstance.post(`/api/v1/disks/like/${diskId}`);
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const getBookmarkDiskList = async (memberId: string) => {
   try {
     const res = await instance.get(`/api/v1/disks/all/bookmarked/${memberId}`);
@@ -37,12 +61,3 @@ export const getBookmarkDiskList = async (memberId: string) => {
     throw err;
   }
 };
-// data :
-// {
-//   "diskName": "diskName",
-//   "content": "content",
-//   "diskColor": “PINK",
-//   "isPrivate": false,
-//   “isBookmark”: false,
-// }
-// file : [MultipartFile]!

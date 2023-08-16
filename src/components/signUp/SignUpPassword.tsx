@@ -59,7 +59,7 @@ const SignUpPassword = ({
         setStep(4);
         setPercent(100);
         setTimeout(() => {
-          navigate("/new-disk", { state: { signUp: true } });
+          navigate("/new-disk", { state: "signUp" });
         }, 800);
       },
     }

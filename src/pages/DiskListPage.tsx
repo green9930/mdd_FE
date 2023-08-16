@@ -25,15 +25,11 @@ const DiskListPage = () => {
   const [openDeleteToast, setOpenDeleteToast] =
     useRecoilState(deleteToastState);
 
-  const { data, isLoading, isSuccess } = useQuery(
-    ["diskList"],
-    () => getDiskList(),
-    {
-      onSuccess: (data) => console.log("SUCCESS", data),
-      onError: (err) => console.log("GET DISK LIST FAIL", err),
-      staleTime: Infinity,
-    }
-  );
+  const { data, isLoading, isSuccess } = useQuery(["diskList"], getDiskList, {
+    onSuccess: (data: DiskListType[]) => console.log("SUCCESS", data),
+    onError: (err) => console.log("GET DISK LIST FAIL", err),
+    staleTime: Infinity,
+  });
 
   useEffect(() => {
     TEST_USER.isMe ? setPage("diskListGallery") : setPage("diskListFeed");

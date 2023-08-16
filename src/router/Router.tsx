@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import SignUpPage from "../pages/SignUpPage";
@@ -7,13 +8,14 @@ import NewDiskPage from "../pages/NewDiskPage";
 import TestPage from "../pages/TestPage";
 import SettingsPage from "../pages/SettingsPage";
 import MainPage from "../pages/MainPage";
-import { useEffect, useState } from "react";
+import EditDiskPage from "../pages/EditDiskPage";
 import { getLoc } from "../utils/localStorage";
 
 const Router = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
   const accessToken = getLoc("accessToken");
+
   useEffect(() => {
     if (accessToken) {
       setIsLogin(true);
@@ -41,6 +43,7 @@ const Router = () => {
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/home/:id" element={<MainPage />} />
       <Route path="/test" element={<TestPage />} />
+      <Route path="/edit-disk/:id" element={<EditDiskPage />} />
     </Routes>
   );
 };
