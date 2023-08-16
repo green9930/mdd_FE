@@ -1,11 +1,10 @@
 import axios, { Axios, AxiosResponse } from "axios";
 import { instance, tokenInstance } from "./api";
-import { PatchType } from "../components/editDisk/EditDisk";
 import { getLoc } from "../utils/localStorage";
 
-export const getDiskList = async () => {
+export const getDiskList = async (diskId: string) => {
   try {
-    const res = await tokenInstance.get("/api/v1/disks/mydisks");
+    const res = await tokenInstance.get(`/api/v1/disks/all/${diskId}`);
     return res.data;
   } catch (err) {
     throw err;

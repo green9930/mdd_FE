@@ -80,8 +80,10 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       pathname.includes("home") && setOpen && setOpen();
     },
     onError: (err: AxiosError<any>) => {
-      if (err.response?.data.ErrorCode === "BOOKMARK_DISK_LIMIT") {
-        window.alert("대표 디스크는 최대 3개까지 설정할 수 있어요!");
+      if (err.response) {
+        if (err.response.data.ErrorCode === "BOOKMARK_DISK_LIMIT") {
+          window.alert("대표 디스크는 최대 3개까지 설정할 수 있어요!");
+        }
       }
     },
   });
@@ -148,9 +150,9 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
           >
             <Like
               fill={
-                diskColor === "PURPLE"
-                  ? lightTheme.colors.white
-                  : lightTheme.colors.text01
+                diskColor === "NEON_ORANGE"
+                  ? lightTheme.colors.text01
+                  : lightTheme.colors.white
               }
             />
             <span>{likeCount}</span>
@@ -315,10 +317,14 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   }
 
   span {
-    color: ${({ diskColor }) =>
-      diskColor === "PURPLE"
-        ? lightTheme.colors.white
-        : lightTheme.colors.text01};
+    color: ${({ isMine, diskColor }) =>
+      isMine
+        ? diskColor === "PURPLE"
+          ? lightTheme.colors.white
+          : lightTheme.colors.text01
+        : diskColor === "NEON_ORANGE"
+        ? lightTheme.colors.text01
+        : lightTheme.colors.white};
     ${({ isMine }) =>
       isMine
         ? css`
