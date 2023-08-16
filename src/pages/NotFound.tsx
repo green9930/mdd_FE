@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme } from "../styles/theme";
 
-import DiskMask3 from "../assets/img/disk_mask_3.png";
+import DiskMask3 from "../assets/img/disk_mask_notfound.png";
 import { ReactComponent as HomeEmpty } from "../assets/svg/home_empty.svg";
 
 import Button from "../components/elements/Button";

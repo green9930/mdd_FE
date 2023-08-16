@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
-import { calcRem, fontTheme, MOBILE_MAX_W } from "../styles/theme";
+import { calcRem, fontTheme, MOBILE_MAX_W, WINDOW_W } from "../styles/theme";
 import { darkTheme, lightTheme } from "../styles/colors";
 
 import { getLoc } from "../utils/localStorage";
@@ -22,6 +22,8 @@ import { ReactComponent as AllDisk } from "../assets/svg/all_disk.svg";
 import { ReactComponent as GuideIcon } from "../assets/svg/guide.svg";
 import { ReactComponent as Plus } from "../assets/svg/plus.svg";
 import { ReactComponent as Bookmark } from "../assets/svg/bookmark.svg";
+import { ReactComponent as CloseCircle } from "../assets/svg/close_circle.svg";
+import { ReactComponent as Pen } from "../assets/svg/pen.svg";
 
 import Header from "../components/layout/Header";
 import Disk from "../components/elements/Disk";
@@ -31,18 +33,20 @@ import Button from "../components/elements/Button";
 import { getBookmarkDiskList } from "../api/diskApi";
 import { DiskType } from "../types/diskTypes";
 import NotFound from "./NotFound";
+import ModalLayout from "../components/layout/ModalLayout";
+import DiskCard from "../components/diskList/DiskCard";
 
 export type StDotBackgroundProps = {
   image: string;
-};
-//안씀
-export type StProfileTextProps = {
-  color: string;
 };
 
 const MainPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [targetDisk, setTargetDisk] = useState<number>(0);
+
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
 
@@ -122,6 +126,7 @@ const MainPage = () => {
 
                   <StProfileImage
                     src={data.profileImg ? data.profileImg : DefaultProfile}
+                    alt="profile"
                   />
                   <StProfileText color={lightTheme.colors.primary01}>
                     {data.nickname}
@@ -196,7 +201,13 @@ const MainPage = () => {
                       }
                     >
                       {bookmarkData.map((item: DiskType) => (
-                        <StDiskBox key={item.diskId}>
+                        <StDiskBox
+                          onClick={() => {
+                            setOpenModal(true);
+                            setTargetDisk(item.diskId);
+                          }}
+                          key={item.diskId}
+                        >
                           <Bookmark width="22px" height="22px" />
                           <Disk diskColor={item.diskColor} />
                           <span>{item.diskName}</span>
@@ -266,6 +277,53 @@ const MainPage = () => {
         </AppLayout>
       ) : isError ? (
         <NotFound />
+      ) : (
+        <></>
+      )}
+
+      {openModal ? (
+        <ModalLayout
+          width={WINDOW_W < MOBILE_MAX_W ? "358px" : "412px"}
+          height="auto"
+          bgc="transparent"
+        >
+          <DiskCard
+            data={
+              bookmarkData.find(
+                (val: DiskType) => val.diskId === targetDisk
+              ) as DiskType
+            }
+            setOpen={() => setOpenModal(false)}
+          />
+          <StBtnContainer>
+            <Button
+              btnStatus="primary02"
+              clickHandler={() => setOpenModal(false)}
+            >
+              <StBtnText>
+                <CloseCircle />
+                <span>닫기</span>
+              </StBtnText>
+            </Button>
+            {(
+              bookmarkData.find(
+                (val: DiskType) => val.diskId === targetDisk
+              ) as DiskType
+            ).isMine ? (
+              <Button
+                btnStatus="primary01"
+                clickHandler={() => navigate(`/edit-disk/${targetDisk}`)}
+              >
+                <StBtnText>
+                  <Pen fill={lightTheme.colors.white} />
+                  <span>편집하기</span>
+                </StBtnText>
+              </Button>
+            ) : (
+              <></>
+            )}
+          </StBtnContainer>
+        </ModalLayout>
       ) : (
         <></>
       )}
@@ -511,4 +569,24 @@ const StButtonText = styled.div`
   display: flex;
   align-items: center;
   gap: ${calcRem(8)};
+`;
+
+const StBtnContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${calcRem(8)};
+  margin-top: ${calcRem(16)};
+`;
+
+const StBtnText = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${calcRem(8)};
+
+  svg {
+    width: ${calcRem(24)};
+    height: ${calcRem(24)};
+  }
 `;

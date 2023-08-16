@@ -1,6 +1,7 @@
 import axios, { Axios, AxiosResponse } from "axios";
 import { instance, tokenInstance } from "./api";
 import { PatchType } from "../components/editDisk/EditDisk";
+import { getLoc } from "../utils/localStorage";
 
 export const getDiskList = async () => {
   try {
@@ -78,7 +79,9 @@ export const likeDisk = async (diskId: number) => {
 
 export const getBookmarkDiskList = async (memberId: string) => {
   try {
-    const res = await instance.get(`/api/v1/disks/all/bookmarked/${memberId}`);
+    const res = getLoc("accessToken")
+      ? await tokenInstance.get(`/api/v1/disks/all/bookmarked/${memberId}`)
+      : await instance.get(`/api/v1/disks/all/bookmarked/${memberId}`);
     return res.data;
   } catch (err) {
     throw err;
