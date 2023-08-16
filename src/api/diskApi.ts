@@ -1,12 +1,20 @@
 import axios, { Axios, AxiosResponse } from "axios";
 import { instance, tokenInstance } from "./api";
+import { PatchType } from "../components/editDisk/EditDisk";
 
 export const getDiskList = async () => {
   try {
     const res = await tokenInstance.get("/api/v1/disks/mydisks");
-    if (res.status === 200) {
-      return res.data;
-    }
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getDisk = async (diskId: string) => {
+  try {
+    const res = await tokenInstance.get(`/api/v1/disks/${diskId}`);
+    return res.data;
   } catch (err) {
     throw err;
   }
@@ -14,12 +22,30 @@ export const getDiskList = async () => {
 
 export const postDisk = async (data: any): Promise<AxiosResponse<any>> => {
   try {
-    const res = await instance.post("/api/v1/disks", data, {
+    const res = await tokenInstance.post("/api/v1/disks", data, {
       headers: {
         "Content-Type": "multipart/form-data",
         responseType: "blob",
       },
     });
+    return res;
+  } catch (err) {
+    throw err;
+  }
+};
+export const patchDisk = async (data: any): Promise<AxiosResponse<any>> => {
+  try {
+    const res = await tokenInstance.patch(
+      `api/v1/disks/${data.diskId}`,
+      data.frm,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          responseType: "blob",
+        },
+      }
+    );
+    console.log(res);
     return res;
   } catch (err) {
     throw err;
@@ -53,11 +79,8 @@ export const likeDisk = async (diskId: number) => {
 export const getBookmarkDiskList = async (memberId: string) => {
   try {
     const res = await instance.get(`/api/v1/disks/all/bookmarked/${memberId}`);
-    if (res.status === 200) {
-      return res.data;
-    }
+    return res.data;
   } catch (err) {
-    console.log(err);
     throw err;
   }
 };

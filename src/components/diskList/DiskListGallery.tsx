@@ -7,7 +7,7 @@ import DiskCard from "./DiskCard";
 import Disk from "../elements/Disk";
 import Button from "../elements/Button";
 import ModalLayout from "../layout/ModalLayout";
-import { DiskColorType, DiskListType } from "../../types/diskTypes";
+import { DiskColorType, DiskType } from "../../types/diskTypes";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
@@ -80,7 +80,7 @@ const DiskListGallery = ({ data }: DiskListProps) => {
           bgc="transparent"
         >
           <DiskCard
-            data={data.find((val) => val.diskId === targetDisk) as DiskListType}
+            data={data.find((val) => val.diskId === targetDisk) as DiskType}
             setOpen={() => setOpenModal(false)}
           />
           <StBtnContainer>
@@ -93,13 +93,11 @@ const DiskListGallery = ({ data }: DiskListProps) => {
                 <span>닫기</span>
               </StBtnText>
             </Button>
-            {(data.find((val) => val.diskId === targetDisk) as DiskListType)
+            {(data.find((val) => val.diskId === targetDisk) as DiskType)
               .isMine ? (
               <Button
                 btnStatus="primary01"
-                clickHandler={() => {
-                  console.log("GO TO EDIT PAGE");
-                }}
+                clickHandler={() => navigate(`/edit-disk/${targetDisk}`)}
               >
                 <StBtnText>
                   <Pen fill={lightTheme.colors.white} />
