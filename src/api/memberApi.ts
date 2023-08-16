@@ -74,3 +74,12 @@ export const patchMyInfo = async (data: any) => {
     throw err;
   }
 };
+
+export const checkNicknameDuplicated = async (data: string) => {
+  try {
+    const res = await instance.get(`/api/v1/members/check/nick/${data}`);
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};

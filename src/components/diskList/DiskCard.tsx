@@ -49,9 +49,9 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const [showBookmark, setShowBookmark] = useState(false);
   const [diskLikeCount, setDiskLikeCount] = useState(0);
 
-  const navigate = useNavigate();
-
   const setOpenDeleteToast = useSetRecoilState(deleteToastState);
+
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 

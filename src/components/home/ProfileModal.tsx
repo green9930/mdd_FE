@@ -1,12 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 
 import ModalLayout from "../layout/ModalLayout";
 import Input from "../elements/Input";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
-import { patchMyInfo } from "../../api/memberApi";
+import { checkNicknameDuplicated, patchMyInfo } from "../../api/memberApi";
 import { MemberType } from "../../types/memberTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import {
@@ -21,6 +21,7 @@ import DefaultProfile from "../../assets/img/default_profile.png";
 import { ReactComponent as GalleryAddOutline } from "../../assets/svg/gallery_add_outline.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 import { ReactComponent as Save } from "../../assets/svg/save.svg";
+import { setLoc } from "../../utils/localStorage";
 
 interface ProfileModalProps {
   data: MemberType;
@@ -54,13 +55,6 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
   }, []);
 
   useEffect(() => {
-    if (!loading && nickname.length === 0) {
-      setNicknameStatus("warning");
-      setNicknameAlert("한 글자 이상 입력해 주세요.");
-    }
-  }, [nickname]);
-
-  useEffect(() => {
     if (!loading && nickname.length > 0) {
       setUpdated(
         data.profileImg !== preview ||
@@ -73,9 +67,39 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
     }
   }, [loading, preview, nickname, interest, introduce]);
 
+  useEffect(() => {
+    if (!loading) {
+      if (nickname.length !== 0) {
+        setNicknameStatus((prev) => (prev === "warning" ? "focused" : prev));
+      } else {
+        setNicknameStatus("warning");
+        setNicknameAlert("한 글자 이상 입력해 주세요.");
+      }
+    }
+  }, [nickname]);
+
+  const { refetch } = useQuery(
+    ["nicknameDuplicated"],
+    () => checkNicknameDuplicated(nickname),
+    {
+      onSuccess: (data) => {
+        if (data) {
+          handleUpdate();
+        } else {
+          setNicknameStatus("warning");
+          setNicknameAlert("이미 존재하는 닉네임이에요 😭");
+        }
+      },
+      onError: (err) => console.log("ERROR", err),
+      enabled: false,
+      staleTime: Infinity,
+    }
+  );
+
   const { mutate: updateMyInfo } = useMutation(patchMyInfo, {
     onSuccess: () => {
       queryClient.invalidateQueries(["myInfo"]);
+      setLoc("nickname", nickname);
       setOpen(false);
     },
     onError: (err) => console.log("FAILED", err),
@@ -121,6 +145,7 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
     updateMyInfo(frm);
   };
 
+  console.log(interest);
   return (
     <ModalLayout
       width={WINDOW_W < MOBILE_MAX_W ? "358px" : "412px"}
@@ -163,6 +188,7 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
           placeholder=""
           jc="flex-start"
           TopChildren={<StOptionText>필수사항</StOptionText>}
+          inputType="nickname"
         />
         <Input
           labelText="요즘 열심히 파고있는 관심사는? 🤔"
@@ -198,7 +224,9 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
         <Button
           btnStatus={updated ? "primary01" : "disabled"}
           disabled={!updated}
-          clickHandler={() => handleUpdate()}
+          clickHandler={() =>
+            data.nickname === nickname ? handleUpdate() : refetch()
+          }
         >
           <StBtnText>
             <Save
