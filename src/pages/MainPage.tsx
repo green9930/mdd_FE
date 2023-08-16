@@ -187,9 +187,7 @@ const MainPage = () => {
                         height="24px"
                       />
                     ) : (
-                      <StMoreText
-                        onClick={() => navigate(`/disk-list/${memberId}`)}
-                      >
+                      <StMoreText onClick={() => navigate(`/disk-list/${id}`)}>
                         더보기
                       </StMoreText>
                     )}
