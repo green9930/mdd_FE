@@ -46,24 +46,24 @@ const DiskHeader = ({
 
   // status bar theme-color 변경
   useEffect(() => {
-    // console.log("RENDERING");
-    // const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-    // if (themeColorMeta) {
-    //   console.log(getLoc("theme"));
-    //   themeColorMeta.setAttribute(
-    //     "content",
-    //     getLoc("theme") === "lightMode"
-    //       ? `${lightTheme.colors.bg}`
-    //       : `${darkTheme.colors.bg}`
-    //   ); // 원하는 색상으로 변경
-    //   // return () =>
-    //   //   themeColorMeta.setAttribute(
-    //   //     "content",
-    //   //     getLoc("theme") === "lightMode"
-    //   //       ? `${lightTheme.colors.bg}`
-    //   //       : `${darkTheme.colors.bg}`
-    //   //   );
-    // }
+    console.log("RENDERING");
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      console.log(getLoc("theme"));
+      themeColorMeta.setAttribute(
+        "content",
+        getLoc("theme") === "lightMode"
+          ? `${lightTheme.colors.bg}`
+          : `${darkTheme.colors.bg}`
+      ); // 원하는 색상으로 변경
+      // return () =>
+      //   themeColorMeta.setAttribute(
+      //     "content",
+      //     getLoc("theme") === "lightMode"
+      //       ? `${lightTheme.colors.bg}`
+      //       : `${darkTheme.colors.bg}`
+      //   );
+    }
   }, [isLightTheme]);
 
   const handleGoBack = () => {
