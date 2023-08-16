@@ -40,6 +40,7 @@ const PasswordInput = ({
   const handleMaskToggle = () => {
     setIsMasked(!isMasked);
   };
+
   return (
     <StContainer inputStatus={status}>
       <StFlex jc={jc}>
@@ -53,9 +54,9 @@ const PasswordInput = ({
           type="number"
           value={value}
           onChange={(e) => {
-            const validation = /^[0-9\b]+$/;
-            const input = e.target.value;
-            if (validation.test(input)) {
+            const validation = /^[0-9\b]*$/;
+            const input = e.target.value.substring(0, maxLength);
+            if (value.length <= maxLength && validation.test(input)) {
               setValue(input);
             }
           }}
@@ -164,4 +165,5 @@ const StFlex = styled.div<{ jc: string }>`
 const StEye = styled.img`
   width: 16px;
   height: 16px;
+  cursor: pointer;
 `;

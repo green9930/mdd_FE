@@ -6,6 +6,8 @@ import { calcRem } from "../../styles/theme";
 import Input from "../elements/Input";
 import { InputStatusType, ValidationType } from "../../types/etcTypes";
 import { useRecoilState } from "recoil";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getDuplicatedId } from "../../api/memberApi";
 
 import { ReactComponent as CheckCircle } from "../../assets/svg/check_circle.svg";
 import Button from "../elements/Button";
@@ -46,6 +48,7 @@ const SignUpId = ({
   percent = 0,
   setPercent,
 }: SignUpHeaderProps) => {
+  const queryClient = useQueryClient();
   const [duplicated, setDupliceted] = useState(true);
   const [status, setStatus] = useState<InputStatusType>("default");
   const [value, setValue] = useState("");
@@ -62,6 +65,20 @@ const SignUpId = ({
       setValue(data.memberName);
     }
   }, []);
+
+  useEffect(() => {
+    if (value.length > 0) {
+      checkDuplicateNickname(value);
+    }
+  }, [value]);
+
+  const checkDuplicateNickname = async (memberName: string) => {
+    const result = await queryClient.fetchQuery(
+      ["nicknameCheck", memberName],
+      () => getDuplicatedId(memberName)
+    );
+    result ? setDupliceted(true) : setDupliceted(false);
+  };
 
   return (
     <StContainer>
