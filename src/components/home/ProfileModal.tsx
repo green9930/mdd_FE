@@ -98,7 +98,7 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
 
   const { mutate: updateMyInfo } = useMutation(patchMyInfo, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["myInfo"]);
+      queryClient.invalidateQueries(["userInfo"]);
       setLoc("nickname", nickname);
       setOpen(false);
     },
