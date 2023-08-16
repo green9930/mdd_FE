@@ -1,10 +1,20 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import styled from "styled-components";
 
 import { getLoc } from "../../utils/localStorage";
-import { lightThemeState, newDiskStepState, pageState } from "../../state/atom";
+import {
+  lightThemeState,
+  newDiskState,
+  newDiskStepState,
+  pageState,
+} from "../../state/atom";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 import { darkTheme, lightTheme } from "../../styles/colors";
 
@@ -28,6 +38,7 @@ const DiskHeader = ({
 }: DiskHeaderProps) => {
   const [page, setPage] = useRecoilState(pageState);
   const [step, setStep] = useRecoilState(newDiskStepState);
+  const resetNewDisk = useResetRecoilState(newDiskState);
 
   const isLightTheme = useRecoilValue(lightThemeState);
 
@@ -56,9 +67,12 @@ const DiskHeader = ({
   }, [isLightTheme]);
 
   const handleGoBack = () => {
-    newDiskContent
-      ? setStep((prev) => (prev === "newDisk2" ? "newDisk1" : "newDiskSignUp1"))
-      : navigate(-1);
+    if (newDiskContent) {
+      setStep((prev) => (prev === "newDisk2" ? "newDisk1" : "newDiskSignUp1"));
+    } else {
+      if (page === "newDisk") resetNewDisk();
+      navigate(-1);
+    }
   };
 
   return (
@@ -105,7 +119,7 @@ const StHeader = styled.div<{ jc: string }>`
   display: flex;
   align-items: center;
   justify-content: ${({ jc }) => jc};
-  width: 100%;
+  width: ${MOBILE_MAX_W}px;
   height: 50px;
   padding: 0 32px;
   background-color: ${({ theme }) => theme.colors.bg};
@@ -114,6 +128,7 @@ const StHeader = styled.div<{ jc: string }>`
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
     padding: 0 16px;
+    width: 100%;
   }
 
   svg {

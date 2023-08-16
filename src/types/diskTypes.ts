@@ -12,11 +12,11 @@ export type NewDiskType = {
   diskName: string;
   content: string;
   diskColor: DiskColorType;
-  isPrivate: boolean;
+  // isPrivate: boolean;
   isBookmark: boolean;
 };
 
-export type DiskListType = {
+export type DiskType = {
   content: string;
   createdAt: string;
   diskColor: DiskColorType;

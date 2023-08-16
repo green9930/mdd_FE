@@ -10,7 +10,7 @@ import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
 const PreviewList = (
   list: any[],
   handleAddImg: (e: ChangeEvent<HTMLInputElement>) => Promise<void>,
-  handleDeleteImg: (target: number) => void,
+  handleDeleteImg: (e: React.MouseEvent, target: number) => void,
   handleMainImg: (target: number) => void
 ) => {
   const arr = [];
@@ -19,7 +19,7 @@ const PreviewList = (
       <li key={`${i}-${list[i]}`}>
         {list[i] ? (
           <StPreview onClick={() => handleMainImg(i)}>
-            <button onClick={() => handleDeleteImg(i)}>
+            <button onClick={(e) => handleDeleteImg(e, i)}>
               <CloseCircle />
             </button>
             <img src={list[i]} alt={`preview-${i}`} />

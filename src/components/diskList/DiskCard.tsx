@@ -9,7 +9,7 @@ import {
   DISK_BTN_LIST,
   DiskBtnType,
   DiskColorType,
-  DiskListType,
+  DiskType,
   DiskModeType,
 } from "../../types/diskTypes";
 import { diskTheme, lightTheme } from "../../styles/colors";
@@ -24,7 +24,7 @@ import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 interface DiskCardProps {
-  data: DiskListType;
+  data: DiskType;
   setOpen?: () => void;
 }
 
@@ -100,7 +100,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
         handleLike(diskId);
         return;
       case "edit":
-        navigate(`edit-disk/${diskId}`);
+        navigate(`/edit-disk/${diskId}`);
         return;
       case "delete":
         if (window.confirm("디스크를 삭제하실 건가요?")) handleDelete(diskId);
@@ -155,10 +155,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
           <StBtnList>
             {DISK_BTN_LIST.map((val, idx) => {
               return (
-                <li
-                  key={`${val}-${idx}`}
-                  onClick={() => clickHandler(val as DiskBtnType)}
-                >
+                <li key={`${val}-${idx}`} onClick={() => clickHandler(val)}>
                   <StIconContainer diskColor={diskColor} isTextMode={false}>
                     {IconConverter(
                       val as DiskBtnType,
@@ -231,8 +228,10 @@ const Stcontainer = styled.div<{ diskColor: DiskColorType }>`
 `;
 
 const StDiskName = styled.h3<{ diskColor: DiskColorType }>`
-  color: ${({ diskColor, theme }) =>
-    diskColor === "PURPLE" ? theme.colors.white : theme.colors.text01};
+  color: ${({ diskColor }) =>
+    diskColor === "PURPLE"
+      ? lightTheme.colors.white
+      : lightTheme.colors.text01};
   text-align: center;
   line-height: ${fontTheme.display01.lineHeight};
   letter-spacing: ${fontTheme.display01.letterSpacing};
@@ -311,8 +310,10 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   }
 
   span {
-    color: ${({ diskColor, theme }) =>
-      diskColor === "PURPLE" ? theme.colors.white : theme.colors.text01};
+    color: ${({ diskColor }) =>
+      diskColor === "PURPLE"
+        ? lightTheme.colors.white
+        : lightTheme.colors.text01};
     ${({ isMine }) =>
       isMine
         ? css`
