@@ -3,22 +3,25 @@ import styled from "styled-components";
 import { fontTheme } from "../../styles/theme";
 import { calcRem } from "../../styles/theme";
 
+import { useRecoilValue } from "recoil";
+
 import Input from "../elements/Input";
-import { InputStatusType, ValidationType } from "../../types/etcTypes";
+import {
+  InputStatusType,
+  ValidationType,
+  isLightThemeType,
+} from "../../types/etcTypes";
 import { useRecoilState } from "recoil";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDuplicatedId } from "../../api/memberApi";
 
 import { ReactComponent as CheckCircle } from "../../assets/svg/check_circle.svg";
 import Button from "../elements/Button";
-import { signUpData } from "../../state/atom";
+import { lightThemeState, signUpData } from "../../state/atom";
+import { lightTheme } from "../../styles/colors";
 
-export interface SignUpHeaderProps
-  extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  step: number;
+export interface SignUpIdrProps extends React.HTMLAttributes<HTMLDivElement> {
   setStep: Dispatch<SetStateAction<number>>;
-  percent: number;
   setPercent: Dispatch<SetStateAction<number>>;
 }
 
@@ -39,16 +42,13 @@ const VALIDATION: ValidationType[] = [
 
 type ValidType = {
   valid: boolean;
+  isLightTheme: boolean;
 };
 
-const SignUpId = ({
-  children,
-  step = 1,
-  setStep,
-  percent = 0,
-  setPercent,
-}: SignUpHeaderProps) => {
+const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
   const queryClient = useQueryClient();
+  const isLightTheme = useRecoilValue(lightThemeState);
+
   const [duplicated, setDupliceted] = useState(true);
   const [status, setStatus] = useState<InputStatusType>("default");
   const [value, setValue] = useState("");
@@ -97,6 +97,7 @@ const SignUpId = ({
         <StValidContainer>
           {VALIDATION.map((item) => (
             <StValidFlex
+              isLightTheme={isLightTheme}
               key={item.text}
               valid={value.length > 0 ? item.validation.test(value) : true}
             >
@@ -104,14 +105,14 @@ const SignUpId = ({
               <StvalidText>{item.text}</StvalidText>
             </StValidFlex>
           ))}
-          <StValidFlex valid={duplicated}>
+          <StValidFlex isLightTheme={isLightTheme} valid={duplicated}>
             <CheckCircle width="16px" height="16px" />
             <StvalidText>중복되지 않은 아이디</StvalidText>
           </StValidFlex>
         </StValidContainer>
       </StTop>
       <StBottom>
-        <StCautionText>
+        <StCautionText isLightTheme={isLightTheme}>
           아이디와 비밀번호는 찾을 수 없으니 주의해주세요
         </StCautionText>
         <Button
@@ -158,12 +159,20 @@ const StValidFlex = styled.div<ValidType>`
   align-items: center;
   gap: ${calcRem(3)};
   span {
-    color: ${({ valid, theme }) =>
-      valid ? theme.colors.primary02 : theme.colors.error};
+    color: ${({ valid, isLightTheme }) =>
+      valid
+        ? isLightTheme
+          ? lightTheme.colors.primary02
+          : lightTheme.colors.white
+        : lightTheme.colors.error};
   }
   svg {
-    fill: ${({ valid, theme }) =>
-      valid ? theme.colors.primary02 : theme.colors.error};
+    fill: ${({ valid, isLightTheme }) =>
+      valid
+        ? isLightTheme
+          ? lightTheme.colors.primary02
+          : lightTheme.colors.white
+        : lightTheme.colors.error};
   }
 `;
 
@@ -174,12 +183,13 @@ const StvalidText = styled.span`
   font-weight: ${fontTheme.caption.fontWeight};
 `;
 
-const StCautionText = styled.span`
+const StCautionText = styled.span<isLightThemeType>`
   letter-spacing: ${fontTheme.caption.letterSpacing};
   line-height: ${fontTheme.caption.lineHeight};
   font-size: ${fontTheme.caption.fontSize};
   font-weight: ${fontTheme.caption.fontWeight};
-  color: ${({ theme }) => theme.colors.primary01};
+  color: ${({ isLightTheme, theme }) =>
+    isLightTheme ? theme.colors.primary01 : theme.colors.text02};
 `;
 
 const StBottom = styled.div`

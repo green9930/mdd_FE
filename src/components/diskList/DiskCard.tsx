@@ -21,7 +21,7 @@ import { ReactComponent as Text } from "../../assets/svg/text.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
 import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface DiskCardProps {
   data: DiskType;
@@ -52,6 +52,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const setOpenDeleteToast = useSetRecoilState(deleteToastState);
 
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const queryClient = useQueryClient();
 
@@ -64,6 +65,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const { mutate: handleDelete } = useMutation(deleteDisk, {
     onSuccess: () => {
       queryClient.invalidateQueries(["diskList"]);
+      queryClient.invalidateQueries(["userBookmarkDisk"]);
       setOpen && setOpen();
       setOpenDeleteToast(true);
     },
@@ -74,6 +76,8 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     onSuccess: () => {
       setShowBookmark(!isBookmark);
       queryClient.invalidateQueries(["diskList"]);
+      queryClient.invalidateQueries(["userBookmarkDisk"]);
+      pathname.includes("home") && setOpen && setOpen();
     },
     onError: (err: AxiosError<any>) => {
       if (err.response?.data.ErrorCode === "BOOKMARK_DISK_LIMIT") {
@@ -86,6 +90,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     onSuccess: () => {
       setDiskLikeCount((prev) => prev + 1);
       queryClient.invalidateQueries(["diskList"]);
+      queryClient.invalidateQueries(["userBookmarkDisk"]);
     },
     onError: (err: AxiosError<any>) => {
       console.log(err);
