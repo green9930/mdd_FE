@@ -10,7 +10,7 @@ import { getLoc } from "../utils/localStorage";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
 import { getMemberInfo } from "../api/memberApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import DotBackground from "../assets/img/dot_background.png";
 import DotBackgroundDark from "../assets/img/dot_background_dark.png";
@@ -30,6 +30,7 @@ import ProfileModal from "../components/home/ProfileModal";
 import Button from "../components/elements/Button";
 import { getBookmarkDiskList } from "../api/diskApi";
 import { DiskType } from "../types/diskTypes";
+import NotFound from "./NotFound";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -40,6 +41,7 @@ export type StProfileTextProps = {
 };
 
 const MainPage = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
@@ -65,7 +67,7 @@ const MainPage = () => {
   };
   const { id } = useParams();
 
-  const { data, isLoading, isSuccess } = useQuery(
+  const { data, isLoading, isSuccess, isError } = useQuery(
     ["myInfo", id],
     () => getMemberInfo(id ? id : ""),
     {
@@ -89,170 +91,185 @@ const MainPage = () => {
     }
   );
 
+  useEffect(() => {
+    queryClient.invalidateQueries(["myBookmarkDisk"]);
+  }, []);
+
   return (
-    <AppLayout>
-      <Header
-        isMyDisk={data && data.isMe}
-        jc={data && data.isMe ? "flex-end" : "flex-start"}
-        userName={data && data.nickname}
-      ></Header>
-      <StContainer>
-        <StDotBackground
-          image={isLightTheme ? DotBackground : DotBackgroundDark}
-        >
-          <StSubContainer>
-            <StProfileContainer
-              color={
-                isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
-              }
+    <>
+      {!isLoading && isSuccess && data ? (
+        <AppLayout>
+          <Header
+            isMyDisk={data.isMe}
+            jc={data.isMe ? "flex-end" : "flex-start"}
+            userName={data.nickname}
+          ></Header>
+          <StContainer>
+            <StDotBackground
+              image={isLightTheme ? DotBackground : DotBackgroundDark}
             >
-              {data && data.isMe && (
-                <StEditBox onClick={() => setOpenProfileModal(true)}>
-                  <Edit />
-                </StEditBox>
-              )}
-
-              <StProfileImage src={data ? data.profileImg : DefaultProfile} />
-              <StProfileText color={lightTheme.colors.primary01}>
-                {data && data.nickname}
-              </StProfileText>
-              <StProfileText color={lightTheme.colors.text02}>
-                {data && data.interest}
-              </StProfileText>
-              <StProfileText
-                color={
-                  isLightTheme
-                    ? lightTheme.colors.text01
-                    : darkTheme.colors.white
-                }
-              >
-                {data && data.introduce}
-              </StProfileText>
-              <StVisitLike>
-                <span>방문 {data && data.visitCount}</span>
-                {data && data.isMe && (
-                  <>
-                    <Like
-                      fill={
-                        isLightTheme
-                          ? lightTheme.colors.text02
-                          : darkTheme.colors.text02
-                      }
-                    />
-                    <span>좋아요 {data && data.likeCount}</span>
-                  </>
-                )}
-              </StVisitLike>
-            </StProfileContainer>
-
-            <StDiskContainer
-              color={
-                isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
-              }
-            >
-              <StTopBox>
-                <StDiskText
+              <StSubContainer>
+                <StProfileContainer
                   color={
-                    isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
+                    isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
                   }
                 >
-                  대표 디스크
-                </StDiskText>
-                {data && data.isMe ? (
-                  <Plus
-                    onClick={() => navigate("/new-disk", { state: "newDisk" })}
-                    width="24px"
-                    height="24px"
+                  {data.isMe && (
+                    <StEditBox onClick={() => setOpenProfileModal(true)}>
+                      <Edit />
+                    </StEditBox>
+                  )}
+
+                  <StProfileImage
+                    src={data.profileImg ? data.profileImg : DefaultProfile}
                   />
-                ) : (
-                  <StMoreText
-                    onClick={() => navigate(`/disk-list/${memberId}`)}
+                  <StProfileText color={lightTheme.colors.primary01}>
+                    {data.nickname}
+                  </StProfileText>
+                  <StProfileText color={lightTheme.colors.text02}>
+                    {data.interest}
+                  </StProfileText>
+                  <StProfileText
+                    color={
+                      isLightTheme
+                        ? lightTheme.colors.text01
+                        : darkTheme.colors.white
+                    }
                   >
-                    더보기
-                  </StMoreText>
+                    {data.introduce}
+                  </StProfileText>
+                  <StVisitLike>
+                    <span>방문 {data.visitCount}</span>
+                    {data.isMe && (
+                      <>
+                        <Like
+                          fill={
+                            isLightTheme
+                              ? lightTheme.colors.text02
+                              : darkTheme.colors.text02
+                          }
+                        />
+                        <span>좋아요 {data.likeCount}</span>
+                      </>
+                    )}
+                  </StVisitLike>
+                </StProfileContainer>
+
+                <StDiskContainer
+                  color={
+                    isLightTheme ? lightTheme.colors.white : darkTheme.colors.bg
+                  }
+                >
+                  <StTopBox>
+                    <StDiskText
+                      color={
+                        isLightTheme
+                          ? darkTheme.colors.bg
+                          : lightTheme.colors.white
+                      }
+                    >
+                      대표 디스크
+                    </StDiskText>
+                    {data.isMe ? (
+                      <Plus
+                        onClick={() =>
+                          navigate("/new-disk", { state: "newDisk" })
+                        }
+                        width="24px"
+                        height="24px"
+                      />
+                    ) : (
+                      <StMoreText
+                        onClick={() => navigate(`/disk-list/${memberId}`)}
+                      >
+                        더보기
+                      </StMoreText>
+                    )}
+                  </StTopBox>
+
+                  {bookmarkData && bookmarkData.length > 0 ? (
+                    <StDiskBoxFlex
+                      color={
+                        isLightTheme
+                          ? darkTheme.colors.bg
+                          : lightTheme.colors.white
+                      }
+                    >
+                      {bookmarkData.map((item: DiskType) => (
+                        <StDiskBox key={item.diskId}>
+                          <Bookmark width="22px" height="22px" />
+                          <Disk diskColor={item.diskColor} />
+                          <span>{item.diskName}</span>
+                        </StDiskBox>
+                      ))}
+                    </StDiskBoxFlex>
+                  ) : (
+                    <StEmptyDisk
+                      color={
+                        isLightTheme
+                          ? lightTheme.colors.primary02
+                          : lightTheme.colors.white
+                      }
+                    >
+                      <span>대표디스크가 없어요.</span>
+                    </StEmptyDisk>
+                  )}
+                </StDiskContainer>
+                {data.isMe ? (
+                  <StBottomContainer
+                    color={
+                      isLightTheme
+                        ? lightTheme.colors.primary02
+                        : darkTheme.colors.text02
+                    }
+                  >
+                    <div onClick={handleShare}>
+                      <Share />
+                      <span>홈 공유하기</span>
+                    </div>
+
+                    <div onClick={() => navigate(`/disk-list/${memberId}`)}>
+                      <AllDisk />
+                      <span>전체 디깅디스크</span>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setModalOpen(true);
+                      }}
+                    >
+                      <GuideIcon />
+                      <span>{`디깅디스크\n사용법`}</span>
+                    </div>
+                  </StBottomContainer>
+                ) : (
+                  <StButtonContainer>
+                    <Button btnStatus={"primary01"} clickHandler={() => {}}>
+                      <StButtonText>
+                        <Like />
+                        <span>{data.likeCount}</span>
+                      </StButtonText>
+                    </Button>
+                  </StButtonContainer>
                 )}
-              </StTopBox>
-
-              {/* <StEmptyDisk
-                color={
-                  isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
-                }
-              >
-                <span>대표디스크가 없어요.</span>
-              </StEmptyDisk> */}
-
-              {bookmarkData && bookmarkData.length > 0 ? (
-                <StDiskBoxFlex
-                  color={
-                    isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
-                  }
-                >
-                  {bookmarkData.map((item: DiskType) => (
-                    <StDiskBox key={item.diskId}>
-                      <Bookmark width="22px" height="22px" />
-                      <Disk diskColor={item.diskColor} />
-                      <span>{item.diskName}</span>
-                    </StDiskBox>
-                  ))}
-                </StDiskBoxFlex>
-              ) : (
-                <StEmptyDisk
-                  color={
-                    isLightTheme
-                      ? lightTheme.colors.primary02
-                      : lightTheme.colors.white
-                  }
-                >
-                  <span>대표디스크가 없어요.</span>
-                </StEmptyDisk>
-              )}
-            </StDiskContainer>
-            {data && data.isMe ? (
-              <StBottomContainer
-                color={
-                  isLightTheme
-                    ? lightTheme.colors.primary02
-                    : darkTheme.colors.text02
-                }
-              >
-                <div onClick={handleShare}>
-                  <Share />
-                  <span>홈 공유하기</span>
-                </div>
-
-                <div onClick={() => navigate(`/disk-list/${memberId}`)}>
-                  <AllDisk />
-                  <span>전체 디깅디스크</span>
-                </div>
-                <div
-                  onClick={() => {
-                    setModalOpen(true);
-                  }}
-                >
-                  <GuideIcon />
-                  <span>{`디깅디스크\n사용법`}</span>
-                </div>
-              </StBottomContainer>
-            ) : (
-              <StButtonContainer>
-                <Button btnStatus={"primary01"} clickHandler={() => {}}>
-                  <StButtonText>
-                    <Like />
-                    <span>{data && data.likeCount}</span>
-                  </StButtonText>
-                </Button>
-              </StButtonContainer>
-            )}
-          </StSubContainer>
-        </StDotBackground>
-      </StContainer>
-      {openProfileModal ? (
-        <ProfileModal data={data} setOpen={() => setOpenProfileModal(false)} />
+              </StSubContainer>
+            </StDotBackground>
+          </StContainer>
+          {openProfileModal ? (
+            <ProfileModal
+              data={data}
+              setOpen={() => setOpenProfileModal(false)}
+            />
+          ) : (
+            <></>
+          )}
+          <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
+        </AppLayout>
+      ) : isError ? (
+        <NotFound />
       ) : (
         <></>
       )}
-      <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
-    </AppLayout>
+    </>
   );
 };
 

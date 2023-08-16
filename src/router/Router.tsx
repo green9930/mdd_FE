@@ -12,6 +12,7 @@ import EditDiskPage from "../pages/EditDiskPage";
 import SettingsPage from "../pages/SettingsPage";
 import { getLoc } from "../utils/localStorage";
 import { loginState } from "../state/atom";
+import NotFound from "../pages/NotFound";
 
 const Router = () => {
   const [loading, setLoading] = useState(true);
@@ -58,6 +59,7 @@ const Router = () => {
             element={isLogin ? <EditDiskPage /> : <Navigate to="/" />}
           />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/*" element={<NotFound />} />
         </Routes>
       ) : (
         <></>
