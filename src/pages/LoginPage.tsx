@@ -1,38 +1,68 @@
-import React, { useEffect, useState } from "react";
-import styled, { keyframes } from "styled-components";
+import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import styled from "styled-components";
 
 import { InputStatusType } from "../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
-
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import PasswordInput from "../components/elements/PasswordInput";
 import AppLayout from "../components/layout/AppLayout";
 
-import MonitorFilled from "../assets/img/monitor_filled.png";
 import { postLogin } from "../api/memberApi";
+import { getCookie, setCookie } from "../utils/cookie";
+import { getLoc } from "../utils/localStorage";
+import { loginState } from "../state/atom";
+import MonitorFilled from "../assets/img/monitor_filled.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [idStatus, setIdStatus] = useState<InputStatusType>("default");
   const [passwordStatus, setPasswordStatus] =
     useState<InputStatusType>("default");
   const [id, setId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const setIsLogin = useSetRecoilState(loginState);
+
   const validCheck = () => {
-    return id.length >= 8 && id.length <= 20 && password.length === 6;
+    return (
+      /^[a-zA-Z0-9]*[a-zA-Z][a-zA-Z0-9]*$/.test(id) &&
+      /\d/.test(id) &&
+      id.length >= 8 &&
+      id.length <= 20 &&
+      password.length === 6
+    );
   };
 
   const { mutate: mutationLogin, isLoading: mutationIsLoading } = useMutation({
     mutationFn: postLogin,
     onSuccess(res) {
-      // queryClient.invalidateQueries(["myInfo"]);
-      navigate("/home");
+      setIsLogin(true);
+      navigate(`/home/${getLoc("memberId")}`);
+    },
+    onError(error: AxiosError | any) {
+      const errerStatus = error.response.status;
+      const errorMessage = error.response.data.errorMessage;
+
+      // 비밀번호 오류 : 409
+      if (errerStatus === 409) {
+        setPasswordStatus("warning");
+
+        // 존재하지 않는 아이디 : 404
+      } else if (errerStatus === 404) {
+        setIdStatus("warning");
+
+        // 로그인 시도 5회 초과 시 : 429 => 1분간 서버 에러
+      } else if (errerStatus === 429) {
+        window.alert(errorMessage);
+        const expiresIn = new Date(Date.now() + 60000);
+        setCookie("loginOver", "true", expiresIn);
+      }
     },
   });
 
@@ -54,6 +84,7 @@ const LoginPage = () => {
           maxLengthView={false}
           maxLength={20}
           placeholder="아이디를 입력해주세요"
+          inputType="memberName"
         ></Input>
         <StInputContainer>
           <PasswordInput
@@ -74,7 +105,7 @@ const LoginPage = () => {
             }
             value={password}
             setValue={setPassword}
-            maxLength={20}
+            maxLength={6}
             placeholder="비밀번호를 입력해주세요"
           ></PasswordInput>
         </StInputContainer>
@@ -82,19 +113,24 @@ const LoginPage = () => {
           btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={() => {
             if (validCheck()) {
-              mutationLogin({
-                memberName: id,
-                password: password,
-              });
-            } else {
-              // setPasswordStatus("warning");
-              // setIdStatus("warning");
+              if (getCookie("loginOver") !== "true") {
+                mutationLogin({
+                  memberName: id,
+                  password: password,
+                });
+              } else {
+                window.alert(
+                  "너무 많은 로그인 시도를 했습니다. 잠시 후 다시 시도해주세요."
+                );
+              }
             }
           }}
         >
           <span>접속하기</span>
         </Button>
-        <StSignUpText>아이디가 없어요</StSignUpText>
+        <StSignUpText onClick={() => navigate("/signUp")}>
+          아이디가 없어요
+        </StSignUpText>
       </StContainer>
     </AppLayout>
   );
@@ -145,6 +181,7 @@ const StPasswordErrorText = styled.span`
 `;
 
 const StSignUpText = styled.span`
+  cursor: pointer;
   padding-top: ${calcRem(32)};
   letter-spacing: ${fontTheme.button.letterSpacing};
   line-height: ${fontTheme.button.lineHeight};

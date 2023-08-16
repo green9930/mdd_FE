@@ -8,6 +8,7 @@ import LogoMDDSimple from "../../assets/img/logo_mdd_simple.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
 import { ReactComponent as Setting } from "../../assets/svg/setting.svg";
 import { useNavigate } from "react-router-dom";
+import { getLoc } from "../../utils/localStorage";
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   isMyDisk: boolean;
@@ -24,9 +25,15 @@ const Header = ({
 }: HeaderProps) => {
   const navigate = useNavigate();
 
+  const accessToken = getLoc("accessToken");
+  const memberId = getLoc("memberId");
+
   const handleGoHome = () => {
-    // 로그인 한 유저일경우 -> 내 홈으로 이동
-    // 없을 경우 -> 로그인 화면으로 이동
+    if (accessToken) {
+      navigate(`/home/${memberId}`);
+    } else {
+      navigate("/");
+    }
   };
 
   return (

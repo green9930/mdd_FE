@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { setLoc } from "../utils/localStorage";
+import { getLoc, setLoc } from "../utils/localStorage";
 import { instance, tokenInstance } from "./api";
 
 export interface AuthData {
@@ -23,20 +23,15 @@ export const postJoin = async (postData: AuthData) => {
     setLoc("memberId", data.memberId);
     return res.data;
   } catch (err: AxiosError | any) {
-    console.log(err.response.data);
     throw err;
   }
 };
 
 export const getDuplicatedId = async (memberName: string) => {
   try {
-    const { data } = await tokenInstance.post(
-      `/api/v1/members/check/${memberName}`
-    );
-    console.log(data);
-    // return data;
+    const { data } = await instance.get(`/api/v1/members/check/${memberName}`);
+    return data;
   } catch (err: AxiosError | any) {
-    console.log(err.response.data);
     throw err;
   }
 };
@@ -54,14 +49,15 @@ export const postLogin = async (postData: AuthData) => {
     setLoc("memberId", data.memberId);
     return res;
   } catch (err: AxiosError | any) {
-    console.log(err);
     throw err;
   }
 };
 
-export const getMyInfo = async () => {
+export const getMemberInfo = async (memberId: string) => {
   try {
-    const res = await tokenInstance.get("/api/v1/members/mypage");
+    const res = getLoc("accessToken")
+      ? await tokenInstance.get(`/api/v1/members/${memberId}`)
+      : await instance.get(`/api/v1/members/${memberId}`);
     return res.data;
   } catch (err) {
     throw err;
@@ -76,6 +72,15 @@ export const patchMyInfo = async (data: any) => {
         responseType: "blob",
       },
     });
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const checkNicknameDuplicated = async (data: string) => {
+  try {
+    const res = await instance.get(`/api/v1/members/check/nick/${data}`);
+    return res.data;
   } catch (err) {
     throw err;
   }

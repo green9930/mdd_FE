@@ -10,6 +10,7 @@ export type BtnStatusType =
 export type DiskPageType =
   | "diskListFeed"
   | "diskListGallery"
+  | "editDisk"
   | "newDisk"
   | "settings";
 

@@ -3,6 +3,11 @@ import { AuthData } from "../api/memberApi";
 import { NewDiskType } from "../types/diskTypes";
 import { DiskPageType, NewDiskStepType } from "../types/etcTypes";
 
+export const loginState = atom<boolean>({
+  key: "loginState",
+  default: false,
+});
+
 // 라이트모드 | 다크모드
 export const lightThemeState = atom<boolean>({
   key: "lightThemeState",
@@ -24,7 +29,7 @@ export const pageState = atom<DiskPageType>({
 
 export const newDiskStepState = atom<NewDiskStepType>({
   key: "newDiskStepState",
-  default: "newDiskSignUp1",
+  default: "newDisk1",
 });
 
 export const newDiskState = atom<NewDiskType>({
@@ -33,7 +38,7 @@ export const newDiskState = atom<NewDiskType>({
     diskName: "",
     content: "",
     diskColor: "PINK",
-    isPrivate: false,
+    // isPrivate: false,
     isBookmark: false,
   },
 });
