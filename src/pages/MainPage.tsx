@@ -29,7 +29,7 @@ import Guide from "../components/Guide";
 import ProfileModal from "../components/home/ProfileModal";
 import Button from "../components/elements/Button";
 import { getBookmarkDiskList } from "../api/diskApi";
-import { DiskListType } from "../types/diskTypes";
+import { DiskType } from "../types/diskTypes";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -47,6 +47,7 @@ const MainPage = () => {
   const isLightTheme = useRecoilValue(lightThemeState);
 
   const memberId = getLoc("memberId");
+
   const handleShare = () => {
     if (navigator.share) {
       const nickname = getLoc("nickname");
@@ -164,7 +165,9 @@ const MainPage = () => {
                     height="24px"
                   />
                 ) : (
-                  <StMoreText onClick={() => navigate("/disk-list")}>
+                  <StMoreText
+                    onClick={() => navigate(`/disk-list/${memberId}`)}
+                  >
                     더보기
                   </StMoreText>
                 )}
@@ -184,7 +187,7 @@ const MainPage = () => {
                     isLightTheme ? darkTheme.colors.bg : lightTheme.colors.white
                   }
                 >
-                  {bookmarkData.map((item: DiskListType) => (
+                  {bookmarkData.map((item: DiskType) => (
                     <StDiskBox key={item.diskId}>
                       <Bookmark width="22px" height="22px" />
                       <Disk diskColor={item.diskColor} />
@@ -217,7 +220,7 @@ const MainPage = () => {
                   <span>홈 공유하기</span>
                 </div>
 
-                <div onClick={() => navigate("/disk-list")}>
+                <div onClick={() => navigate(`/disk-list/${memberId}`)}>
                   <AllDisk />
                   <span>전체 디깅디스크</span>
                 </div>

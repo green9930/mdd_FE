@@ -1,21 +1,23 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import { useMutation } from "@tanstack/react-query";
+import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import styled from "styled-components";
 
 import { InputStatusType } from "../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
-
-import { useMutation } from "@tanstack/react-query";
 
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import PasswordInput from "../components/elements/PasswordInput";
 import AppLayout from "../components/layout/AppLayout";
 
-import MonitorFilled from "../assets/img/monitor_filled.png";
 import { postLogin } from "../api/memberApi";
-import { AxiosError } from "axios";
 import { getCookie, setCookie } from "../utils/cookie";
+import { getLoc } from "../utils/localStorage";
+import { loginState } from "../state/atom";
+import MonitorFilled from "../assets/img/monitor_filled.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ const LoginPage = () => {
     useState<InputStatusType>("default");
   const [id, setId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const setIsLogin = useSetRecoilState(loginState);
 
   const validCheck = () => {
     return (
@@ -38,7 +42,8 @@ const LoginPage = () => {
   const { mutate: mutationLogin, isLoading: mutationIsLoading } = useMutation({
     mutationFn: postLogin,
     onSuccess(res) {
-      navigate("/home");
+      setIsLogin(true);
+      navigate(`/home/${getLoc("memberId")}`);
     },
     onError(error: AxiosError | any) {
       const errerStatus = error.response.status;

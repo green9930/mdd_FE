@@ -14,6 +14,7 @@ import Button from "../components/elements/Button";
 import Guide from "../components/Guide";
 import { useRecoilState } from "recoil";
 import { logoutToastState } from "../state/atom";
+import ToastModal from "../components/elements/ToastModal";
 
 const MONITOR_TEXT =
   "당신의 디깅디스크를\n만들어드리는 MDD에 오신것을\n환영합니다.";
@@ -124,6 +125,13 @@ const HomePage = () => {
         </StLoginText>
       </StContainer>
       <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      {openLogoutToast ? (
+        <ToastModal>
+          <span>로그아웃 되었습니다.</span>
+        </ToastModal>
+      ) : (
+        <></>
+      )}
     </AppLayout>
   );
 };
