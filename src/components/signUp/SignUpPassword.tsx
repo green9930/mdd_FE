@@ -2,17 +2,19 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+import { isLightThemeType } from "../../types/etcTypes";
+import { useMutation } from "@tanstack/react-query";
+import { lightThemeState, signUpData } from "../../state/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import { postJoin } from "../../api/memberApi";
+
 import { calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
-import { signUpData } from "../../state/atom";
-import { useRecoilState } from "recoil";
-
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
-import { postJoin } from "../../api/memberApi";
-import { useMutation } from "@tanstack/react-query";
 
-interface buttonStyleType {
+interface ButtonStyleProps {
   show?: boolean;
   status?: string;
 }
@@ -31,6 +33,7 @@ const SignUpPassword = ({
   setStep,
   setPercent,
 }: SignUpPasswordProps) => {
+  const isLightTheme = useRecoilValue(lightThemeState);
   const [error, setError] = useState(false);
   const [passwordIndex, setPasswordIndex] = useState(0);
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
@@ -55,7 +58,6 @@ const SignUpPassword = ({
     () => postJoin(data),
     {
       onSuccess(res) {
-        // queryClient.invalidateQueries(["myInfo"]);
         setStep(4);
         setPercent(100);
         setTimeout(() => {
@@ -147,7 +149,7 @@ const SignUpPassword = ({
           />
         </StBottom>
       </StNumberGrid>
-      <StCautionText>
+      <StCautionText isLightTheme={isLightTheme}>
         아이디와 비밀번호는 찾을 수 없으니 주의해주세요
       </StCautionText>
     </StContainer>
@@ -161,7 +163,6 @@ const StContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: space-between; */
   height: 100%;
 `;
 
@@ -193,7 +194,7 @@ const StNumberGrid = styled.div`
   gap: ${calcRem(8)};
 `;
 
-const StBottom = styled.div<buttonStyleType>`
+const StBottom = styled.div<ButtonStyleProps>`
   width: 48px;
   height: 48px;
   display: flex;
@@ -235,14 +236,13 @@ const StPassword = styled.div`
   position: relative;
 `;
 
-const StPasswordBox = styled.div<buttonStyleType>`
+const StPasswordBox = styled.div<ButtonStyleProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 34px;
   height: 48px;
   border-bottom: 2px solid;
-  /* ${({ theme }) => theme.colors.primary02} */
   border-color: ${({ theme, status }) => {
     switch (status) {
       case "default":
@@ -271,10 +271,11 @@ const StPasswordBox = styled.div<buttonStyleType>`
   }
 `;
 
-const StCautionText = styled.span`
+const StCautionText = styled.span<isLightThemeType>`
   letter-spacing: ${fontTheme.caption.letterSpacing};
   line-height: ${fontTheme.caption.lineHeight};
   font-size: ${fontTheme.caption.fontSize};
   font-weight: ${fontTheme.caption.fontWeight};
-  color: ${({ theme }) => theme.colors.primary01};
+  color: ${({ isLightTheme, theme }) =>
+    isLightTheme ? theme.colors.primary01 : theme.colors.text02};
 `;

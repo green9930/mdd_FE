@@ -53,7 +53,6 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  console.log(pathname);
 
   const queryClient = useQueryClient();
 
@@ -66,7 +65,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const { mutate: handleDelete } = useMutation(deleteDisk, {
     onSuccess: () => {
       queryClient.invalidateQueries(["diskList"]);
-      queryClient.invalidateQueries(["myBookmarkDisk"]);
+      queryClient.invalidateQueries(["userBookmarkDisk"]);
       setOpen && setOpen();
       setOpenDeleteToast(true);
     },
@@ -77,7 +76,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     onSuccess: () => {
       setShowBookmark(!isBookmark);
       queryClient.invalidateQueries(["diskList"]);
-      queryClient.invalidateQueries(["myBookmarkDisk"]);
+      queryClient.invalidateQueries(["userBookmarkDisk"]);
       pathname.includes("home") && setOpen && setOpen();
     },
     onError: (err: AxiosError<any>) => {
@@ -91,7 +90,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     onSuccess: () => {
       setDiskLikeCount((prev) => prev + 1);
       queryClient.invalidateQueries(["diskList"]);
-      queryClient.invalidateQueries(["myBookmarkDisk"]);
+      queryClient.invalidateQueries(["userBookmarkDisk"]);
     },
     onError: (err: AxiosError<any>) => {
       console.log(err);

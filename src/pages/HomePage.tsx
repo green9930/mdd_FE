@@ -5,16 +5,17 @@ import { useNavigate } from "react-router-dom";
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 
+import { useRecoilState } from "recoil";
+import { logoutToastState } from "../state/atom";
+
+import Button from "../components/elements/Button";
+import Guide from "../components/Guide";
+import ToastModal from "../components/elements/ToastModal";
+
 import LogoMDDSimple from "../assets/img/logo_mdd_simple.png";
 import MonitorEmpty from "../assets/img/monitor_empty.png";
 import DiskMask01 from "../assets/img/disk_mask_1.png";
 import DiskMask02 from "../assets/img/disk_mask_2.png";
-
-import Button from "../components/elements/Button";
-import Guide from "../components/Guide";
-import { useRecoilState } from "recoil";
-import { logoutToastState } from "../state/atom";
-import ToastModal from "../components/elements/ToastModal";
 
 const MONITOR_TEXT =
   "당신의 디깅디스크를\n만들어드리는 MDD에 오신것을\n환영합니다.";

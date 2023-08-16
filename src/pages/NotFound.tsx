@@ -5,12 +5,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme } from "../styles/theme";
 
+import Button from "../components/elements/Button";
+
 import DiskMask3 from "../assets/img/disk_mask_notfound.png";
 import { ReactComponent as HomeEmpty } from "../assets/svg/home_empty.svg";
 
-import Button from "../components/elements/Button";
-
-export interface NotFound extends React.HTMLAttributes<HTMLDivElement> {
+export interface NotFoundProps extends React.HTMLAttributes<HTMLDivElement> {
   errorMessage?: string;
 }
 type ErrorMessageType = {
@@ -22,7 +22,7 @@ const ERROR_MESSAGE: ErrorMessageType = {
   409: "탈퇴한 회원의 링크",
 };
 
-const NotFound = ({ errorMessage = "서버 접속 불가" }: NotFound) => {
+const NotFound = ({ errorMessage = "서버 접속 불가" }: NotFoundProps) => {
   const navigate = useNavigate();
 
   const { state } = useLocation();

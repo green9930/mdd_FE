@@ -103,7 +103,7 @@ const StCreateText = styled.span`
   font-weight: ${fontTheme.caption.fontWeight};
   padding-bottom: ${calcRem(8)};
   text-align: end;
-  color: ${({ theme }) => theme.colors.primary02};
+  color: ${lightTheme.colors.primary02};
 `;
 
 const StText = styled.span`
@@ -111,7 +111,7 @@ const StText = styled.span`
   line-height: ${fontTheme.display02.lineHeight};
   font-size: ${fontTheme.display02.fontSize};
   font-weight: ${fontTheme.display02.fontWeight};
-  color: ${({ theme }) => theme.colors.text01};
+  color: ${({ theme }) => theme.colors.primary05};
   padding-top: ${calcRem(24)};
 `;
 

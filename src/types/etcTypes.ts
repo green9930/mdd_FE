@@ -32,3 +32,7 @@ export type ValidationType = {
   text: string;
   validation: RegExp;
 };
+
+export type isLightThemeType = {
+  isLightTheme: boolean;
+};
