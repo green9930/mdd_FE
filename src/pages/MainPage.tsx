@@ -9,8 +9,8 @@ import { darkTheme, lightTheme } from "../styles/colors";
 import { getLoc } from "../utils/localStorage";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
-import { getMemberInfo } from "../api/memberApi";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserInfo, postUserLike } from "../api/memberApi";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import DotBackground from "../assets/img/dot_background.png";
 import DotBackgroundDark from "../assets/img/dot_background_dark.png";
@@ -64,7 +64,7 @@ const MainPage = () => {
           url: `mydiggingdisk.com/home/${memberId}`,
         })
         .then(() => {})
-        .catch((error) => console.error(error));
+        .catch(() => {});
     } else {
       alert("현재 브라우저에서는 공유 기능을 지원하지 않습니다.");
     }
@@ -72,11 +72,9 @@ const MainPage = () => {
   const { id } = useParams();
 
   const { data, isLoading, isSuccess, isError } = useQuery(
-    ["myInfo", id],
-    () => getMemberInfo(id ? id : ""),
+    ["userInfo", id],
+    () => getUserInfo(id ? id : ""),
     {
-      onSuccess: (data) => console.log("SUCCESS", data),
-      onError: (err) => console.log("GET DISK LIST FAIL", err),
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
       cacheTime: 1000 * 60 * 60,
@@ -84,19 +82,24 @@ const MainPage = () => {
   );
 
   const { data: bookmarkData } = useQuery(
-    ["myBookmarkDisk", id],
+    ["userBookmarkDisk", id],
     () => getBookmarkDiskList(id ? id : ""),
     {
-      onSuccess: (data) => console.log("SUCCESS", data),
-      onError: (err) => console.log("GET DISK LIST FAIL", err),
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 60,
       cacheTime: 1000 * 60 * 60,
     }
   );
 
+  const { mutate: mutationUserLike, isLoading: mutationIsLoading } =
+    useMutation(() => postUserLike(id ? id : ""), {
+      onSuccess(res) {
+        queryClient.invalidateQueries(["userInfo"]);
+      },
+    });
+
   useEffect(() => {
-    queryClient.invalidateQueries(["myBookmarkDisk"]);
+    queryClient.invalidateQueries(["userBookmarkDisk"]);
   }, []);
 
   return (
@@ -254,7 +257,12 @@ const MainPage = () => {
                   </StBottomContainer>
                 ) : (
                   <StButtonContainer>
-                    <Button btnStatus={"primary01"} clickHandler={() => {}}>
+                    <Button
+                      btnStatus={"primary01"}
+                      clickHandler={() => {
+                        mutationUserLike();
+                      }}
+                    >
                       <StButtonText>
                         <Like />
                         <span>{data.likeCount}</span>
@@ -369,7 +377,6 @@ const StProfileContainer = styled.div`
   padding: ${calcRem(24)} ${calcRem(16)};
   border-radius: 12px;
   background-color: ${({ color }) => color};
-  /* background-color: ${({ theme }) => theme.colors.white}; */
   border: 2px solid ${({ theme }) => theme.colors.primary01};
   flex-direction: column;
   align-items: center;

@@ -53,7 +53,7 @@ export const postLogin = async (postData: AuthData) => {
   }
 };
 
-export const getMemberInfo = async (memberId: string) => {
+export const getUserInfo = async (memberId: string) => {
   try {
     const res = getLoc("accessToken")
       ? await tokenInstance.get(`/api/v1/members/${memberId}`)
@@ -80,6 +80,15 @@ export const patchMyInfo = async (data: any) => {
 export const checkNicknameDuplicated = async (data: string) => {
   try {
     const res = await instance.get(`/api/v1/members/check/nick/${data}`);
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const postUserLike = async (memberId: string) => {
+  try {
+    const res = await instance.post(`/api/v1/members/like/${memberId}`);
     return res.data;
   } catch (err) {
     throw err;
