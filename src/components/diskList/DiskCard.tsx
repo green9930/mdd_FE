@@ -9,6 +9,7 @@ import {
   DISK_BTN_LIST,
   DiskBtnType,
   DiskColorType,
+  DiskListType,
   DiskModeType,
 } from "../../types/diskTypes";
 import { diskTheme, lightTheme } from "../../styles/colors";
@@ -17,83 +18,137 @@ import { calcRem, fontTheme } from "../../styles/theme";
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface DiskCardProps {
-  data: any;
+  data: DiskListType;
   setOpen?: () => void;
 }
 
 const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const {
+    content,
+    createdAt,
+    diskColor,
     diskId,
     diskName,
-    content,
-    diskColor,
-    isPrivate,
+    diskOwnerId,
+    diskOwnerNickname,
     image,
+    isBookmark,
     isMine,
-    createdAt,
+    isPrivate,
+    likeCount,
+    modifiedAt,
   } = data;
   const [mainImg, setMainImg] = useState<string>("");
   const [mode, setMode] = useState<DiskModeType>("gallery");
-  const [isBookmark, setIsBookmark] = useState(false);
+  const [showBookmark, setShowBookmark] = useState(false);
+  const [diskLikeCount, setDiskLikeCount] = useState(0);
+
+  const navigate = useNavigate();
+
+  const setOpenDeleteToast = useSetRecoilState(deleteToastState);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setMainImg(image[0].imgUrl);
+    setShowBookmark(isBookmark);
+    setDiskLikeCount(likeCount);
   }, []);
 
-  const setOpenDeleteToast = useSetRecoilState(deleteToastState);
+  const { mutate: handleDelete } = useMutation(deleteDisk, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["diskList"]);
+      setOpen && setOpen();
+      setOpenDeleteToast(true);
+    },
+    onError: (err) => console.log("FAILED", err),
+  });
+
+  const { mutate: handleBookmark } = useMutation(bookmarkDisk, {
+    onSuccess: () => {
+      setShowBookmark(!isBookmark);
+      queryClient.invalidateQueries(["diskList"]);
+    },
+    onError: (err: AxiosError<any>) => {
+      if (err.response?.data.ErrorCode === "BOOKMARK_DISK_LIMIT") {
+        window.alert("대표 디스크는 최대 3개까지 설정할 수 있어요!");
+      }
+    },
+  });
+
+  const { mutate: handleLike } = useMutation(likeDisk, {
+    onSuccess: () => {
+      setDiskLikeCount((prev) => prev + 1);
+      queryClient.invalidateQueries(["diskList"]);
+    },
+    onError: (err: AxiosError<any>) => {
+      console.log(err);
+    },
+  });
 
   const handleMainImg = (target: number) => setMainImg(image[target].imgUrl);
 
   const clickHandler = (name: DiskBtnType) => {
     switch (name) {
       case "like":
-        console.log(name);
+        handleLike(diskId);
         return;
       case "edit":
-        console.log(name);
+        navigate(`edit-disk/${diskId}`);
         return;
       case "delete":
-        if (window.confirm("디스크를 삭제하실 건가요?")) {
-          console.log("DELETE DISK");
-          setOpen && setOpen();
-          setOpenDeleteToast(true);
-        }
+        if (window.confirm("디스크를 삭제하실 건가요?")) handleDelete(diskId);
         return;
       case "bookmark":
-        console.log(name);
-        setIsBookmark(!isBookmark);
+        handleBookmark(diskId);
         return;
       case "mode":
-        console.log(name);
         setMode("text");
         return;
       default:
         return;
     }
   };
+
   return (
-    <Stcontainer diskColor={diskColor as DiskColorType}>
-      <StDiskName>{diskName}</StDiskName>
+    <Stcontainer diskColor={diskColor}>
+      <StDiskName diskColor={diskColor}>{diskName}</StDiskName>
       <StPreviewContainer>
         <StMainImg src={mainImg} alt="main-preview" />
       </StPreviewContainer>
       <StImgList>{DiskPreviewList(image, handleMainImg)}</StImgList>
       <StSubContainer>
         {isMine ? (
-          <StLikesCount isMine={true} diskColor={diskColor as DiskColorType}>
-            <Like fill={lightTheme.colors.text01} />
-            <span>1234</span>
+          <StLikesCount isMine={true} diskColor={diskColor}>
+            <Like
+              fill={
+                diskColor === "PURPLE"
+                  ? lightTheme.colors.white
+                  : lightTheme.colors.text01
+              }
+            />
+            <span>{likeCount}</span>
           </StLikesCount>
         ) : (
           <StLikesCount
             onClick={() => clickHandler("like")}
             isMine={false}
-            diskColor={diskColor as DiskColorType}
+            diskColor={diskColor}
           >
-            <Like fill={lightTheme.colors.text01} />
-            <span>1234</span>
+            <Like
+              fill={
+                diskColor === "PURPLE"
+                  ? lightTheme.colors.white
+                  : lightTheme.colors.text01
+              }
+            />
+            <span>{likeCount}</span>
           </StLikesCount>
         )}
         {isMine ? (
@@ -104,13 +159,10 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
                   key={`${val}-${idx}`}
                   onClick={() => clickHandler(val as DiskBtnType)}
                 >
-                  <StIconContainer
-                    diskColor={diskColor as DiskColorType}
-                    isTextMode={false}
-                  >
+                  <StIconContainer diskColor={diskColor} isTextMode={false}>
                     {IconConverter(
                       val as DiskBtnType,
-                      isBookmark,
+                      showBookmark,
                       diskColor === "NEON_ORANGE"
                     )}
                   </StIconContainer>
@@ -120,7 +172,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
           </StBtnList>
         ) : (
           <StIconContainer
-            diskColor={diskColor as DiskColorType}
+            diskColor={diskColor}
             isTextMode={false}
             onClick={() => clickHandler("mode")}
           >
@@ -141,7 +193,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
             <span>첫 생성일: {createdAt}</span>
           </Stcontent>
           <StIconContainer
-            diskColor={diskColor as DiskColorType}
+            diskColor={diskColor}
             onClick={() => setMode("gallery")}
             isTextMode={true}
           >
@@ -178,8 +230,9 @@ const Stcontainer = styled.div<{ diskColor: DiskColorType }>`
   position: relative;
 `;
 
-const StDiskName = styled.h3`
-  color: ${({ theme }) => theme.colors.text01};
+const StDiskName = styled.h3<{ diskColor: DiskColorType }>`
+  color: ${({ diskColor, theme }) =>
+    diskColor === "PURPLE" ? theme.colors.white : theme.colors.text01};
   text-align: center;
   line-height: ${fontTheme.display01.lineHeight};
   letter-spacing: ${fontTheme.display01.letterSpacing};
@@ -209,7 +262,6 @@ const StImgList = styled.ul`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  /* justify-content: space-between; */
   gap: ${calcRem(8)};
   width: 100%;
   height: auto;
@@ -259,7 +311,8 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   }
 
   span {
-    color: ${({ theme }) => theme.colors.text01};
+    color: ${({ diskColor, theme }) =>
+      diskColor === "PURPLE" ? theme.colors.white : theme.colors.text01};
     ${({ isMine }) =>
       isMine
         ? css`
@@ -320,7 +373,7 @@ const Stcontent = styled.div`
     height: 80%;
     color: ${({ theme }) => theme.colors.white};
     text-align: center;
-    word-break: keep-all;
+    word-break: break-all;
     overflow: scroll;
   }
 
@@ -341,6 +394,7 @@ const StIconContainer = styled.div<{
   background-color: ${({ diskColor }) => diskTheme[diskColor].border};
   border-radius: ${calcRem(12)};
   cursor: pointer;
+
   ${({ isTextMode }) =>
     isTextMode &&
     css`

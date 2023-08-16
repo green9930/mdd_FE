@@ -24,7 +24,7 @@ export const pageState = atom<DiskPageType>({
 
 export const newDiskStepState = atom<NewDiskStepType>({
   key: "newDiskStepState",
-  default: "newDiskSignUp1",
+  default: "newDisk1",
 });
 
 export const newDiskState = atom<NewDiskType>({

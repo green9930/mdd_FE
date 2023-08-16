@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import { getLoc } from "../../utils/localStorage";
-import { lightThemeState, pageState } from "../../state/atom";
+import { lightThemeState, newDiskStepState, pageState } from "../../state/atom";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 import { darkTheme, lightTheme } from "../../styles/colors";
 
@@ -17,14 +17,18 @@ interface DiskHeaderProps {
   isMyDisk: boolean;
   titleText: string;
   jc?: string;
+  newDiskContent?: boolean;
 }
 
 const DiskHeader = ({
   isMyDisk,
   titleText,
   jc = "space-between",
+  newDiskContent = false,
 }: DiskHeaderProps) => {
   const [page, setPage] = useRecoilState(pageState);
+  const [step, setStep] = useRecoilState(newDiskStepState);
+
   const isLightTheme = useRecoilValue(lightThemeState);
 
   const navigate = useNavigate();
@@ -52,7 +56,9 @@ const DiskHeader = ({
   }, [isLightTheme]);
 
   const handleGoBack = () => {
-    navigate(-1);
+    newDiskContent
+      ? setStep((prev) => (prev === "newDisk2" ? "newDisk1" : "newDiskSignUp1"))
+      : navigate(-1);
   };
 
   return (
@@ -79,7 +85,7 @@ const DiskHeader = ({
             )}
           </button>
           {isMyDisk ? (
-            <button onClick={() => navigate("/new-disk")}>
+            <button onClick={() => navigate("/new-disk", { state: "newDisk" })}>
               <PlusFilled fill={lightTheme.colors.primary01} />
             </button>
           ) : (
