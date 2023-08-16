@@ -8,15 +8,16 @@ import styled from "styled-components";
 import { InputStatusType } from "../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
+import { getCookie, setCookie } from "../utils/cookie";
+import { getLoc } from "../utils/localStorage";
+import { postLogin } from "../api/memberApi";
+import { loginState } from "../state/atom";
+
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import PasswordInput from "../components/elements/PasswordInput";
 import AppLayout from "../components/layout/AppLayout";
 
-import { postLogin } from "../api/memberApi";
-import { getCookie, setCookie } from "../utils/cookie";
-import { getLoc } from "../utils/localStorage";
-import { loginState } from "../state/atom";
 import MonitorFilled from "../assets/img/monitor_filled.png";
 
 const LoginPage = () => {
