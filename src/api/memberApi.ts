@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { setLoc } from "../utils/localStorage";
+import { getLoc, setLoc } from "../utils/localStorage";
 import { instance, tokenInstance } from "./api";
 
 export interface AuthData {
@@ -55,7 +55,9 @@ export const postLogin = async (postData: AuthData) => {
 
 export const getMemberInfo = async (memberId: string) => {
   try {
-    const res = await instance.get(`/api/v1/members/${memberId}`);
+    const res = getLoc("accessToken")
+      ? await tokenInstance.get(`/api/v1/members/${memberId}`)
+      : await instance.get(`/api/v1/members/${memberId}`);
     return res.data;
   } catch (err) {
     throw err;

@@ -7,7 +7,11 @@ import IconConverter from "./IconConverter";
 import Button from "../elements/Button";
 
 import { clearLoc, getLoc, setLoc } from "../../utils/localStorage";
-import { lightThemeState, logoutToastState } from "../../state/atom";
+import {
+  lightThemeState,
+  loginState,
+  logoutToastState,
+} from "../../state/atom";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 
 import DiskMask3 from "../../assets/img/disk_mask_3.png";
@@ -48,6 +52,7 @@ const Settings = () => {
   const [openUnregisterModal, setOpenUnregisterModal] = useState(false);
   const [isLightTheme, setIsLightTheme] = useRecoilState(lightThemeState);
 
+  const setIsLogin = useSetRecoilState(loginState);
   const setOpenLogoutToast = useSetRecoilState(logoutToastState);
 
   const navigate = useNavigate();
@@ -69,6 +74,7 @@ const Settings = () => {
         return;
       case "logout":
         clearLoc();
+        setIsLogin(false);
         setOpenLogoutToast(true);
         navigate("/");
         return;
@@ -87,6 +93,9 @@ const Settings = () => {
       <StList>
         {SETTINGS_LIST.map((val) => {
           const { title, content, icon } = val;
+          if (!getLoc("accessToken") && icon === "logout") {
+            return;
+          }
           return (
             <li key={title}>
               <div onClick={() => clickHandler(icon)}>
@@ -106,9 +115,13 @@ const Settings = () => {
           );
         })}
       </StList>
-      <StUnregister onClick={() => setOpenUnregisterModal(true)}>
-        <span>회원탈퇴</span>
-      </StUnregister>
+      {getLoc("accessToken") ? (
+        <StUnregister onClick={() => setOpenUnregisterModal(true)}>
+          <span>회원탈퇴</span>
+        </StUnregister>
+      ) : (
+        <></>
+      )}
       {openUnregisterModal ? (
         <ModalLayout
           width={WINDOW_W < MOBILE_MAX_W ? "358px" : "537px"}
