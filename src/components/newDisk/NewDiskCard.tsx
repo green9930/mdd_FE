@@ -1,28 +1,37 @@
 import React, { ChangeEvent } from "react";
 import styled from "styled-components";
 import { diskTheme, lightTheme } from "../../styles/colors";
+
+import PreviewList from "./PreviewList";
+import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
+import {
+  DiskColorType,
+  DiskImgType,
+  DiskType,
+  NewDiskType,
+} from "../../types/diskTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
 import { ReactComponent as EmptyRegisterDisk } from "../../assets/svg/empty_register_disk.svg";
-import PreviewList from "./PreviewList";
-import { DiskColorType, DiskType, NewDiskType } from "../../types/diskTypes";
-import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
 
 interface NewDiskCardProps {
   isNew: boolean;
   disk: NewDiskType | DiskType;
+  diskColor?: DiskColorType;
   files: File[];
   setFiles: (value: React.SetStateAction<File[]>) => void;
-  previewList: any[];
-  setPreviewList: (value: React.SetStateAction<any[]>) => void;
+  previewList: DiskImgType[];
+  setPreviewList: (value: React.SetStateAction<DiskImgType[]>) => void;
   mainImg: string;
   setMainImg: (value: React.SetStateAction<string>) => void;
   setDeleteImgList?: React.Dispatch<React.SetStateAction<number[]>>;
+  defaultImgList?: DiskImgType[];
 }
 
 const NewDiskCard = ({
   isNew,
   disk,
+  diskColor,
   files,
   setFiles,
   previewList,
@@ -30,6 +39,7 @@ const NewDiskCard = ({
   mainImg,
   setMainImg,
   setDeleteImgList,
+  defaultImgList = [],
 }: NewDiskCardProps) => {
   const handleAddImg = async (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target.files;
@@ -46,42 +56,73 @@ const NewDiskCard = ({
             reader.readAsDataURL(file);
             reader.onload = () => {
               const previewImgUrl = reader.result;
-              setPreviewList((prev) => [...prev, previewImgUrl]);
+              setPreviewList((prev: DiskImgType[]) => [
+                ...prev,
+                { imgId: "new", imgUrl: previewImgUrl as string },
+              ]);
+              // setPreviewList((prev) => [...prev, previewImgUrl]);
+              if (!previewList.length) {
+                setMainImg(previewImgUrl as string);
+              }
             };
           } catch (err) {
             window.alert("사진을 불러올 수 없습니다.");
-            console.log("UPLOAD IMAGE ERROR >> ", err);
+            throw err;
           }
         });
       }
     }
   };
 
-  const handleDeleteImg = (e: React.MouseEvent, target: number) => {
+  const handleDeleteImg = (
+    e: React.MouseEvent,
+    target: number,
+    targetUrl: string
+  ) => {
     e.stopPropagation();
     if (isNew) {
+      // 디스크 생성 페이지
       setFiles(files.filter((_, idx) => idx !== target));
     } else {
-      if (setDeleteImgList) {
-        setDeleteImgList((prev) => [
-          ...prev,
-          (disk as DiskType).image[target].imgId,
-        ]);
-      }
-      if (mainImg === previewList[target]) {
-        target === 0 ? setMainImg(previewList[1]) : setMainImg(previewList[0]);
+      // 디스크 편집 페이지
+      if (defaultImgList.map((val) => val.imgUrl).includes(targetUrl)) {
+        // 기존 사진 삭제
+        const targetId = (
+          defaultImgList.find((val) => val.imgUrl === targetUrl) as DiskImgType
+        ).imgId;
+        setDeleteImgList &&
+          setDeleteImgList((prev) => [...prev, targetId as number]);
+      } else {
+        // 추가된 사진 삭제
+        const targetIndex = previewList
+          .filter((val) => val.imgId === "new")
+          .map((val) => val.imgUrl)
+          .indexOf(targetUrl);
+        setFiles(files.filter((_, idx) => idx !== targetIndex));
       }
     }
-    setPreviewList(previewList.filter((_, idx) => idx !== target));
+
+    setPreviewList((prev) => prev.filter((val) => val.imgUrl !== targetUrl));
+
+    if (mainImg === targetUrl) {
+      // 대표 이미지 삭제할 경우
+      const mainImgIndex = previewList
+        .map((val) => val.imgUrl)
+        .indexOf(mainImg);
+      mainImgIndex === 0
+        ? setMainImg(previewList.length > 1 ? previewList[1].imgUrl : "")
+        : setMainImg(previewList[0].imgUrl);
+    }
   };
 
-  const handleMainImg = (target: number) => {
-    setMainImg(previewList[target]);
-  };
+  const handleMainImg = (target: number) =>
+    setMainImg(previewList[target].imgUrl);
 
   return (
-    <StGallery diskColor={disk.diskColor}>
-      <StDiskName diskColor={disk.diskColor}>{disk.diskName}</StDiskName>
+    <StGallery diskColor={diskColor ? diskColor : disk.diskColor}>
+      <StDiskName diskColor={diskColor ? diskColor : disk.diskColor}>
+        {disk.diskName}
+      </StDiskName>
       <StPreviewContainer>
         {previewList.length ? (
           <StMainImg src={mainImg} alt="main-preview" />
@@ -155,6 +196,7 @@ const StEmptyContainer = styled.div`
   justify-content: center;
   gap: ${calcRem(16)};
   padding-top: ${calcRem(100)};
+  cursor: default;
 
   span {
     color: ${({ theme }) => theme.colors.primary02};

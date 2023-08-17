@@ -26,12 +26,12 @@ export interface NewDiskProps {
 
 const NewDiskPage = () => {
   const [step, setStep] = useRecoilState(newDiskStepState);
-  const setPageState = useSetRecoilState(pageState);
+  const setPage = useSetRecoilState(pageState);
 
   const location = useLocation();
 
   useEffect(() => {
-    setPageState("newDisk");
+    setPage("newDisk");
     location.state === "newDisk"
       ? setStep("newDisk1")
       : setStep("newDiskSignUp1");
