@@ -46,6 +46,7 @@ const MainPage = () => {
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [targetDisk, setTargetDisk] = useState<number>(0);
+  const [like, setLike] = useState<number>(0);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
@@ -61,12 +62,18 @@ const MainPage = () => {
         .share({
           title: "My Digging Disk",
           text: `${nickname} 님의 디스크를 공유했습니다.`,
-          url: `mydiggingdisk.com/home/${memberId}`,
+          url: `/${memberId}`,
         })
         .then(() => {})
         .catch(() => {});
     } else {
-      alert("현재 브라우저에서는 공유 기능을 지원하지 않습니다.");
+      const url = `http://mydiggingdisk.com/home/${memberId}`;
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          alert("공유 링크가 복사되었습니다.");
+        })
+        .catch(() => {});
     }
   };
   const { id } = useParams();
@@ -75,9 +82,8 @@ const MainPage = () => {
     ["userInfo", id],
     () => getUserInfo(id ? id : ""),
     {
+      onSuccess: (res) => setLike(res.likeCount),
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 60,
-      cacheTime: 1000 * 60 * 60,
     }
   );
 
@@ -86,15 +92,14 @@ const MainPage = () => {
     () => getBookmarkDiskList(id ? id : ""),
     {
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 60,
-      cacheTime: 1000 * 60 * 60,
     }
   );
 
   const { mutate: mutationUserLike, isLoading: mutationIsLoading } =
     useMutation(() => postUserLike(id ? id : ""), {
       onSuccess(res) {
-        queryClient.invalidateQueries(["userInfo"]);
+        // queryClient.invalidateQueries(["userInfo"]);
+        setLike(res);
       },
     });
 
@@ -157,7 +162,7 @@ const MainPage = () => {
                               : darkTheme.colors.text02
                           }
                         />
-                        <span>좋아요 {data.likeCount}</span>
+                        <span>좋아요 {like}</span>
                       </>
                     )}
                   </StVisitLike>
@@ -265,7 +270,7 @@ const MainPage = () => {
                     >
                       <StButtonText>
                         <Like />
-                        <span>{data.likeCount}</span>
+                        <span>{like}</span>
                       </StButtonText>
                     </Button>
                   </StButtonContainer>
@@ -286,7 +291,7 @@ const MainPage = () => {
       ) : isError ? (
         <NotFound />
       ) : (
-        <></>
+        <>로딩중 ...</>
       )}
 
       {openModal ? (
