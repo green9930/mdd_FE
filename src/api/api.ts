@@ -21,7 +21,6 @@ export const tokenInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
     accept: "application/json",
-    Authorization: `Bearer ${accessToken}`,
   },
   withCredentials: true,
 });
