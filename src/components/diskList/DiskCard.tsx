@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled, { css } from "styled-components";
 
 import DiskPreviewList from "./DiskPreviewList";
 import IconConverter from "./IconConverter";
-import { deleteToastState } from "../../state/atom";
+import { deleteToastState, pageState } from "../../state/atom";
 import {
   DISK_BTN_LIST,
   DiskBtnType,
@@ -16,6 +16,7 @@ import { diskTheme, lightTheme } from "../../styles/colors";
 import { calcRem, fontTheme } from "../../styles/theme";
 
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
+import { ReactComponent as LikeFilled } from "../../assets/svg/like_filled.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -47,9 +48,10 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const [mainImg, setMainImg] = useState<string>("");
   const [mode, setMode] = useState<DiskModeType>("gallery");
   const [showBookmark, setShowBookmark] = useState(false);
-  const [diskLikeCount, setDiskLikeCount] = useState(0);
+  const [showLike, setShowLike] = useState(false);
 
   const setOpenDeleteToast = useSetRecoilState(deleteToastState);
+  const page = useRecoilValue(pageState);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -59,7 +61,6 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   useEffect(() => {
     setMainImg(image[0].imgUrl);
     setShowBookmark(isBookmark);
-    setDiskLikeCount(likeCount);
   }, []);
 
   const { mutate: handleDelete } = useMutation(deleteDisk, {
@@ -90,9 +91,12 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
 
   const { mutate: handleLike } = useMutation(likeDisk, {
     onSuccess: () => {
-      setDiskLikeCount((prev) => prev + 1);
+      setShowLike(true);
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["userBookmarkDisk"]);
+      setTimeout(() => {
+        setShowLike(false);
+      }, 200);
     },
     onError: (err: AxiosError<any>) => {
       console.log(err);
@@ -133,13 +137,23 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       <StSubContainer>
         {isMine ? (
           <StLikesCount isMine={true} diskColor={diskColor}>
-            <Like
-              fill={
-                diskColor === "PURPLE"
-                  ? lightTheme.colors.white
-                  : lightTheme.colors.text01
-              }
-            />
+            {showLike ? (
+              <LikeFilled
+                fill={
+                  diskColor === "PURPLE"
+                    ? lightTheme.colors.white
+                    : lightTheme.colors.text01
+                }
+              />
+            ) : (
+              <Like
+                fill={
+                  diskColor === "PURPLE"
+                    ? lightTheme.colors.white
+                    : lightTheme.colors.text01
+                }
+              />
+            )}
             <span>{likeCount}</span>
           </StLikesCount>
         ) : (
@@ -148,13 +162,23 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
             isMine={false}
             diskColor={diskColor}
           >
-            <Like
-              fill={
-                diskColor === "NEON_ORANGE"
-                  ? lightTheme.colors.text01
-                  : lightTheme.colors.white
-              }
-            />
+            {showLike ? (
+              <LikeFilled
+                fill={
+                  diskColor === "NEON_ORANGE"
+                    ? lightTheme.colors.text01
+                    : lightTheme.colors.white
+                }
+              />
+            ) : (
+              <Like
+                fill={
+                  diskColor === "NEON_ORANGE"
+                    ? lightTheme.colors.text01
+                    : lightTheme.colors.white
+                }
+              />
+            )}
             <span>{likeCount}</span>
           </StLikesCount>
         )}
@@ -162,15 +186,21 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
           <StBtnList>
             {DISK_BTN_LIST.map((val, idx) => {
               return (
-                <li key={`${val}-${idx}`} onClick={() => clickHandler(val)}>
-                  <StIconContainer diskColor={diskColor} isTextMode={false}>
-                    {IconConverter(
-                      val as DiskBtnType,
-                      showBookmark,
-                      diskColor === "NEON_ORANGE"
-                    )}
-                  </StIconContainer>
-                </li>
+                <>
+                  {page === "diskListGallery" && val === "edit" ? (
+                    <></>
+                  ) : (
+                    <li key={`${val}-${idx}`} onClick={() => clickHandler(val)}>
+                      <StIconContainer diskColor={diskColor} isTextMode={false}>
+                        {IconConverter(
+                          val as DiskBtnType,
+                          showBookmark,
+                          diskColor === "NEON_ORANGE"
+                        )}
+                      </StIconContainer>
+                    </li>
+                  )}
+                </>
               );
             })}
           </StBtnList>
@@ -302,6 +332,8 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   align-items: center;
   justify-content: flex-start;
   gap: ${({ isMine }) => (isMine ? calcRem(4) : calcRem(8))};
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
 
   ${({ isMine, diskColor }) =>
     !isMine &&
