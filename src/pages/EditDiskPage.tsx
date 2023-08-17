@@ -23,8 +23,8 @@ const EditDiskPage = () => {
     ["diskById"],
     () => getDisk(paramsId as string),
     {
-      onSuccess: (data: DiskType) => console.log("SUCCESS", data),
-      onError: (err) => console.log("GET DISK LIST FAIL", err),
+      // onSuccess: (data: DiskType) => console.log("SUCCESS", data),
+      onError: () => window.alert("디스크 정보를 가져오지 못했습니다."),
       enabled: false,
       cacheTime: 0,
     }

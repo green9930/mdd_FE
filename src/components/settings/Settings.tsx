@@ -13,6 +13,7 @@ import {
   loginState,
   logoutToastState,
   routeState,
+  signUpState,
   unregisterToastState,
 } from "../../state/atom";
 import { deleteUser } from "../../api/memberApi";
@@ -57,6 +58,7 @@ const Settings = () => {
 
   const setRoute = useSetRecoilState(routeState);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
+  const [isSignUp, setIsSignUp] = useRecoilState(signUpState);
   const setOpenLogoutToast = useSetRecoilState(logoutToastState);
   const setOpenUnregisterToast = useSetRecoilState(unregisterToastState);
 
@@ -71,6 +73,7 @@ const Settings = () => {
       removeLoc("memberName");
       setRoute(true);
       setIsLogin(false);
+      setIsSignUp(false);
       setOpenUnregisterToast(true);
       navigate("/");
     },
@@ -100,8 +103,9 @@ const Settings = () => {
         removeLoc("memberName");
         setRoute(true);
         setIsLogin(false);
+        setIsSignUp(false);
         setOpenLogoutToast(true);
-        navigate("/");
+        navigate("/login");
         return;
       default:
         return;
@@ -113,7 +117,7 @@ const Settings = () => {
       <StList>
         {SETTINGS_LIST.map((val) => {
           const { title, content, icon } = val;
-          if (!isLogin && icon === "logout") {
+          if (!isLogin && !isSignUp && icon === "logout") {
             return;
           }
           return (
@@ -135,7 +139,7 @@ const Settings = () => {
           );
         })}
       </StList>
-      {isLogin ? (
+      {isLogin || isSignUp ? (
         <StUnregister onClick={() => setOpenUnregisterModal(true)}>
           <span>회원탈퇴</span>
         </StUnregister>

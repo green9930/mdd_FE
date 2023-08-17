@@ -24,6 +24,7 @@ import { ReactComponent as ListCategoqy } from "../../assets/svg/list_category.s
 import { ReactComponent as ListVertical } from "../../assets/svg/list_vertical.svg";
 
 interface DiskHeaderProps {
+  param?: string;
   isMyDisk: boolean;
   titleText: string;
   jc?: string;
@@ -31,6 +32,7 @@ interface DiskHeaderProps {
 }
 
 const DiskHeader = ({
+  param,
   isMyDisk,
   titleText,
   jc = "space-between",
@@ -71,10 +73,10 @@ const DiskHeader = ({
       setStep((prev) => (prev === "newDisk2" ? "newDisk1" : "newDiskSignUp1"));
     switch (page) {
       case "diskListFeed":
-        navigate(-1);
+        navigate(`/home/${param}`);
         return;
       case "diskListGallery":
-        navigate(-1);
+        navigate(`/home/${param}`);
         return;
       case "editDisk":
         setPage("diskListGallery");

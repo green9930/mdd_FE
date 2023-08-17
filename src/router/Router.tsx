@@ -39,7 +39,11 @@ const Router = () => {
           <Route
             path="/"
             element={
-              isLogin ? <Navigate to={`/home/${memberId}`} /> : <HomePage />
+              isLogin || isSignUp ? (
+                <Navigate to={`/home/${memberId}`} />
+              ) : (
+                <HomePage />
+              )
             }
           />
           <Route path="/home/:id" element={<MainPage />} />
@@ -58,6 +62,9 @@ const Router = () => {
           <Route path="/disk-list/:id" element={<DiskListPage />} />
           <Route
             path="/new-disk"
+            // element={
+            //   isLogin || isSignUp ? <NewDiskPage /> : <Navigate to="/" />
+            // }
             element={
               isLogin ? (
                 <NewDiskPage />
@@ -70,7 +77,9 @@ const Router = () => {
           />
           <Route
             path="/edit-disk/:id"
-            element={isLogin ? <EditDiskPage /> : <Navigate to="/" />}
+            element={
+              isLogin || isSignUp ? <EditDiskPage /> : <Navigate to="/" />
+            }
           />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/*" element={<NotFound />} />
