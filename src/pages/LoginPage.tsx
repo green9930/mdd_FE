@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { KeyboardEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
@@ -67,6 +67,27 @@ const LoginPage = () => {
     },
   });
 
+  const onClickLogin = () => {
+    if (validCheck()) {
+      if (getCookie("loginOver") !== "true") {
+        mutationLogin({
+          memberName: id,
+          password: password,
+        });
+      } else {
+        window.alert(
+          "너무 많은 로그인 시도를 했습니다. 잠시 후 다시 시도해주세요."
+        );
+      }
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      onClickLogin();
+    }
+  };
+
   return (
     <AppLayout>
       <StContainer>
@@ -86,6 +107,7 @@ const LoginPage = () => {
           maxLength={20}
           placeholder="아이디를 입력해주세요"
           inputType="memberName"
+          onKeyDown={handleKeyDown}
         ></Input>
         <StInputContainer>
           <PasswordInput
@@ -108,24 +130,12 @@ const LoginPage = () => {
             setValue={setPassword}
             maxLength={6}
             placeholder="비밀번호를 입력해주세요"
+            onKeyDown={handleKeyDown}
           ></PasswordInput>
         </StInputContainer>
         <Button
           btnStatus={validCheck() ? "primary01" : "disabled"}
-          clickHandler={() => {
-            if (validCheck()) {
-              if (getCookie("loginOver") !== "true") {
-                mutationLogin({
-                  memberName: id,
-                  password: password,
-                });
-              } else {
-                window.alert(
-                  "너무 많은 로그인 시도를 했습니다. 잠시 후 다시 시도해주세요."
-                );
-              }
-            }
-          }}
+          clickHandler={onClickLogin}
         >
           <span>접속하기</span>
         </Button>
