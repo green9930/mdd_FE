@@ -53,7 +53,7 @@ const PasswordInput = ({
         <StInput
           isMasked={isMasked}
           placeholder={placeholder}
-          type="number"
+          type="text"
           value={value}
           onChange={(e) => {
             const validation = /^[0-9\b]*$/;

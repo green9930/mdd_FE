@@ -138,7 +138,7 @@ const LoginPage = () => {
             value={password}
             setValue={setPassword}
             maxLength={6}
-            placeholder="비밀번호를 입력해주세요"
+            placeholder="비밀번호는 숫자 6자리예요"
             onKeyDown={handleKeyDown}
           ></PasswordInput>
         </StInputContainer>
@@ -210,6 +210,7 @@ const StPasswordErrorText = styled.span`
 const StSignUpText = styled.span`
   cursor: pointer;
   padding-top: ${calcRem(32)};
+  padding-bottom: ${calcRem(27)};
   letter-spacing: ${fontTheme.button.letterSpacing};
   line-height: ${fontTheme.button.lineHeight};
   font-size: ${fontTheme.button.fontSize};
