@@ -18,7 +18,7 @@ import { ReactComponent as Pen } from "../../assets/svg/pen.svg";
 import { useSetRecoilState } from "recoil";
 import { newDiskStepState } from "../../state/atom";
 
-const DiskListGallery = ({ data }: DiskListProps) => {
+const DiskListGallery = ({ isMine, data }: DiskListProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [targetDisk, setTargetDisk] = useState(0);
 
@@ -68,10 +68,14 @@ const DiskListGallery = ({ data }: DiskListProps) => {
             </StItem>
           );
         })}
-        <StNewDisk onClick={handleNewDisk}>
-          <PlusFilled fill={lightTheme.colors.primary01} />
-          <span>새로운 디스크 생성하기</span>
-        </StNewDisk>
+        {isMine ? (
+          <StNewDisk onClick={handleNewDisk}>
+            <PlusFilled fill={lightTheme.colors.primary01} />
+            <span>새로운 디스크 생성하기</span>
+          </StNewDisk>
+        ) : (
+          <></>
+        )}
       </StList>
       {openModal ? (
         <ModalLayout

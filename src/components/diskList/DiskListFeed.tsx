@@ -9,7 +9,7 @@ import { lightTheme } from "../../styles/colors";
 import { ReactComponent as ArrowCircle } from "../../assets/svg/arrow_circle.svg";
 import { DiskListProps } from "../../pages/DiskListPage";
 
-const DiskListFeed = ({ data }: DiskListProps) => {
+const DiskListFeed = ({ isMine, data }: DiskListProps) => {
   const scrollToTop = () => {
     window.scroll({
       top: 0,
@@ -39,14 +39,18 @@ const DiskListFeed = ({ data }: DiskListProps) => {
           );
         })}
       </StList>
-      <StBtnContainer>
-        <Button btnStatus="primary02" clickHandler={scrollToTop}>
-          <BtnText>
-            <ArrowCircle fill={lightTheme.colors.white} />
-            <span>위로 가기</span>
-          </BtnText>
-        </Button>
-      </StBtnContainer>
+      {data.length ? (
+        <StBtnContainer>
+          <Button btnStatus="primary02" clickHandler={scrollToTop}>
+            <BtnText>
+              <ArrowCircle fill={lightTheme.colors.white} />
+              <span>위로 가기</span>
+            </BtnText>
+          </Button>
+        </StBtnContainer>
+      ) : (
+        <></>
+      )}
     </StContainer>
   );
 };
