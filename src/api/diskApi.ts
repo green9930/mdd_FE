@@ -33,6 +33,7 @@ export const postDisk = async (data: any): Promise<AxiosResponse<any>> => {
     throw err;
   }
 };
+
 export const patchDisk = async (data: any): Promise<AxiosResponse<any>> => {
   try {
     const res = await tokenInstance.patch(
@@ -70,7 +71,7 @@ export const bookmarkDisk = async (diskId: number) => {
 
 export const likeDisk = async (diskId: number) => {
   try {
-    await tokenInstance.post(`/api/v1/disks/like/${diskId}`);
+    await instance.post(`/api/v1/disks/like/${diskId}`);
   } catch (err) {
     throw err;
   }
