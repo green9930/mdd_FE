@@ -1,6 +1,6 @@
-import React, { KeyboardEvent, useState } from "react";
+import React, { KeyboardEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import styled from "styled-components";
@@ -9,7 +9,7 @@ import AppLayout from "../components/layout/AppLayout";
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import PasswordInput from "../components/elements/PasswordInput";
-import { loginState, routeState } from "../state/atom";
+import { loginState, logoutToastState, routeState } from "../state/atom";
 import { getCookie, setCookie } from "../utils/cookie";
 import { getLoc } from "../utils/localStorage";
 import { postLogin } from "../api/memberApi";
@@ -17,6 +17,7 @@ import { InputStatusType } from "../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
+import ToastModal from "../components/elements/ToastModal";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -28,6 +29,14 @@ const LoginPage = () => {
 
   const setIsLogin = useSetRecoilState(loginState);
   const setRoute = useSetRecoilState(routeState);
+  const [openLogoutToast, setOpenLogoutToast] =
+    useRecoilState(logoutToastState);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (openLogoutToast) setOpenLogoutToast(false);
+    }, 2000);
+  }, [openLogoutToast]);
 
   const validCheck = () => {
     return (
@@ -143,6 +152,13 @@ const LoginPage = () => {
           아이디가 없어요
         </StSignUpText>
       </StContainer>
+      {openLogoutToast ? (
+        <ToastModal>
+          <span>로그아웃 되었습니다.</span>
+        </ToastModal>
+      ) : (
+        <></>
+      )}
     </AppLayout>
   );
 };

@@ -23,17 +23,15 @@ const HomePage = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [currentIcon, setCurrentIcon] = useState(DiskMask01);
   const [displayText, setDisplayText] = useState<string[]>([]);
-  const [openLogoutToast, setOpenLogoutToast] =
-    useRecoilState(logoutToastState);
+
   const [openUnregisterToast, setOpenUnregisterToast] =
     useRecoilState(unregisterToastState);
 
   useEffect(() => {
     setTimeout(() => {
-      if (openLogoutToast) setOpenLogoutToast(false);
       if (openUnregisterToast) setOpenUnregisterToast(false);
     }, 2000);
-  }, [openLogoutToast, openUnregisterToast]);
+  }, [openUnregisterToast]);
 
   setTimeout(() => {
     const cursor = document.querySelector(".cursor") as HTMLElement | null;
@@ -127,13 +125,6 @@ const HomePage = () => {
         </StLoginText>
       </StContainer>
       <Guide modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      {openLogoutToast ? (
-        <ToastModal>
-          <span>로그아웃 되었습니다.</span>
-        </ToastModal>
-      ) : (
-        <></>
-      )}
       {openUnregisterToast ? (
         <ToastModal>
           <span>회원 탈퇴 처리가 완료됐어요.</span>
