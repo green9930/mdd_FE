@@ -198,7 +198,7 @@ const MainPage = () => {
                     )}
                   </StTopBox>
 
-                  {bookmarkData && bookmarkData.length > 0 ? (
+                  {bookmarkData && bookmarkData.diskList.length > 0 ? (
                     <StDiskBoxFlex
                       color={
                         isLightTheme
@@ -206,7 +206,7 @@ const MainPage = () => {
                           : lightTheme.colors.white
                       }
                     >
-                      {bookmarkData.map((item: DiskType) => (
+                      {bookmarkData.diskList.map((item: DiskType) => (
                         <StDiskBox
                           onClick={() => {
                             setOpenModal(true);
@@ -300,7 +300,7 @@ const MainPage = () => {
         >
           <DiskCard
             data={
-              bookmarkData.find(
+              bookmarkData.diskList.find(
                 (val: DiskType) => val.diskId === targetDisk
               ) as DiskType
             }
@@ -317,7 +317,7 @@ const MainPage = () => {
               </StBtnText>
             </Button>
             {(
-              bookmarkData.find(
+              bookmarkData.diskList.find(
                 (val: DiskType) => val.diskId === targetDisk
               ) as DiskType
             ).isMine ? (
