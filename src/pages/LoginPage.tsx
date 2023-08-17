@@ -5,18 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import styled from "styled-components";
 
-import { InputStatusType } from "../types/etcTypes";
-import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
-
-import { getCookie, setCookie } from "../utils/cookie";
-import { getLoc } from "../utils/localStorage";
-import { postLogin } from "../api/memberApi";
-import { loginState } from "../state/atom";
-
+import AppLayout from "../components/layout/AppLayout";
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import PasswordInput from "../components/elements/PasswordInput";
-import AppLayout from "../components/layout/AppLayout";
+import { loginState, routeState } from "../state/atom";
+import { getCookie, setCookie } from "../utils/cookie";
+import { getLoc } from "../utils/localStorage";
+import { postLogin } from "../api/memberApi";
+import { InputStatusType } from "../types/etcTypes";
+import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
 
@@ -29,6 +27,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState<string>("");
 
   const setIsLogin = useSetRecoilState(loginState);
+  const setRoute = useSetRecoilState(routeState);
 
   const validCheck = () => {
     return (
@@ -43,6 +42,7 @@ const LoginPage = () => {
   const { mutate: mutationLogin, isLoading: mutationIsLoading } = useMutation({
     mutationFn: postLogin,
     onSuccess(res) {
+      setRoute(true);
       setIsLogin(true);
       navigate(`/home/${getLoc("memberId")}`);
     },

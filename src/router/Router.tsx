@@ -11,20 +11,26 @@ import NewDiskPage from "../pages/NewDiskPage";
 import EditDiskPage from "../pages/EditDiskPage";
 import SettingsPage from "../pages/SettingsPage";
 import { getLoc } from "../utils/localStorage";
-import { loginState } from "../state/atom";
+import { loginState, routeState, signUpState } from "../state/atom";
 import NotFound from "../pages/NotFound";
 
 const Router = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useRecoilState(routeState);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
+  const [isSignUp, setIsSignUp] = useRecoilState(signUpState);
 
   const accessToken = getLoc("accessToken");
   const memberId = getLoc("memberId");
 
   useEffect(() => {
-    accessToken ? setIsLogin(true) : setIsLogin(false);
+    console.log("ROUTE RENDERING...", loading);
+    console.log("ISSIGNUP", isSignUp);
+    console.log("ISLOGIN", isLogin);
+    if (!isSignUp && !isLogin) {
+      accessToken ? setIsLogin(true) : setIsLogin(false);
+    }
     setLoading(false);
-  }, [isLogin]);
+  }, [loading]);
 
   return (
     <>
@@ -52,7 +58,15 @@ const Router = () => {
           <Route path="/disk-list/:id" element={<DiskListPage />} />
           <Route
             path="/new-disk"
-            element={isLogin ? <NewDiskPage /> : <Navigate to="/" />}
+            element={
+              isLogin ? (
+                <NewDiskPage />
+              ) : isSignUp ? (
+                <NewDiskPage />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
           <Route
             path="/edit-disk/:id"

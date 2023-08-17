@@ -39,11 +39,15 @@ const NewDiskPage = () => {
 
   return (
     <AppLayout>
-      <DiskHeader
-        isMyDisk={TEST_DATA.isMe}
-        titleText="디스크 생성하기"
-        newDiskContent={step === "newDisk2" || step === "newDiskSignUp2"}
-      />
+      {step === "newDisk1" || step === "newDisk2" ? (
+        <DiskHeader
+          isMyDisk={TEST_DATA.isMe}
+          titleText="디스크 생성하기"
+          newDiskContent={step === "newDisk2"}
+        />
+      ) : (
+        <></>
+      )}
       {step === "newDiskSignUp1" || step === "newDisk1" ? (
         <NewDiskCover titleText={TITLE_LIST[step]} />
       ) : (

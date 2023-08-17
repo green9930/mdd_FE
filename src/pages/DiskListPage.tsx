@@ -11,7 +11,7 @@ import ToastModal from "../components/elements/ToastModal";
 import { getDiskList } from "../api/diskApi";
 import { getLoc } from "../utils/localStorage";
 import { deleteToastState, pageState } from "../state/atom";
-import { DiskType } from "../types/diskTypes";
+import { DiskListType, DiskType } from "../types/diskTypes";
 
 export interface DiskListProps {
   data: DiskType[];
@@ -24,19 +24,23 @@ const DiskListPage = () => {
   const [openDeleteToast, setOpenDeleteToast] =
     useRecoilState(deleteToastState);
 
-  const params = useParams();
+  const { id: paramsId } = useParams<{ id: string }>();
 
-  const { data, isLoading, isSuccess } = useQuery(["diskList"], getDiskList, {
-    onSuccess: (data: DiskType[]) => {
-      console.log("SUCCESS", data);
-    },
-    onError: (err) => console.log("GET DISK LIST FAIL", err),
-    staleTime: Infinity,
-  });
+  const { data, isLoading, isSuccess } = useQuery(
+    ["diskList"],
+    () => getDiskList(paramsId as string),
+    {
+      onSuccess: (data: DiskListType) => {
+        console.log("SUCCESS", data);
+      },
+      onError: (err) => console.log("GET DISK LIST FAIL", err),
+      staleTime: Infinity,
+    }
+  );
 
   useEffect(() => {
-    setIsMyPage(params.id === getLoc("memberId"));
-    params.id === getLoc("memberId")
+    setIsMyPage(paramsId === getLoc("memberId"));
+    paramsId === getLoc("memberId")
       ? setPage("diskListGallery")
       : setPage("diskListFeed");
   }, []);
@@ -49,16 +53,26 @@ const DiskListPage = () => {
 
   return (
     <AppLayout>
-      <DiskHeader
-        isMyDisk={isMyPage}
-        titleText={
-          isMyPage ? "전체 디깅디스크" : `${getLoc("nickname")}님의 디깅디스크`
-        }
-      />
       {!isLoading && isSuccess ? (
         <>
-          {page === "diskListFeed" ? <DiskListFeed data={data} /> : <></>}
-          {page === "diskListGallery" ? <DiskListGallery data={data} /> : <></>}
+          <DiskHeader
+            isMyDisk={data.isMine}
+            titleText={
+              data.isMine
+                ? "전체 디깅디스크"
+                : `${data.nickname}님의 디깅디스크`
+            }
+          />
+          {page === "diskListFeed" ? (
+            <DiskListFeed data={data.diskList} />
+          ) : (
+            <></>
+          )}
+          {page === "diskListGallery" ? (
+            <DiskListGallery data={data.diskList} />
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <></>

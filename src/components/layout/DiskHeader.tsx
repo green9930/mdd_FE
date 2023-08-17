@@ -67,11 +67,28 @@ const DiskHeader = ({
   }, [isLightTheme]);
 
   const handleGoBack = () => {
-    if (newDiskContent) {
+    if (newDiskContent)
       setStep((prev) => (prev === "newDisk2" ? "newDisk1" : "newDiskSignUp1"));
-    } else {
-      if (page === "newDisk") resetNewDisk();
-      navigate(-1);
+    switch (page) {
+      case "diskListFeed":
+        navigate(-1);
+        return;
+      case "diskListGallery":
+        navigate(-1);
+        return;
+      case "editDisk":
+        setPage("diskListGallery");
+        navigate(-1);
+        return;
+      case "newDisk":
+        resetNewDisk();
+        navigate(-1);
+        return;
+      case "settings":
+        navigate(`/home/${getLoc("memberId")}`);
+        return;
+      default:
+        return;
     }
   };
 
