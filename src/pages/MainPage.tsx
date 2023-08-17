@@ -35,6 +35,7 @@ import { DiskType } from "../types/diskTypes";
 import NotFound from "./NotFound";
 import ModalLayout from "../components/layout/ModalLayout";
 import DiskCard from "../components/diskList/DiskCard";
+import { numberFormat } from "../utils/numberFormat";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -56,18 +57,18 @@ const MainPage = () => {
   const memberId = getLoc("memberId");
 
   const handleShare = () => {
+    const nickname = getLoc("nickname");
     if (navigator.share) {
-      const nickname = getLoc("nickname");
       navigator
         .share({
           title: "My Digging Disk",
-          text: `${nickname} 님의 디스크를 공유했습니다.`,
-          url: `/${memberId}`,
+          text: `${nickname} 님의 디깅디스크 보러갈래요? 💾`,
+          url: `/home/${memberId}`,
         })
         .then(() => {})
         .catch(() => {});
     } else {
-      const url = `http://mydiggingdisk.com/home/${memberId}`;
+      const url = `${nickname} 님의 디깅디스크 보러갈래요? 💾\nhttps://mydiggingdisk.com/home/${memberId}`;
       navigator.clipboard
         .writeText(url)
         .then(() => {
@@ -76,6 +77,7 @@ const MainPage = () => {
         .catch(() => {});
     }
   };
+
   const { id } = useParams();
 
   const { data, isLoading, isSuccess, isError } = useQuery(
@@ -140,7 +142,7 @@ const MainPage = () => {
                     {data.nickname}
                   </StProfileText>
                   <StProfileText color={lightTheme.colors.text02}>
-                    {data.interest}
+                    {data.interest} {data.interest && "디깅중"}
                   </StProfileText>
                   <StProfileText
                     color={
@@ -152,7 +154,7 @@ const MainPage = () => {
                     {data.introduce}
                   </StProfileText>
                   <StVisitLike>
-                    <span>방문 {data.visitCount}</span>
+                    <span>방문 {numberFormat(parseInt(data.visitCount))}</span>
                     {data.isMe && (
                       <>
                         <Like
@@ -162,7 +164,7 @@ const MainPage = () => {
                               : darkTheme.colors.text02
                           }
                         />
-                        <span>좋아요 {like}</span>
+                        <span>좋아요 {numberFormat(like)}</span>
                       </>
                     )}
                   </StVisitLike>
@@ -268,7 +270,7 @@ const MainPage = () => {
                     >
                       <StButtonText>
                         <Like />
-                        <span>{like}</span>
+                        <span>{numberFormat(like)}</span>
                       </StButtonText>
                     </Button>
                   </StButtonContainer>
@@ -347,7 +349,7 @@ export default MainPage;
 const StContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg};
   width: 100%;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 62px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -512,7 +514,7 @@ const StDiskBox = styled.div`
   border-radius: 8px;
   padding: ${calcRem(8)} ${calcRem(4)};
   width: 100%;
-  height: 132px;
+  height: auto;
   background-color: ${({ theme }) => theme.colors.bg};
   display: flex;
   align-items: center;
@@ -566,7 +568,7 @@ const StBottomContainer = styled.div`
 `;
 
 const StButtonContainer = styled.div`
-  width: 139px;
+  min-width: 139px;
   margin-top: ${calcRem(8)};
 `;
 
