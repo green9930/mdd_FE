@@ -1,31 +1,24 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 import { NewDiskProps } from "../../pages/NewDiskPage";
-import PreviewList from "./PreviewList";
+import NewDiskCard from "./NewDiskCard";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
 import { postDisk } from "../../api/diskApi";
 import { newDiskState, newDiskStepState } from "../../state/atom";
-import {
-  DISK_CONTENT_MAX_LENGTH,
-  DISK_IMG_MAX_LENGTH,
-} from "../../utils/validations";
-import { DiskColorType } from "../../types/diskTypes";
+import { DISK_CONTENT_MAX_LENGTH } from "../../utils/validations";
+import { getLoc } from "../../utils/localStorage";
+import { DiskImgType } from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
-import { diskTheme, lightTheme } from "../../styles/colors";
-
-import { ReactComponent as EmptyRegisterDisk } from "../../assets/svg/empty_register_disk.svg";
-import { getLoc } from "../../utils/localStorage";
-import NewDiskCard from "./NewDiskCard";
 
 const NewDiskContent = ({ titleText }: NewDiskProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const [previewList, setPreviewList] = useState<any[]>([]);
+  const [previewList, setPreviewList] = useState<DiskImgType[]>([]);
   const [mainImg, setMainImg] = useState<string>("");
   const [content, setContent] = useState("");
   const [contentStatus, setContentStatus] =
@@ -39,19 +32,21 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    setMainImg(previewList[0]);
+    previewList.length ? setMainImg(previewList[0].imgUrl) : setMainImg("");
   }, [previewList]);
 
-  const { mutate: addDisk, isLoading } = useMutation(postDisk, {
-    onSuccess: (data) => {
-      console.log(data);
+  const { mutate: addDisk } = useMutation(postDisk, {
+    onSuccess: () => {
       setStep("newDisk1");
       queryClient.invalidateQueries(["diskList"]);
-      navigate(`/disk-list/${getLoc("memberId")}`);
+      window.location.replace(`/disk-list/${getLoc("memberId")}`);
     },
-    onError: (err) => {
-      alert("디스크 생성에 실패했습니다.");
-      console.log(err);
+    onError: (err: any) => {
+      err.response.data.ErrorCode === "NOT_SUPPORTED_FILE_TYPE"
+        ? alert(
+            "디스크 이미지는 현재 PNG, JPG, JPEG 확장자만 지원하고 있습니다."
+          )
+        : alert("디스크 생성에 실패했습니다.");
     },
   });
 
@@ -106,7 +101,12 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
         </Button>
         <StSkipBtn>
           {step === "newDiskSignUp2" ? (
-            <Button btnStatus="transparent" clickHandler={() => navigate("/")}>
+            <Button
+              btnStatus="transparent"
+              clickHandler={() =>
+                window.location.replace(`/home/${getLoc("memberId")}`)
+              }
+            >
               <span>나중에 만들기</span>
             </Button>
           ) : (

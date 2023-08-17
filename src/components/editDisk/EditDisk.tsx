@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 
 import DiskCarousel from "../newDisk/DiskCarousel";
+import NewDiskCard from "../newDisk/NewDiskCard";
 import Input from "../elements/Input";
+import Textarea from "../elements/Textarea";
+import Button from "../elements/Button";
 import {
   DISK_CONTENT_MAX_LENGTH,
   DISK_NAME_MAX_LENGTH,
@@ -11,18 +16,13 @@ import {
   RANDOM_DISK_NAME_LIST,
   getRandomName,
 } from "../../utils/getRandomName";
-import { DISK_COLOR_LIST, DiskType } from "../../types/diskTypes";
+import { getLoc } from "../../utils/localStorage";
+import { patchDisk } from "../../api/diskApi";
+import { DISK_COLOR_LIST, DiskImgType, DiskType } from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
 import { ReactComponent as Dice } from "../../assets/svg/dice.svg";
-import NewDiskCard from "../newDisk/NewDiskCard";
-import Textarea from "../elements/Textarea";
-import Button from "../elements/Button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { patchDisk } from "../../api/diskApi";
-import { useNavigate } from "react-router-dom";
-import { getLoc } from "../../utils/localStorage";
 
 interface EditDiskProps {
   data: DiskType;
@@ -34,13 +34,16 @@ export type PatchType = {
 };
 
 const EditDisk = ({ data }: EditDiskProps) => {
+  const [valid, setValid] = useState<boolean>(false);
+  const [updated, setUpdated] = useState<boolean>(false);
   const [diskNum, setDiskNum] = useState<number>(0);
   const [diskName, setDiskName] = useState<string>(RANDOM_DISK_NAME_LIST[0]);
   const [diskNameStatus, setDiskNameStatus] =
     useState<InputStatusType>("default");
   const [files, setFiles] = useState<File[]>([]);
+  const [defaultImgList, setDefaultImgList] = useState<DiskImgType[]>([]);
   const [deleteImgList, setDeleteImgList] = useState<number[]>([]);
-  const [previewList, setPreviewList] = useState<any[]>([]);
+  const [previewList, setPreviewList] = useState<DiskImgType[]>([]);
   const [mainImg, setMainImg] = useState<string>("");
   const [content, setContent] = useState("");
   const [contentStatus, setContentStatus] =
@@ -51,44 +54,62 @@ const EditDisk = ({ data }: EditDiskProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    //   {
-    //     "diskName" : "diskName3",
-    //     "diskColor" : "NEON_ORANGE",
-    //     "isBookmark" : true,
-    //     "deleteImgList" : [1, 3]
-    // }
     setDiskName(data.diskName);
     setDiskNum(DISK_COLOR_LIST.indexOf(data.diskColor));
     setContent(data.content);
     setMainImg(data.image[0].imgUrl);
-    setPreviewList(data.image.map((val) => val.imgUrl));
+    setDefaultImgList(data.image);
+    setPreviewList(data.image);
   }, []);
 
-  const { mutate: editDisk, isLoading } = useMutation(patchDisk, {
-    onSuccess: (data) => {
-      console.log(data);
+  useEffect(() => {
+    // DISKNAME 유효성 검사
+    const diskNameValid = diskName.length ? true : false;
+
+    // IMAGE 유효성 검사
+    const imgIdArr = data.image.map((val) => val.imgId).sort();
+    const deleteAll =
+      JSON.stringify(imgIdArr) === JSON.stringify(deleteImgList.sort());
+    // 삭제한 이미지가 있을 경우 > 추가된 이미지가 있을 경우 : 추가된 이미지가 없을 경우
+    // 삭제한 이미지가 없을 경우 > true
+    const imgValid = deleteImgList.length
+      ? files.length
+        ? true
+        : !deleteAll
+      : true;
+
+    setValid(diskNameValid && imgValid);
+  }, [diskName, deleteImgList, files]);
+
+  useEffect(() => {
+    const imageUpdated =
+      JSON.stringify(defaultImgList) !== JSON.stringify(previewList);
+
+    data.content === content &&
+    data.diskColor === DISK_COLOR_LIST[diskNum] &&
+    data.diskName === diskName &&
+    !imageUpdated
+      ? setUpdated(false)
+      : setUpdated(true);
+  }, [diskName, content, diskNum, previewList]);
+
+  const { mutate: editDisk } = useMutation(patchDisk, {
+    onSuccess: () => {
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["diskById"]);
       navigate(`/disk-list/${getLoc("memberId")}`);
     },
-    onError: (err) => {
-      alert("디스크 편집에 실패했습니다.");
-      console.log(err);
-    },
+    onError: () => alert("디스크 편집에 실패했습니다."),
   });
 
   const handleSubmit = async () => {
-    console.log(files);
-    console.log(diskName, content, DISK_COLOR_LIST[diskNum], deleteImgList);
     const frm = new FormData();
     const newData = {
       diskName,
       content,
       diskColor: DISK_COLOR_LIST[diskNum],
       isPrivate: false,
-      deleteImgList: [],
-      isBookmark: false,
-      // isBookmark: data.isBookmark,
+      deleteImgList,
     };
     files.map((file) => frm.append("file", file));
     frm.append(
@@ -97,7 +118,6 @@ const EditDisk = ({ data }: EditDiskProps) => {
         type: "application/json",
       })
     );
-    // editDisk(frm);
     editDisk({ diskId: data.diskId, frm: frm });
   };
 
@@ -130,6 +150,7 @@ const EditDisk = ({ data }: EditDiskProps) => {
         <NewDiskCard
           isNew={false}
           disk={data}
+          diskColor={DISK_COLOR_LIST[diskNum]}
           previewList={previewList}
           mainImg={mainImg}
           files={files}
@@ -137,6 +158,7 @@ const EditDisk = ({ data }: EditDiskProps) => {
           setPreviewList={setPreviewList}
           setMainImg={setMainImg}
           setDeleteImgList={setDeleteImgList}
+          defaultImgList={defaultImgList}
         />
         <StContent>
           <Textarea
@@ -155,10 +177,9 @@ const EditDisk = ({ data }: EditDiskProps) => {
       </StDiskContent>
       <StBtnContainer>
         <Button
-          btnStatus={files.length ? "primary01" : "disabled"}
+          btnStatus={valid && updated ? "primary01" : "disabled"}
           clickHandler={() => handleSubmit()}
-          disabled={false}
-          // disabled={!files.length}
+          disabled={!(valid && updated)}
         >
           <span>디스크 굽기</span>
         </Button>
@@ -201,6 +222,14 @@ const StRandomBtn = styled.button`
   display: flex;
   align-items: center;
   gap: ${calcRem(4)};
+
+  span {
+    color: ${({ theme }) => theme.colors.text02};
+    line-height: ${fontTheme.body02.lineHeight};
+    letter-spacing: ${fontTheme.body02.letterSpacing};
+    font-size: ${fontTheme.body02.fontSize};
+    font-weight: ${fontTheme.body02.fontWeight};
+  }
 `;
 
 const StDiskContent = styled.div`

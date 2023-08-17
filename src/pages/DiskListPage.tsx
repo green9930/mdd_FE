@@ -14,6 +14,7 @@ import { deleteToastState, pageState } from "../state/atom";
 import { DiskListType, DiskType } from "../types/diskTypes";
 
 export interface DiskListProps {
+  isMine: boolean;
   data: DiskType[];
 }
 
@@ -33,7 +34,13 @@ const DiskListPage = () => {
       onSuccess: (data: DiskListType) => {
         console.log("SUCCESS", data);
       },
-      onError: (err) => console.log("GET DISK LIST FAIL", err),
+      onError: (err: any) => {
+        if (err.response.data.ErrorCode === "NOT_FOUND_MEMBER") {
+          window.alert(err.response.data.errorMessage);
+          window.location.replace("/member_not_found");
+        }
+        console.log("GET DISK LIST FAIL", err);
+      },
       staleTime: Infinity,
     }
   );
@@ -56,6 +63,7 @@ const DiskListPage = () => {
       {!isLoading && isSuccess ? (
         <>
           <DiskHeader
+            param={paramsId as string}
             isMyDisk={data.isMine}
             titleText={
               data.isMine
@@ -64,12 +72,12 @@ const DiskListPage = () => {
             }
           />
           {page === "diskListFeed" ? (
-            <DiskListFeed data={data.diskList} />
+            <DiskListFeed isMine={data.isMine} data={data.diskList} />
           ) : (
             <></>
           )}
           {page === "diskListGallery" ? (
-            <DiskListGallery data={data.diskList} />
+            <DiskListGallery isMine={data.isMine} data={data.diskList} />
           ) : (
             <></>
           )}

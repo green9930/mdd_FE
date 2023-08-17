@@ -41,10 +41,10 @@ export type DiskListType = {
 };
 
 export type DiskImgType = {
-  createdAt: string;
-  imgId: number;
+  createdAt?: string;
+  imgId: number | "new";
   imgUrl: string;
-  modifiedAt: string;
+  modifiedAt?: string;
 };
 
 export const DISK_BTN_LIST = [

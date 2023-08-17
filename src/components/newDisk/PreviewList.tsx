@@ -1,16 +1,21 @@
 import { ChangeEvent } from "react";
 import styled from "styled-components";
 
+import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
+import { DiskImgType } from "../../types/diskTypes";
 import { calcRem } from "../../styles/theme";
 
 import { ReactComponent as GalleryAdd } from "../../assets/svg/gallery_add.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
-import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
 
 const PreviewList = (
-  list: any[],
+  list: DiskImgType[],
   handleAddImg: (e: ChangeEvent<HTMLInputElement>) => Promise<void>,
-  handleDeleteImg: (e: React.MouseEvent, target: number) => void,
+  handleDeleteImg: (
+    e: React.MouseEvent,
+    target: number,
+    targetUrl: string
+  ) => void,
   handleMainImg: (target: number) => void
 ) => {
   const arr = [];
@@ -19,10 +24,10 @@ const PreviewList = (
       <li key={`${i}-${list[i]}`}>
         {list[i] ? (
           <StPreview onClick={() => handleMainImg(i)}>
-            <button onClick={(e) => handleDeleteImg(e, i)}>
+            <button onClick={(e) => handleDeleteImg(e, i, list[i].imgUrl)}>
               <CloseCircle />
             </button>
-            <img src={list[i]} alt={`preview-${i}`} />
+            <img src={list[i].imgUrl} alt={`preview-${i}`} />
           </StPreview>
         ) : (
           <StAddImage htmlFor="disk-img">
