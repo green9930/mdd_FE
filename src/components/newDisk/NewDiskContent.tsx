@@ -39,9 +39,15 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
     onSuccess: () => {
       setStep("newDisk1");
       queryClient.invalidateQueries(["diskList"]);
-      navigate(`/disk-list/${getLoc("memberId")}`);
+      window.location.replace(`/disk-list/${getLoc("memberId")}`);
     },
-    onError: () => alert("디스크 생성에 실패했습니다."),
+    onError: (err: any) => {
+      err.response.data.ErrorCode === "NOT_SUPPORTED_FILE_TYPE"
+        ? alert(
+            "디스크 이미지는 현재 PNG, JPG, JPEG 확장자만 지원하고 있습니다."
+          )
+        : alert("디스크 생성에 실패했습니다.");
+    },
   });
 
   const handleSubmit = async () => {
@@ -95,7 +101,12 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
         </Button>
         <StSkipBtn>
           {step === "newDiskSignUp2" ? (
-            <Button btnStatus="transparent" clickHandler={() => navigate("/")}>
+            <Button
+              btnStatus="transparent"
+              clickHandler={() =>
+                window.location.replace(`/home/${getLoc("memberId")}`)
+              }
+            >
               <span>나중에 만들기</span>
             </Button>
           ) : (

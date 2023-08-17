@@ -222,6 +222,14 @@ const StRandomBtn = styled.button`
   display: flex;
   align-items: center;
   gap: ${calcRem(4)};
+
+  span {
+    color: ${({ theme }) => theme.colors.text02};
+    line-height: ${fontTheme.body02.lineHeight};
+    letter-spacing: ${fontTheme.body02.letterSpacing};
+    font-size: ${fontTheme.body02.fontSize};
+    font-weight: ${fontTheme.body02.fontWeight};
+  }
 `;
 
 const StDiskContent = styled.div`

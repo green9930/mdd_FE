@@ -174,7 +174,7 @@ const StDiskName = styled.h3<{ diskColor: DiskColorType }>`
 
 const StPreviewContainer = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   width: 100%;
   aspect-ratio: 1;
@@ -195,7 +195,6 @@ const StEmptyContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${calcRem(16)};
-  padding-top: ${calcRem(100)};
   cursor: default;
 
   span {

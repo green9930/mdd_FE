@@ -19,6 +19,7 @@ import {
   RANDOM_DISK_NAME_LIST,
   getRandomName,
 } from "../../utils/getRandomName";
+import { getLoc } from "../../utils/localStorage";
 
 const NewDiskCover = ({ titleText }: NewDiskProps) => {
   const [diskNum, setDiskNum] = useState<number>(0);
@@ -79,7 +80,12 @@ const NewDiskCover = ({ titleText }: NewDiskProps) => {
         </Button>
         <StSkipBtn>
           {step === "newDiskSignUp1" ? (
-            <Button btnStatus="transparent" clickHandler={() => navigate("/")}>
+            <Button
+              btnStatus="transparent"
+              clickHandler={() =>
+                window.location.replace(`/home/${getLoc("memberId")}`)
+              }
+            >
               <span>나중에 만들기</span>
             </Button>
           ) : (
@@ -130,6 +136,14 @@ const StRandomBtn = styled.button`
   display: flex;
   align-items: center;
   gap: ${calcRem(4)};
+
+  span {
+    color: ${({ theme }) => theme.colors.text02};
+    line-height: ${fontTheme.body02.lineHeight};
+    letter-spacing: ${fontTheme.body02.letterSpacing};
+    font-size: ${fontTheme.body02.fontSize};
+    font-weight: ${fontTheme.body02.fontWeight};
+  }
 `;
 
 const StBtnContainer = styled.div`
