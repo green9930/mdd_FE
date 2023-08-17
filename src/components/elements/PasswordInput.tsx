@@ -20,6 +20,7 @@ interface PasswordInputProps extends React.HTMLAttributes<HTMLDivElement> {
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
   children?: React.ReactNode;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const PasswordInput = ({
@@ -34,6 +35,7 @@ const PasswordInput = ({
   jc = "space-between",
   TopChildren,
   children,
+  onKeyDown = () => {},
 }: PasswordInputProps) => {
   const [isMasked, setIsMasked] = useState(true);
 
@@ -64,6 +66,7 @@ const PasswordInput = ({
           onBlur={() => setStatus("default")}
           maxLength={maxLength}
           inputStatus={status}
+          onKeyDown={onKeyDown}
         />
         <StEye onClick={handleMaskToggle} src={isMasked ? EyeSlash : Eye} />
       </StInputContainer>
