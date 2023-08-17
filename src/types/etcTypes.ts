@@ -12,7 +12,8 @@ export type DiskPageType =
   | "diskListGallery"
   | "editDisk"
   | "newDisk"
-  | "settings";
+  | "settings"
+  | "home";
 
 export type NewDiskStepType =
   | "newDiskSignUp1"

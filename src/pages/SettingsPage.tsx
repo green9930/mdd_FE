@@ -7,10 +7,10 @@ import Settings from "../components/settings/Settings";
 import { pageState } from "../state/atom";
 
 const SettingsPage = () => {
-  const setDiskPage = useSetRecoilState(pageState);
+  const setPage = useSetRecoilState(pageState);
 
   useEffect(() => {
-    setDiskPage("settings");
+    setPage("settings");
   }, []);
 
   return (
