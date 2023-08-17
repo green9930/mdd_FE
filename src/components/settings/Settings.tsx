@@ -1,21 +1,24 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import ModalLayout from "../layout/ModalLayout";
 import IconConverter from "./IconConverter";
 import Button from "../elements/Button";
-
-import { clearLoc, getLoc, setLoc } from "../../utils/localStorage";
+import { getLoc, removeLoc, setLoc } from "../../utils/localStorage";
 import {
   lightThemeState,
   loginState,
   logoutToastState,
+  routeState,
+  unregisterToastState,
 } from "../../state/atom";
+import { deleteUser } from "../../api/memberApi";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 
 import DiskMask3 from "../../assets/img/disk_mask_3.png";
-import { useNavigate } from "react-router-dom";
 
 export type SettingIconType = "letter" | "heart" | "candles" | "logout";
 
@@ -52,10 +55,27 @@ const Settings = () => {
   const [openUnregisterModal, setOpenUnregisterModal] = useState(false);
   const [isLightTheme, setIsLightTheme] = useRecoilState(lightThemeState);
 
-  const setIsLogin = useSetRecoilState(loginState);
+  const setRoute = useSetRecoilState(routeState);
+  const [isLogin, setIsLogin] = useRecoilState(loginState);
   const setOpenLogoutToast = useSetRecoilState(logoutToastState);
+  const setOpenUnregisterToast = useSetRecoilState(unregisterToastState);
 
   const navigate = useNavigate();
+
+  const { mutate: handleUnregister } = useMutation(deleteUser, {
+    onSuccess: () => {
+      removeLoc("accessToken");
+      removeLoc("memberId");
+      removeLoc("nickname");
+      removeLoc("refreshToken");
+      removeLoc("memberName");
+      setRoute(true);
+      setIsLogin(false);
+      setOpenUnregisterToast(true);
+      navigate("/");
+    },
+    onError: (err) => console.log(err),
+  });
 
   const clickHandler = (name: SettingIconType) => {
     switch (name) {
@@ -73,7 +93,12 @@ const Settings = () => {
         );
         return;
       case "logout":
-        clearLoc();
+        removeLoc("accessToken");
+        removeLoc("memberId");
+        removeLoc("nickname");
+        removeLoc("refreshToken");
+        removeLoc("memberName");
+        setRoute(true);
         setIsLogin(false);
         setOpenLogoutToast(true);
         navigate("/");
@@ -83,17 +108,12 @@ const Settings = () => {
     }
   };
 
-  const handleUnregister = () => {
-    console.log("UNREGISTER");
-    setOpenUnregisterModal(false);
-  };
-
   return (
     <StContainer>
       <StList>
         {SETTINGS_LIST.map((val) => {
           const { title, content, icon } = val;
-          if (!getLoc("accessToken") && icon === "logout") {
+          if (!isLogin && icon === "logout") {
             return;
           }
           return (
@@ -115,7 +135,7 @@ const Settings = () => {
           );
         })}
       </StList>
-      {getLoc("accessToken") ? (
+      {isLogin ? (
         <StUnregister onClick={() => setOpenUnregisterModal(true)}>
           <span>회원탈퇴</span>
         </StUnregister>
@@ -138,10 +158,7 @@ const Settings = () => {
               </span>
             </StUnregisterModal>
             <StBtnContainer>
-              <Button
-                btnStatus="unregister"
-                clickHandler={() => handleUnregister()}
-              >
+              <Button btnStatus="unregister" clickHandler={handleUnregister}>
                 <span>탈퇴하기</span>
               </Button>
               <Button

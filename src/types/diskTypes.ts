@@ -32,6 +32,14 @@ export type DiskType = {
   modifiedAt: string;
 };
 
+export type DiskListType = {
+  diskList: DiskType[];
+  isMine: boolean;
+  memberId: number;
+  memberName: string;
+  nickname: string;
+};
+
 export type DiskImgType = {
   createdAt: string;
   imgId: number;

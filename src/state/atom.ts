@@ -3,15 +3,26 @@ import { AuthData } from "../api/memberApi";
 import { NewDiskType } from "../types/diskTypes";
 import { DiskPageType, NewDiskStepType } from "../types/etcTypes";
 
+// 라이트모드 | 다크모드
+export const lightThemeState = atom<boolean>({
+  key: "lightThemeState",
+  default: true,
+});
+
+// Route rerendering
+export const routeState = atom<boolean>({
+  key: "routeState",
+  default: true,
+});
+
 export const loginState = atom<boolean>({
   key: "loginState",
   default: false,
 });
 
-// 라이트모드 | 다크모드
-export const lightThemeState = atom<boolean>({
-  key: "lightThemeState",
-  default: true,
+export const signUpState = atom<boolean>({
+  key: "signUpState",
+  default: false,
 });
 
 export const signUpData = atom<AuthData>({
@@ -50,5 +61,10 @@ export const deleteToastState = atom<boolean>({
 
 export const logoutToastState = atom<boolean>({
   key: "logoutToastState",
+  default: false,
+});
+
+export const unregisterToastState = atom<boolean>({
+  key: "unregisterToastState",
   default: false,
 });

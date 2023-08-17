@@ -1,4 +1,10 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
+import React, {
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+  KeyboardEvent,
+} from "react";
 import styled from "styled-components";
 import { fontTheme } from "../../styles/theme";
 import { calcRem } from "../../styles/theme";
@@ -80,6 +86,23 @@ const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
     result ? setDupliceted(true) : setDupliceted(false);
   };
 
+  const onClickNextStep = () => {
+    if (checkValidation()) {
+      setData({
+        memberName: value,
+        password: "",
+      });
+      setStep(2);
+      setPercent(50);
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      onClickNextStep();
+    }
+  };
+
   return (
     <StContainer>
       <StTop>
@@ -93,6 +116,7 @@ const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
           maxLength={20}
           placeholder="아이디를 입력해주세요"
           inputType="memberName"
+          onKeyDown={handleKeyDown}
         ></Input>
         <StValidContainer>
           {VALIDATION.map((item) => (
@@ -117,16 +141,7 @@ const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
         </StCautionText>
         <Button
           btnStatus={checkValidation() ? "primary01" : "disabled"}
-          clickHandler={() => {
-            if (checkValidation()) {
-              setData({
-                memberName: value,
-                password: "",
-              });
-              setStep(2);
-              setPercent(50);
-            }
-          }}
+          clickHandler={onClickNextStep}
         >
           <span>다음</span>
         </Button>

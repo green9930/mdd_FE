@@ -19,6 +19,7 @@ interface InputProps extends React.HTMLAttributes<HTMLDivElement> {
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
   inputType?: string;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const Input = ({
@@ -35,6 +36,7 @@ const Input = ({
   jc = "space-between",
   TopChildren,
   inputType = "",
+  onKeyDown = () => {},
 }: InputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (inputType === "memberName" || inputType === "nickname") {
@@ -60,6 +62,7 @@ const Input = ({
           onBlur={() => setStatus("default")}
           maxLength={maxLength}
           inputStatus={status}
+          onKeyDown={onKeyDown}
         />
         {maxLength && maxLengthView && (
           <StTextLength>

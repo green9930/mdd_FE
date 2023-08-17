@@ -94,3 +94,12 @@ export const postUserLike = async (memberId: string) => {
     throw err;
   }
 };
+
+export const deleteUser = async () => {
+  try {
+    const res = await tokenInstance.delete(`/api/v1/members`);
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};

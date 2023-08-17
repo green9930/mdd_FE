@@ -1,14 +1,17 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
-import styled, { css } from "styled-components";
 import { useNavigate } from "react-router-dom";
-
-import { isLightThemeType } from "../../types/etcTypes";
 import { useMutation } from "@tanstack/react-query";
-import { lightThemeState, signUpData } from "../../state/atom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import styled, { css } from "styled-components";
 
+import {
+  lightThemeState,
+  routeState,
+  signUpData,
+  signUpState,
+} from "../../state/atom";
 import { postJoin } from "../../api/memberApi";
-
+import { isLightThemeType } from "../../types/etcTypes";
 import { calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
@@ -33,11 +36,13 @@ const SignUpPassword = ({
   setStep,
   setPercent,
 }: SignUpPasswordProps) => {
-  const isLightTheme = useRecoilValue(lightThemeState);
   const [error, setError] = useState(false);
   const [passwordIndex, setPasswordIndex] = useState(0);
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
   const [data, setData] = useRecoilState(signUpData);
+  const setIsSignUp = useSetRecoilState(signUpState);
+  const setRoute = useSetRecoilState(routeState);
+  const isLightTheme = useRecoilValue(lightThemeState);
 
   const navigate = useNavigate();
 
@@ -61,6 +66,8 @@ const SignUpPassword = ({
         setStep(4);
         setPercent(100);
         setTimeout(() => {
+          setIsSignUp(true);
+          setRoute(true);
           navigate("/new-disk", { state: "signUp" });
         }, 800);
       },
