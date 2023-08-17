@@ -9,6 +9,7 @@ import Guide from "../components/Guide";
 import ToastModal from "../components/elements/ToastModal";
 import { logoutToastState, unregisterToastState } from "../state/atom";
 import { calcRem, MOBILE_MAX_W } from "../styles/theme";
+import { lightTheme } from "../styles/colors";
 
 import LogoMDDSimple from "../assets/img/logo_mdd_simple.png";
 import MonitorEmpty from "../assets/img/monitor_empty.png";
@@ -225,7 +226,7 @@ const StCursor = styled.span`
   display: inline-block;
   animation: ${blink} 1s step-end infinite;
   height: 17px;
-  border-right: 2px solid ${({ theme }) => theme.colors.text01};
+  border-right: 2px solid ${lightTheme.colors.text01};
   position: relative;
   right: 1px;
 `;
