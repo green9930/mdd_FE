@@ -63,11 +63,11 @@ const SignUpPassword = ({
     () => postJoin(data),
     {
       onSuccess(res) {
-        setIsSignUp(true);
-        setRoute(true);
         setStep(4);
         setPercent(100);
         setTimeout(() => {
+          setIsSignUp(true);
+          setRoute(true);
           navigate("/new-disk", { state: "signUp" });
         }, 800);
       },
