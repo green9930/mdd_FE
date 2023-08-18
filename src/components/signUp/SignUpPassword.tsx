@@ -61,27 +61,24 @@ const SignUpPassword = ({
     }
   }, [step]);
 
-  const { mutate: mutationSignUp, isLoading: mutationIsLoading } = useMutation(
-    () => postJoin(data),
-    {
-      onSuccess(res) {
-        setStep(4);
-        setPercent(100);
-        setData({
-          memberName: "",
-          password: "",
-        });
-        setTimeout(() => {
-          setIsSignUp(true);
-          navigate("/new-disk", { state: "signUp" });
-        }, 800);
-        setTimeout(() => {
-          setRoute(true);
-          setIsLogin(true);
-        }, 1200);
-      },
-    }
-  );
+  const { mutate: mutationSignUp } = useMutation(() => postJoin(data), {
+    onSuccess(res) {
+      setStep(4);
+      setPercent(100);
+      setData({
+        memberName: "",
+        password: "",
+      });
+      setTimeout(() => {
+        setIsSignUp(true);
+        navigate("/new-disk", { state: "signUp" });
+      }, 800);
+      setTimeout(() => {
+        setRoute(true);
+        setIsLogin(true);
+      }, 1200);
+    },
+  });
 
   const deletePassword = () => {
     if (passwordIndex !== 0) {

@@ -101,6 +101,7 @@ const HomePage = () => {
         </StMonitorContainer>
         <StButton>
           <Button
+            className="guide-modal"
             btnStatus="primary02"
             clickHandler={() => {
               setModalOpen(true);

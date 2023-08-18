@@ -18,6 +18,7 @@ import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
 import ToastModal from "../components/elements/ToastModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -99,6 +100,7 @@ const LoginPage = () => {
 
   return (
     <AppLayout>
+      {mutationIsLoading && <LoadingSpinner />}
       <StContainer>
         <StMonitor src={MonitorFilled} />
         <Input
