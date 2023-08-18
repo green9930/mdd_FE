@@ -56,29 +56,39 @@ const SignUpPassword = ({
   }, [error]);
 
   useEffect(() => {
+    return () => {
+      setPassword(["", "", "", "", "", ""]);
+      setPasswordIndex(0);
+    };
+  }, [step]);
+
+  useEffect(() => {
     if (step === 2) {
       setError(false);
     }
   }, [step]);
 
-  const { mutate: mutationSignUp } = useMutation(() => postJoin(data), {
-    onSuccess(res) {
-      setStep(4);
-      setPercent(100);
-      setData({
-        memberName: "",
-        password: "",
-      });
-      setTimeout(() => {
-        setIsSignUp(true);
-        navigate("/new-disk", { state: "signUp" });
-      }, 800);
-      setTimeout(() => {
-        setRoute(true);
-        setIsLogin(true);
-      }, 1200);
-    },
-  });
+  const { mutate: mutationSignUp, isLoading } = useMutation(
+    () => postJoin(data),
+    {
+      onSuccess(res) {
+        setStep(4);
+        setPercent(100);
+        setData({
+          memberName: "",
+          password: "",
+        });
+        setTimeout(() => {
+          setIsSignUp(true);
+          navigate("/new-disk", { state: "signUp" });
+        }, 800);
+        setTimeout(() => {
+          setRoute(true);
+          setIsLogin(true);
+        }, 1200);
+      },
+    }
+  );
 
   const deletePassword = () => {
     if (passwordIndex !== 0) {
@@ -86,6 +96,11 @@ const SignUpPassword = ({
       passwordCopy[passwordIndex - 1] = "";
       setPassword(passwordCopy);
       setPasswordIndex(passwordIndex - 1);
+    }
+    if (error) {
+      setError(false);
+      setPasswordIndex(0);
+      setPassword(["", "", "", "", "", ""]);
     }
   };
 
@@ -145,6 +160,7 @@ const SignUpPassword = ({
       <StNumberGrid>
         {NUMBER.map((item, index) => (
           <StBottom
+            disabled={isLoading}
             show={item === ""}
             onClick={() => passwordInput(item)}
             key={`${item}_${index}`}
@@ -207,7 +223,7 @@ const StNumberGrid = styled.div`
   gap: ${calcRem(8)};
 `;
 
-const StBottom = styled.div<ButtonStyleProps>`
+const StBottom = styled.button<ButtonStyleProps>`
   width: 48px;
   height: 48px;
   display: flex;
