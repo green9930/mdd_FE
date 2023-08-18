@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 import Loading1 from "../assets/img/loading_1.png";
 import Loading2 from "../assets/img/loading_2.png";
 import Loading3 from "../assets/img/loading_3.png";
+
 import { fontTheme } from "../styles/theme";
 
 const LoadingSpinner = () => {
@@ -17,22 +18,22 @@ const LoadingSpinner = () => {
   }, [iconIndex]);
 
   return (
-    <SpinnerWrapper>
-      <SpinnerBackground>
-        <SpinnerIcon
+    <StSpinnerWrapper>
+      <StSpinnerBackground>
+        <StSpinnerIcon
           src={
             iconIndex === 0 ? Loading1 : iconIndex === 1 ? Loading2 : Loading3
           }
         />
         <span>디스크 불러오는 중</span>
-      </SpinnerBackground>
-    </SpinnerWrapper>
+      </StSpinnerBackground>
+    </StSpinnerWrapper>
   );
 };
 
 export default LoadingSpinner;
 
-const SpinnerWrapper = styled.div`
+const StSpinnerWrapper = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -50,7 +51,7 @@ const SpinnerWrapper = styled.div`
   }
 `;
 
-const SpinnerBackground = styled.div`
+const StSpinnerBackground = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +64,7 @@ const SpinnerBackground = styled.div`
   background: var(--transparent-02, rgba(15, 11, 33, 0.5));
 `;
 
-const SpinnerIcon = styled.img`
+const StSpinnerIcon = styled.img`
   width: 120px;
   height: 96px;
 `;
