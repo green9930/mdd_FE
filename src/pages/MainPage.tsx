@@ -276,6 +276,7 @@ const MainPage = () => {
                       <span>전체 디깅디스크</span>
                     </div>
                     <div
+                      className="guide-modal"
                       onClick={() => {
                         setModalOpen(true);
                       }}

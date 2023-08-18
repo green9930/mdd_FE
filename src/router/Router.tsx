@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { Navigate, Route, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import HomePage from "../pages/HomePage";
 import MainPage from "../pages/MainPage";
@@ -13,8 +19,11 @@ import SettingsPage from "../pages/SettingsPage";
 import { getLoc } from "../utils/localStorage";
 import { loginState, routeState, signUpState } from "../state/atom";
 import NotFound from "../pages/NotFound";
+import { initGA, logPageView } from "../utils/googleAnalytics";
 
 const Router = () => {
+  let location = useLocation();
+
   const [loading, setLoading] = useRecoilState(routeState);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
   const [isSignUp, setIsSignUp] = useRecoilState(signUpState);
@@ -31,6 +40,15 @@ const Router = () => {
     }
     setLoading(false);
   }, [loading]);
+
+  useEffect(() => {
+    initGA();
+    logPageView();
+
+    return () => {
+      logPageView();
+    };
+  }, [location]);
 
   return (
     <>
