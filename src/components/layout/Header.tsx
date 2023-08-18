@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
-import { lightTheme } from "../../styles/colors";
+import { darkTheme, lightTheme } from "../../styles/colors";
 
 import LogoMDDSimple from "../../assets/img/logo_mdd_simple.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
@@ -27,6 +27,18 @@ const Header = ({
 
   const accessToken = getLoc("accessToken");
   const memberId = getLoc("memberId");
+
+  useEffect(() => {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute(
+        "content",
+        getLoc("theme") === "lightMode"
+          ? `${lightTheme.colors.primary02}`
+          : `${darkTheme.colors.primary02}`
+      );
+    }
+  }, []);
 
   const handleGoHome = () => {
     if (accessToken) {
@@ -75,8 +87,8 @@ const StHeader = styled.div<{ jc: string }>`
   height: 62px;
   padding: 0 32px;
   background-color: ${({ theme }) => theme.colors.primary02};
-  position: relative;
   border-bottom: 2px solid ${({ theme }) => theme.colors.primary01};
+  position: relative;
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
     padding: 0 16px;

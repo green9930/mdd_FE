@@ -123,18 +123,19 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       const likeViewCopy = [...likeView];
       const newKey = Date.now();
       likeViewCopy.push(
-        <LikeIcon key={newKey}>
-          <Like
-            fill={
-              isMine
-                ? diskColor === "PURPLE"
-                  ? lightTheme.colors.white
-                  : lightTheme.colors.text01
-                : diskColor === "NEON_ORANGE"
-                ? lightTheme.colors.text01
-                : lightTheme.colors.white
-            }
-          />
+        <LikeIcon
+          fillColor={
+            isMine
+              ? diskColor === "PURPLE"
+                ? lightTheme.colors.white
+                : lightTheme.colors.text01
+              : diskColor === "NEON_ORANGE"
+              ? lightTheme.colors.text01
+              : lightTheme.colors.white
+          }
+          key={newKey}
+        >
+          <Like />
         </LikeIcon>
       );
       setLikeView(likeViewCopy);
@@ -377,7 +378,7 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
       padding: ${calcRem(8)} ${calcRem(16)};
       background-color: ${diskTheme[diskColor].border}};
       border-radius: ${calcRem(12)};
-    `};
+    `}
 
   svg {
     width: ${({ isMine }) => (isMine ? calcRem(16) : calcRem(24))};
@@ -491,9 +492,10 @@ const StIconContainer = styled.div<{
   }
 `;
 
-const floatAnimation = keyframes`
+const floatAnimation = (fillColor: string) => keyframes`
   0% {
     opacity: 1;
+    fill: ${fillColor};
     transform: translateY(0px);
   }
   50% {
@@ -501,15 +503,16 @@ const floatAnimation = keyframes`
   }
   100% {
     opacity: 0;
+    fill: transparent;
     transform: translateY(-20px);
   }
 `;
 
-const LikeIcon = styled.div`
+const LikeIcon = styled.div<{ fillColor: string }>`
   position: absolute;
 
   svg {
     cursor: pointer;
-    animation: ${floatAnimation} 1s ease-in-out;
+    animation: ${({ fillColor }) => floatAnimation(fillColor)} 1s ease-in-out;
   }
 `;

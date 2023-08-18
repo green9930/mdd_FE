@@ -6,6 +6,7 @@ import { RecoilRoot } from "recoil";
 
 import App from "./App";
 import GlobalStyle from "./styles/GlobalStyle";
+import ScrollToTop from "./components/elements/ScrollToTop";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,6 +15,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <RecoilRoot>
     <BrowserRouter>
+      <ScrollToTop />
       <GlobalStyle />
       <App />
     </BrowserRouter>

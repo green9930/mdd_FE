@@ -19,6 +19,17 @@ function App() {
 
   useEffect(() => {
     const currentTheme = getLoc("theme");
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute(
+        "content",
+        getLoc("theme") === "lightMode"
+          ? `${lightTheme.colors.bg}`
+          : `${darkTheme.colors.bg}`
+      ); // 원하는 색상으로 변경
+    }
+
     if (currentTheme) {
       setIsLightTheme(currentTheme === "lightMode");
       document.body.style.backgroundColor =

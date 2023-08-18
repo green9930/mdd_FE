@@ -149,8 +149,8 @@ const StHeader = styled.div<{ jc: string }>`
   z-index: 55;
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
-    padding: 0 16px;
     width: 100%;
+    padding: 0 16px;
   }
 
   svg {
