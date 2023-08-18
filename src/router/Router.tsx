@@ -42,12 +42,7 @@ const Router = () => {
   }, [loading]);
 
   useEffect(() => {
-    initGA();
     logPageView();
-
-    return () => {
-      logPageView();
-    };
   }, [location]);
 
   return (

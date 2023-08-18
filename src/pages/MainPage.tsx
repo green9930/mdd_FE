@@ -566,7 +566,7 @@ const StMoreText = styled.span`
 const StDiskBox = styled.div`
   cursor: pointer;
   border-radius: 8px;
-  padding: ${calcRem(8)} ${calcRem(4)};
+  padding: ${calcRem(8)};
   width: 100%;
   height: auto;
   background-color: ${({ theme }) => theme.colors.bg};
