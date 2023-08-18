@@ -56,12 +56,19 @@ const SignUpPassword = ({
   }, [error]);
 
   useEffect(() => {
+    return () => {
+      setPassword(["", "", "", "", "", ""]);
+      setPasswordIndex(0);
+    };
+  }, [step]);
+
+  useEffect(() => {
     if (step === 2) {
       setError(false);
     }
   }, [step]);
 
-  const { mutate: mutationSignUp, isLoading: mutationIsLoading } = useMutation(
+  const { mutate: mutationSignUp, isLoading } = useMutation(
     () => postJoin(data),
     {
       onSuccess(res) {
@@ -89,6 +96,11 @@ const SignUpPassword = ({
       passwordCopy[passwordIndex - 1] = "";
       setPassword(passwordCopy);
       setPasswordIndex(passwordIndex - 1);
+    }
+    if (error) {
+      setError(false);
+      setPasswordIndex(0);
+      setPassword(["", "", "", "", "", ""]);
     }
   };
 
@@ -148,6 +160,7 @@ const SignUpPassword = ({
       <StNumberGrid>
         {NUMBER.map((item, index) => (
           <StBottom
+            disabled={isLoading}
             show={item === ""}
             onClick={() => passwordInput(item)}
             key={`${item}_${index}`}
@@ -210,7 +223,7 @@ const StNumberGrid = styled.div`
   gap: ${calcRem(8)};
 `;
 
-const StBottom = styled.div<ButtonStyleProps>`
+const StBottom = styled.button<ButtonStyleProps>`
   width: 48px;
   height: 48px;
   display: flex;

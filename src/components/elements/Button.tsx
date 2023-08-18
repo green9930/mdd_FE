@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+
+import { lightThemeState } from "../../state/atom";
 import { BtnStatusType } from "../../types/etcTypes";
 import { calcRem, fontTheme } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   btnStatus: BtnStatusType;
@@ -16,13 +20,17 @@ const Button = ({
   disabled = false,
   children,
 }: ButtonProps) => {
+  const [isLightTheme, setIsLightTheme] = useRecoilState(lightThemeState);
+
   return (
     <StButton
       btnStatus={btnStatus}
       onClick={() => clickHandler()}
       disabled={disabled}
     >
-      <StContent btnStatus={btnStatus}>{children}</StContent>
+      <StContent isLightTheme={isLightTheme} btnStatus={btnStatus}>
+        {children}
+      </StContent>
     </StButton>
   );
 };
@@ -57,7 +65,10 @@ const StButton = styled.button<{ btnStatus: BtnStatusType }>`
     btnStatus === "disabled" ? "not-allowed" : "pointer"};
 `;
 
-const StContent = styled.div<{ btnStatus: BtnStatusType }>`
+const StContent = styled.div<{
+  isLightTheme: boolean;
+  btnStatus: BtnStatusType;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,7 +82,8 @@ const StContent = styled.div<{ btnStatus: BtnStatusType }>`
         case "primary02":
           return theme.colors.white;
         case "disabled":
-          return theme.colors.primary02;
+          return lightTheme.colors.primary02;
+        // return theme.colors.primary02;
         case "unregister":
           return theme.colors.primary01;
         case "transparent":

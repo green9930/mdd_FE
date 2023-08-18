@@ -208,7 +208,7 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
           status={introduceStatus}
           setStatus={setIntroduceStatus}
           maxLength={INTRODUCE_MAX_LENGTH}
-          placeholder="할 말이 없다면 MBTI 소개는 어때요?...ㅋㅋ"
+          placeholder="MBTI 소개는 어때요?"
           jc={"flex-start"}
           TopChildren={<StOptionText>선택사항</StOptionText>}
           isMultiLine={false}

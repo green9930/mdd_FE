@@ -17,7 +17,7 @@ import { StaleWhileRevalidate } from "workbox-strategies";
 declare const self: ServiceWorkerGlobalScope;
 
 // VERSION UPDATE
-const CACHE_VERSION = "1.0";
+const CACHE_VERSION = "1.0.1";
 
 // clientsClaim();
 

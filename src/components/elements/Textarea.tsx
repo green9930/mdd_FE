@@ -1,4 +1,10 @@
-import React, { ChangeEvent, Dispatch, SetStateAction, useRef } from "react";
+import React, {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+} from "react";
 import styled from "styled-components";
 
 import { InputStatusType } from "../../types/etcTypes";
@@ -33,10 +39,7 @@ const Textarea = ({
 }: TextareaProps) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleTextarea = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value.substring(0, maxLength);
-    setValue(text);
-
+  useEffect(() => {
     if (contentRef.current) {
       contentRef.current.style.height = "auto";
       if (isMultiLine) {
@@ -51,6 +54,11 @@ const Textarea = ({
             : `${contentRef.current.scrollHeight}px`;
       }
     }
+  }, [value]);
+
+  const handleTextarea = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value.substring(0, maxLength);
+    setValue(text);
   };
 
   return (

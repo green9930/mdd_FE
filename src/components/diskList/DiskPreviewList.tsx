@@ -5,16 +5,18 @@ import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
 import { DiskImgType } from "../../types/diskTypes";
 
 const DiskPreviewList = (
-  image: DiskImgType[],
+  list: DiskImgType[],
+  mainImg: string,
   handleMainImg: (target: number) => void
 ) => {
   const arr = [];
   for (let i = 0; i < DISK_IMG_MAX_LENGTH; i++) {
     arr.push(
       <li key={`preview-${i}`}>
-        {image[i] ? (
+        {list[i] ? (
           <StPreview visibile={true} onClick={() => handleMainImg(i)}>
-            <img src={image[i].imgUrl} alt={`preview-${image[i].imgId}`} />
+            {list[i].imgUrl === mainImg ? <StDim /> : <></>}
+            <img src={list[i].imgUrl} alt={`preview-${list[i].imgId}`} />
           </StPreview>
         ) : (
           <StPreview visibile={false} />
@@ -50,4 +52,14 @@ const StPreview = styled.div<{ visibile: boolean }>`
     left: ${calcRem(4)};
     z-index: 11;
   }
+`;
+
+const StDim = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.transparent03};
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 `;

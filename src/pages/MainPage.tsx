@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
+import ReactGA from "react-ga";
 
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme, MOBILE_MAX_W, WINDOW_W } from "../styles/theme";
@@ -10,7 +11,10 @@ import { getLoc } from "../utils/localStorage";
 import { useRecoilValue } from "recoil";
 import { lightThemeState } from "../state/atom";
 import { getUserInfo, postUserLike } from "../api/memberApi";
+import { getBookmarkDiskList } from "../api/diskApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DiskType } from "../types/diskTypes";
+import { numberFormat } from "../utils/numberFormat";
 
 import DotBackground from "../assets/img/dot_background.png";
 import DotBackgroundDark from "../assets/img/dot_background_dark.png";
@@ -30,12 +34,10 @@ import Disk from "../components/elements/Disk";
 import Guide from "../components/Guide";
 import ProfileModal from "../components/home/ProfileModal";
 import Button from "../components/elements/Button";
-import { getBookmarkDiskList } from "../api/diskApi";
-import { DiskType } from "../types/diskTypes";
 import NotFound from "./NotFound";
 import ModalLayout from "../components/layout/ModalLayout";
 import DiskCard from "../components/diskList/DiskCard";
-import { numberFormat } from "../utils/numberFormat";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export type StDotBackgroundProps = {
   image: string;
@@ -45,10 +47,10 @@ const MainPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  const [likeView, setLikeView] = useState<JSX.Element[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [targetDisk, setTargetDisk] = useState<number>(0);
   const [like, setLike] = useState<number>(0);
-
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
 
@@ -76,6 +78,13 @@ const MainPage = () => {
         })
         .catch(() => {});
     }
+
+    ReactGA.event({
+      category: "share",
+      action: "click",
+      label: "share my page",
+      value: 1,
+    });
   };
 
   const { id } = useParams();
@@ -97,13 +106,29 @@ const MainPage = () => {
     }
   );
 
-  const { mutate: mutationUserLike, isLoading: mutationIsLoading } =
-    useMutation(() => postUserLike(id ? id : ""), {
+  const { mutate: mutationUserLike } = useMutation(
+    () => postUserLike(id ? id : ""),
+    {
       onSuccess(res) {
-        // queryClient.invalidateQueries(["userInfo"]);
         setLike(res);
+        const likeViewCopy = [...likeView];
+        const newKey = Date.now();
+        likeViewCopy.push(
+          <LikeIcon key={newKey}>
+            <Like />
+          </LikeIcon>
+        );
+        setLikeView(likeViewCopy);
+        setTimeout(() => {
+          likeViewCopy.pop();
+          setLikeView(likeViewCopy);
+        }, 500);
+        setTimeout(() => {
+          setLikeView([]);
+        }, 10000);
       },
-    });
+    }
+  );
 
   useEffect(() => {
     queryClient.invalidateQueries(["userBookmarkDisk"]);
@@ -111,6 +136,7 @@ const MainPage = () => {
 
   return (
     <>
+      {isLoading && <LoadingSpinner text="디스크 불러오는 중" />}
       {!isLoading && isSuccess && data ? (
         <AppLayout>
           <Header
@@ -141,9 +167,14 @@ const MainPage = () => {
                   <StProfileText color={lightTheme.colors.primary01}>
                     {data.nickname}
                   </StProfileText>
-                  <StProfileText color={lightTheme.colors.text02}>
-                    {data.interest} {data.interest && "디깅중"}
-                  </StProfileText>
+                  <StRowFlexText>
+                    <span color={lightTheme.colors.text02}>
+                      {data.interest}
+                    </span>
+                    <span color={lightTheme.colors.text02}>
+                      {data.interest && " 디깅 중"}
+                    </span>
+                  </StRowFlexText>
                   <StProfileText
                     color={
                       isLightTheme
@@ -254,6 +285,12 @@ const MainPage = () => {
                     <div
                       onClick={() => {
                         setModalOpen(true);
+                        ReactGA.event({
+                          category: "guide",
+                          action: "click",
+                          label: "open guide modal",
+                          value: 1,
+                        });
                       }}
                     >
                       <GuideIcon />
@@ -269,7 +306,14 @@ const MainPage = () => {
                       }}
                     >
                       <StButtonText>
-                        <Like />
+                        <Like fill={lightTheme.colors.white} />
+
+                        {/* {isLiked && (
+                          <LikeIcon>
+                            <Like />
+                          </LikeIcon>
+                        )} */}
+                        {likeView}
                         <span>{numberFormat(like)}</span>
                       </StButtonText>
                     </Button>
@@ -291,9 +335,8 @@ const MainPage = () => {
       ) : isError ? (
         <NotFound />
       ) : (
-        <>로딩중 ...</>
+        <></>
       )}
-
       {openModal ? (
         <ModalLayout
           width={WINDOW_W < MOBILE_MAX_W ? "358px" : "412px"}
@@ -397,6 +440,30 @@ const StProfileText = styled.span`
   letter-spacing: ${fontTheme.display01.letterSpacing};
   font-size: ${fontTheme.display01.fontSize};
   font-weight: ${fontTheme.display01.fontWeight};
+`;
+
+const StRowFlexText = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  span {
+    text-align: center;
+    font-family: "NanumSquareNeo";
+    color: ${lightTheme.colors.text02};
+    line-height: ${fontTheme.display01.lineHeight};
+    letter-spacing: ${fontTheme.display01.letterSpacing};
+    font-size: ${fontTheme.display01.fontSize};
+  }
+  span:nth-child(1) {
+    font-weight: ${fontTheme.display01.fontWeight};
+    white-space: pre-line;
+  }
+  span:nth-child(2) {
+    font-weight: ${fontTheme.headline01.fontWeight};
+    white-space: pre;
+  }
 `;
 
 const StVisitLike = styled.div`
@@ -512,7 +579,7 @@ const StMoreText = styled.span`
 const StDiskBox = styled.div`
   cursor: pointer;
   border-radius: 8px;
-  padding: ${calcRem(8)} ${calcRem(4)};
+  padding: ${calcRem(8)};
   width: 100%;
   height: auto;
   background-color: ${({ theme }) => theme.colors.bg};
@@ -572,17 +639,6 @@ const StButtonContainer = styled.div`
   margin-top: ${calcRem(8)};
 `;
 
-const StButtonText = styled.div`
-  svg {
-    fill: ${({ theme }) => theme.colors.white};
-    width: 24px;
-    height: 24px;
-  }
-  display: flex;
-  align-items: center;
-  gap: ${calcRem(8)};
-`;
-
 const StBtnContainer = styled.div`
   display: flex;
   align-items: center;
@@ -601,4 +657,41 @@ const StBtnText = styled.div`
     width: ${calcRem(24)};
     height: ${calcRem(24)};
   }
+`;
+
+const floatAnimation = keyframes`
+  0% {
+    opacity: 1;
+    fill:${lightTheme.colors.white};
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    fill: transparent;
+    transform: translateY(-20px);
+  }
+`;
+
+const LikeIcon = styled.div`
+  position: absolute;
+  svg {
+    fill: transparent;
+    cursor: pointer;
+    animation: ${floatAnimation} 1s ease-in-out;
+  }
+`;
+
+const StButtonText = styled.div`
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: ${calcRem(8)};
 `;

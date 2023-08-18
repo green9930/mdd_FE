@@ -18,6 +18,7 @@ import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
 import ToastModal from "../components/elements/ToastModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ const LoginPage = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !mutationIsLoading) {
       onClickLogin();
     }
   };
@@ -143,6 +144,7 @@ const LoginPage = () => {
           ></PasswordInput>
         </StInputContainer>
         <Button
+          disabled={mutationIsLoading}
           btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={onClickLogin}
         >

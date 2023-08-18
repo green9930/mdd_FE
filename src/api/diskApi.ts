@@ -46,8 +46,7 @@ export const patchDisk = async (data: any): Promise<AxiosResponse<any>> => {
         },
       }
     );
-    console.log(res);
-    return res;
+    return res.data;
   } catch (err) {
     throw err;
   }
@@ -63,7 +62,8 @@ export const deleteDisk = async (diskId: number) => {
 
 export const bookmarkDisk = async (diskId: number) => {
   try {
-    await tokenInstance.post(`/api/v1/disks/bookmark/${diskId}`);
+    const res = await tokenInstance.post(`/api/v1/disks/bookmark/${diskId}`);
+    return res.data;
   } catch (err) {
     throw err;
   }

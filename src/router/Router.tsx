@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { Navigate, Route, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import HomePage from "../pages/HomePage";
 import MainPage from "../pages/MainPage";
@@ -13,8 +19,11 @@ import SettingsPage from "../pages/SettingsPage";
 import { getLoc } from "../utils/localStorage";
 import { loginState, routeState, signUpState } from "../state/atom";
 import NotFound from "../pages/NotFound";
+import { initGA, logPageView } from "../utils/googleAnalytics";
 
 const Router = () => {
+  let location = useLocation();
+
   const [loading, setLoading] = useRecoilState(routeState);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
   const [isSignUp, setIsSignUp] = useRecoilState(signUpState);
@@ -23,14 +32,18 @@ const Router = () => {
   const memberId = getLoc("memberId");
 
   useEffect(() => {
-    console.log("ROUTE RENDERING...", loading);
-    console.log("ISSIGNUP", isSignUp);
-    console.log("ISLOGIN", isLogin);
+    // console.log("ROUTE RENDERING...", loading);
+    // console.log("ISSIGNUP", isSignUp);
+    // console.log("ISLOGIN", isLogin);
     if (!isSignUp && !isLogin) {
       accessToken ? setIsLogin(true) : setIsLogin(false);
     }
     setLoading(false);
   }, [loading]);
+
+  useEffect(() => {
+    logPageView();
+  }, [location]);
 
   return (
     <>
@@ -62,9 +75,6 @@ const Router = () => {
           <Route path="/disk-list/:id" element={<DiskListPage />} />
           <Route
             path="/new-disk"
-            // element={
-            //   isLogin || isSignUp ? <NewDiskPage /> : <Navigate to="/" />
-            // }
             element={
               isLogin ? (
                 <NewDiskPage />

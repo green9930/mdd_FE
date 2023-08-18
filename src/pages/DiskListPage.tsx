@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
@@ -8,9 +8,10 @@ import DiskHeader from "../components/layout/DiskHeader";
 import DiskListFeed from "../components/diskList/DiskListFeed";
 import DiskListGallery from "../components/diskList/DiskListGallery";
 import ToastModal from "../components/elements/ToastModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { getDiskList } from "../api/diskApi";
 import { getLoc } from "../utils/localStorage";
-import { deleteToastState, pageState } from "../state/atom";
+import { createToastState, deleteToastState, pageState } from "../state/atom";
 import { DiskListType, DiskType } from "../types/diskTypes";
 
 export interface DiskListProps {
@@ -24,6 +25,8 @@ const DiskListPage = () => {
   const [page, setPage] = useRecoilState(pageState);
   const [openDeleteToast, setOpenDeleteToast] =
     useRecoilState(deleteToastState);
+  const [openCreateToast, setOpenCreateToast] =
+    useRecoilState(createToastState);
 
   const { id: paramsId } = useParams<{ id: string }>();
 
@@ -51,6 +54,12 @@ const DiskListPage = () => {
       ? setPage("diskListGallery")
       : setPage("diskListFeed");
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (openCreateToast) setOpenCreateToast(false);
+    }, 2000);
+  }, [openCreateToast]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -83,11 +92,18 @@ const DiskListPage = () => {
           )}
         </>
       ) : (
-        <></>
+        <LoadingSpinner text="디스크 불러오는 중" />
       )}
       {openDeleteToast ? (
         <ToastModal>
           <span>디스크가 삭제되었어요 🗑</span>
+        </ToastModal>
+      ) : (
+        <></>
+      )}
+      {openCreateToast ? (
+        <ToastModal>
+          <span>디스크 굽기 완료! 대표 디스크로 설정해보세요</span>
         </ToastModal>
       ) : (
         <></>
