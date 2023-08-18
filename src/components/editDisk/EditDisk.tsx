@@ -150,6 +150,7 @@ const EditDisk = ({ data }: EditDiskProps) => {
         <NewDiskCard
           isNew={false}
           disk={data}
+          diskName={diskName}
           diskColor={DISK_COLOR_LIST[diskNum]}
           previewList={previewList}
           mainImg={mainImg}

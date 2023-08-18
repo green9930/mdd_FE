@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import { NewDiskProps } from "../../pages/NewDiskPage";
@@ -9,7 +9,11 @@ import NewDiskCard from "./NewDiskCard";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
 import { postDisk } from "../../api/diskApi";
-import { newDiskState, newDiskStepState } from "../../state/atom";
+import {
+  createToastState,
+  newDiskState,
+  newDiskStepState,
+} from "../../state/atom";
 import { DISK_CONTENT_MAX_LENGTH } from "../../utils/validations";
 import { getLoc } from "../../utils/localStorage";
 import { DiskImgType } from "../../types/diskTypes";
@@ -26,6 +30,7 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
 
   const [newDisk, setNewDisk] = useRecoilState(newDiskState);
   const [step, setStep] = useRecoilState(newDiskStepState);
+  const setOpenCreateToast = useSetRecoilState(createToastState);
 
   const navigate = useNavigate();
 
@@ -35,9 +40,10 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
     previewList.length ? setMainImg(previewList[0].imgUrl) : setMainImg("");
   }, [previewList]);
 
-  const { mutate: addDisk } = useMutation(postDisk, {
+  const { mutate: addDisk, isLoading: postLoading } = useMutation(postDisk, {
     onSuccess: () => {
       setStep("newDisk1");
+      setOpenCreateToast(true);
       queryClient.invalidateQueries(["diskList"]);
       window.location.replace(`/disk-list/${getLoc("memberId")}`);
     },
@@ -70,6 +76,7 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
       <NewDiskCard
         isNew={true}
         disk={newDisk}
+        diskName={newDisk.diskName}
         previewList={previewList}
         mainImg={mainImg}
         files={files}
@@ -93,9 +100,9 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
       </StContent>
       <StBtnContainer>
         <Button
-          btnStatus={files.length ? "primary01" : "disabled"}
+          btnStatus={!postLoading && files.length ? "primary01" : "disabled"}
           clickHandler={() => handleSubmit()}
-          disabled={!files.length}
+          disabled={!postLoading && files.length ? false : true}
         >
           <span>디스크 굽기</span>
         </Button>

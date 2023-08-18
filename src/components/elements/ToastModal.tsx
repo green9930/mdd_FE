@@ -24,6 +24,7 @@ const StContainer = styled.div`
   box-shadow: 0px 2px 5px 0px rgba(6, 25, 56, 0.06);
 
   span {
+    white-space: nowrap;
     color: ${({ theme }) => theme.colors.white};
     line-height: ${fontTheme.body02.lineHeight};
     letter-spacing: ${fontTheme.body02.letterSpacing};

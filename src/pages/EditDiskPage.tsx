@@ -1,21 +1,21 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useSetRecoilState } from "recoil";
 
 import AppLayout from "../components/layout/AppLayout";
 import DiskHeader from "../components/layout/DiskHeader";
 import EditDisk from "../components/editDisk/EditDisk";
-import { pageState } from "../state/atom";
-import { useQuery } from "@tanstack/react-query";
 import { getDisk } from "../api/diskApi";
-import { DiskType } from "../types/diskTypes";
+import { pageState } from "../state/atom";
 
 const EditDiskPage = () => {
-  const setPageState = useSetRecoilState(pageState);
+  const setPage = useSetRecoilState(pageState);
 
   const { id: paramsId } = useParams<{ id: string }>();
 
   useEffect(() => {
+    setPage("editDisk");
     refetch();
   }, []);
 
@@ -29,10 +29,6 @@ const EditDiskPage = () => {
       cacheTime: 0,
     }
   );
-
-  useEffect(() => {
-    setPageState("editDisk");
-  }, []);
 
   return (
     <AppLayout>

@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled, { css } from "styled-components";
 
 import DiskPreviewList from "./DiskPreviewList";
 import IconConverter from "./IconConverter";
-import { deleteToastState, pageState } from "../../state/atom";
+import {
+  bookmarkToastState,
+  deleteToastState,
+  pageState,
+} from "../../state/atom";
 import {
   DISK_BTN_LIST,
   DiskBtnType,
@@ -23,6 +27,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
 import { AxiosError } from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import ToastModal from "../elements/ToastModal";
 
 interface DiskCardProps {
   data: DiskType;
@@ -50,6 +55,8 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const [showBookmark, setShowBookmark] = useState(false);
   const [showLike, setShowLike] = useState(false);
 
+  const [openBookmarkToast, setOpenBookmarkToast] =
+    useRecoilState(bookmarkToastState);
   const setOpenDeleteToast = useSetRecoilState(deleteToastState);
   const page = useRecoilValue(pageState);
 
@@ -63,18 +70,36 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     setShowBookmark(isBookmark);
   }, []);
 
+  useEffect(() => {
+    if (openBookmarkToast.open) {
+      setTimeout(() => {
+        setOpenBookmarkToast((prev) => ({ ...prev, open: false }));
+      }, 2000);
+    }
+  }, [openBookmarkToast.open]);
+
+  // 디스크 삭제 =======================================================
   const { mutate: handleDelete } = useMutation(deleteDisk, {
     onSuccess: () => {
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["userBookmarkDisk"]);
       setOpen && setOpen();
+
       setOpenDeleteToast(true);
     },
     onError: (err) => console.log("FAILED", err),
   });
 
+  // 디스크 북마크 =======================================================
   const { mutate: handleBookmark } = useMutation(bookmarkDisk, {
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data);
+      if (data) {
+        setOpenBookmarkToast({
+          open: true,
+          text: "대표 디스크로 설정되었어요",
+        });
+      }
       setShowBookmark(!isBookmark);
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["userBookmarkDisk"]);
@@ -83,12 +108,16 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     onError: (err: AxiosError<any>) => {
       if (err.response) {
         if (err.response.data.ErrorCode === "BOOKMARK_DISK_LIMIT") {
-          window.alert("대표 디스크는 최대 3개까지 설정할 수 있어요!");
+          setOpenBookmarkToast({
+            open: true,
+            text: "대표 디스크 자리가 꽉 찼어요!",
+          });
         }
       }
     },
   });
 
+  // 디스크 좋아요 =======================================================
   const { mutate: handleLike } = useMutation(likeDisk, {
     onSuccess: () => {
       setShowLike(true);
@@ -103,6 +132,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     },
   });
 
+  // 디스크 대표 이미지 설정 =======================================================
   const handleMainImg = (target: number) => setMainImg(image[target].imgUrl);
 
   const clickHandler = (name: DiskBtnType) => {
@@ -133,27 +163,17 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       <StPreviewContainer>
         <StMainImg src={mainImg} alt="main-preview" />
       </StPreviewContainer>
-      <StImgList>{DiskPreviewList(image, handleMainImg)}</StImgList>
+      <StImgList>{DiskPreviewList(image, mainImg, handleMainImg)}</StImgList>
       <StSubContainer>
         {isMine ? (
           <StLikesCount isMine={true} diskColor={diskColor}>
-            {showLike ? (
-              <LikeFilled
-                fill={
-                  diskColor === "PURPLE"
-                    ? lightTheme.colors.white
-                    : lightTheme.colors.text01
-                }
-              />
-            ) : (
-              <Like
-                fill={
-                  diskColor === "PURPLE"
-                    ? lightTheme.colors.white
-                    : lightTheme.colors.text01
-                }
-              />
-            )}
+            <Like
+              fill={
+                diskColor === "PURPLE"
+                  ? lightTheme.colors.white
+                  : lightTheme.colors.text01
+              }
+            />
             <span>{likeCount}</span>
           </StLikesCount>
         ) : (
@@ -186,21 +206,22 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
           <StBtnList>
             {DISK_BTN_LIST.map((val, idx) => {
               return (
-                <>
+                <React.Fragment key={`${val}-${idx}`}>
                   {page === "diskListGallery" && val === "edit" ? (
                     <></>
                   ) : (
-                    <li key={`${val}-${idx}`} onClick={() => clickHandler(val)}>
+                    <li onClick={() => clickHandler(val)}>
                       <StIconContainer diskColor={diskColor} isTextMode={false}>
                         {IconConverter(
                           val as DiskBtnType,
                           showBookmark,
+                          showLike,
                           diskColor === "NEON_ORANGE"
                         )}
                       </StIconContainer>
                     </li>
                   )}
-                </>
+                </React.Fragment>
               );
             })}
           </StBtnList>
@@ -240,6 +261,13 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
             />
           </StIconContainer>
         </StContentContainer>
+      ) : (
+        <></>
+      )}
+      {openBookmarkToast.open ? (
+        <ToastModal>
+          <span>{openBookmarkToast.text}</span>
+        </ToastModal>
       ) : (
         <></>
       )}
@@ -414,9 +442,11 @@ const Stcontent = styled.div`
   }
 
   p {
+    width: 100%;
     height: 80%;
     color: ${({ theme }) => theme.colors.white};
     text-align: center;
+    white-space: pre-wrap;
     word-break: break-all;
     overflow: scroll;
   }
