@@ -2,7 +2,6 @@ import { DiskBtnType } from "../../types/diskTypes";
 import { lightTheme } from "../../styles/colors";
 
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
-import { ReactComponent as LikeFilled } from "../../assets/svg/like_filled.svg";
 import { ReactComponent as Pen } from "../../assets/svg/pen.svg";
 import { ReactComponent as BookmarkEmpty } from "../../assets/svg/bookmark_empty.svg";
 import { ReactComponent as BookmarkFilled } from "../../assets/svg/bookmark_filled.svg";
@@ -12,31 +11,16 @@ import { ReactComponent as Trash } from "../../assets/svg/trash.svg";
 const IconConverter = (
   name: DiskBtnType,
   isBookmark: boolean,
-  showLike: boolean,
   isNeonOrange: boolean
 ) => {
   switch (name) {
     case "like":
       return (
-        <>
-          {showLike ? (
-            <LikeFilled
-              fill={
-                isNeonOrange
-                  ? lightTheme.colors.text01
-                  : lightTheme.colors.white
-              }
-            />
-          ) : (
-            <Like
-              fill={
-                isNeonOrange
-                  ? lightTheme.colors.text01
-                  : lightTheme.colors.white
-              }
-            />
-          )}
-        </>
+        <Like
+          fill={
+            isNeonOrange ? lightTheme.colors.text01 : lightTheme.colors.white
+          }
+        />
       );
     case "edit":
       return (
