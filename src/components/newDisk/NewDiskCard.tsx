@@ -17,6 +17,7 @@ import { ReactComponent as EmptyRegisterDisk } from "../../assets/svg/empty_regi
 interface NewDiskCardProps {
   isNew: boolean;
   disk: NewDiskType | DiskType;
+  diskName: string;
   diskColor?: DiskColorType;
   files: File[];
   setFiles: (value: React.SetStateAction<File[]>) => void;
@@ -31,6 +32,7 @@ interface NewDiskCardProps {
 const NewDiskCard = ({
   isNew,
   disk,
+  diskName,
   diskColor,
   files,
   setFiles,
@@ -121,7 +123,7 @@ const NewDiskCard = ({
   return (
     <StGallery diskColor={diskColor ? diskColor : disk.diskColor}>
       <StDiskName diskColor={diskColor ? diskColor : disk.diskColor}>
-        {disk.diskName}
+        {diskName}
       </StDiskName>
       <StPreviewContainer>
         {previewList.length ? (
@@ -134,7 +136,13 @@ const NewDiskCard = ({
         )}
       </StPreviewContainer>
       <StImgList>
-        {PreviewList(previewList, handleAddImg, handleDeleteImg, handleMainImg)}
+        {PreviewList(
+          previewList,
+          handleAddImg,
+          handleDeleteImg,
+          mainImg,
+          handleMainImg
+        )}
       </StImgList>
     </StGallery>
   );
@@ -161,6 +169,9 @@ const StGallery = styled.div<{ diskColor: DiskColorType }>`
 `;
 
 const StDiskName = styled.h3<{ diskColor: DiskColorType }>`
+  width: 100%;
+  overflow-x: hidden;
+  height: ${fontTheme.display01.lineHeight};
   color: ${({ diskColor }) =>
     diskColor === "PURPLE"
       ? lightTheme.colors.white
