@@ -19,7 +19,7 @@ const GUIDE_TEXT: GuideText = {
   1: [
     "디깅이란 내가 좋아하는 것들의 정보를 수집하며 깊게 알아가는 즐거움을 느끼는 것을 뜻해요.",
     "당신은 지금 어떤 것에 몰입하고 있나요?",
-    "디깅의 순간이 무의미하게 흘러가고있진 않았나요?",
+    "디깅의 순간이 무의미하게 흘러가고 있진 않았나요?",
   ],
   2: [
     "나만의 디깅을 의미있게 기록해봐요.\n디깅디스크는 최대 4장까지 나의 디깅 순간을 밀도있게 기록할 수 있어요.",
@@ -60,7 +60,7 @@ const Guide = ({ modalOpen, setModalOpen }: GuideProps) => {
       {modalOpen ? (
         <ModalLayout
           width={`calc(${WINDOW_W}px - 24px)`}
-          height="372px"
+          height="auto"
           bgc={isLightTheme ? lightTheme.colors.bg : darkTheme.colors.bg}
         >
           <StModalContainer>
@@ -138,6 +138,7 @@ const StModalContainer = styled.div`
 `;
 
 const StTextContainer = styled.div`
+  word-break: keep-all;
   display: flex;
   flex-direction: column;
   align-items: center;
