@@ -140,7 +140,10 @@ const Settings = () => {
         })}
       </StList>
       {isLogin || isSignUp ? (
-        <StUnregister onClick={() => setOpenUnregisterModal(true)}>
+        <StUnregister
+          isLightTheme={isLightTheme}
+          onClick={() => setOpenUnregisterModal(true)}
+        >
           <span>회원탈퇴</span>
         </StUnregister>
       ) : (
@@ -230,10 +233,11 @@ const StContent = styled.span`
   font-weight: ${fontTheme.caption.fontWeight};
 `;
 
-const StUnregister = styled.div`
+const StUnregister = styled.div<{ isLightTheme: boolean }>`
   padding: 0 ${calcRem(16)};
   text-decoration: underline;
-  color: ${({ theme }) => theme.colors.primary02};
+  color: ${({ isLightTheme, theme }) =>
+    isLightTheme ? theme.colors.primary02 : theme.colors.primary01};
   line-height: ${fontTheme.button.lineHeight};
   letter-spacing: ${fontTheme.button.letterSpacing};
   font-size: ${fontTheme.button.fontSize};

@@ -46,8 +46,7 @@ export const patchDisk = async (data: any): Promise<AxiosResponse<any>> => {
         },
       }
     );
-    console.log(res);
-    return res;
+    return res.data;
   } catch (err) {
     throw err;
   }

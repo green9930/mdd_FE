@@ -32,9 +32,9 @@ const Router = () => {
   const memberId = getLoc("memberId");
 
   useEffect(() => {
-    console.log("ROUTE RENDERING...", loading);
-    console.log("ISSIGNUP", isSignUp);
-    console.log("ISLOGIN", isLogin);
+    // console.log("ROUTE RENDERING...", loading);
+    // console.log("ISSIGNUP", isSignUp);
+    // console.log("ISLOGIN", isLogin);
     if (!isSignUp && !isLogin) {
       accessToken ? setIsLogin(true) : setIsLogin(false);
     }
@@ -75,9 +75,6 @@ const Router = () => {
           <Route path="/disk-list/:id" element={<DiskListPage />} />
           <Route
             path="/new-disk"
-            // element={
-            //   isLogin || isSignUp ? <NewDiskPage /> : <Navigate to="/" />
-            // }
             element={
               isLogin ? (
                 <NewDiskPage />

@@ -7,7 +7,11 @@ import Loading3 from "../assets/img/loading_3.png";
 
 import { fontTheme } from "../styles/theme";
 
-const LoadingSpinner = () => {
+interface LoadingSpinnerProps {
+  text: "디스크 불러오는 중" | "디스크 굽는 중";
+}
+
+const LoadingSpinner = ({ text }: LoadingSpinnerProps) => {
   const [iconIndex, setIconIndex] = useState(0);
 
   useEffect(() => {
@@ -25,7 +29,7 @@ const LoadingSpinner = () => {
             iconIndex === 0 ? Loading1 : iconIndex === 1 ? Loading2 : Loading3
           }
         />
-        <span>디스크 불러오는 중</span>
+        <span>{text}</span>
       </StSpinnerBackground>
     </StSpinnerWrapper>
   );

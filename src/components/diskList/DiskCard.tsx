@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import styled, { css } from "styled-components";
+import { AxiosError } from "axios";
+import styled, { css, keyframes } from "styled-components";
 
 import DiskPreviewList from "./DiskPreviewList";
 import IconConverter from "./IconConverter";
+import ToastModal from "../elements/ToastModal";
 import {
   bookmarkToastState,
   deleteToastState,
@@ -20,14 +23,10 @@ import { diskTheme, lightTheme } from "../../styles/colors";
 import { calcRem, fontTheme } from "../../styles/theme";
 
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
-import { ReactComponent as LikeFilled } from "../../assets/svg/like_filled.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
-import { AxiosError } from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
-import ToastModal from "../elements/ToastModal";
 
 interface DiskCardProps {
   data: DiskType;
@@ -53,7 +52,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const [mainImg, setMainImg] = useState<string>("");
   const [mode, setMode] = useState<DiskModeType>("gallery");
   const [showBookmark, setShowBookmark] = useState(false);
-  const [showLike, setShowLike] = useState(false);
+  const [likeView, setLikeView] = useState<JSX.Element[]>([]);
 
   const [openBookmarkToast, setOpenBookmarkToast] =
     useRecoilState(bookmarkToastState);
@@ -87,13 +86,11 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
 
       setOpenDeleteToast(true);
     },
-    onError: (err) => console.log("FAILED", err),
   });
 
   // 디스크 북마크 =======================================================
   const { mutate: handleBookmark } = useMutation(bookmarkDisk, {
     onSuccess: (data) => {
-      console.log(data);
       if (data) {
         setOpenBookmarkToast({
           open: true,
@@ -120,15 +117,35 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   // 디스크 좋아요 =======================================================
   const { mutate: handleLike } = useMutation(likeDisk, {
     onSuccess: () => {
-      setShowLike(true);
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["userBookmarkDisk"]);
+
+      const likeViewCopy = [...likeView];
+      const newKey = Date.now();
+      likeViewCopy.push(
+        <LikeIcon
+          fillColor={
+            isMine
+              ? diskColor === "PURPLE"
+                ? lightTheme.colors.white
+                : lightTheme.colors.text01
+              : diskColor === "NEON_ORANGE"
+              ? lightTheme.colors.text01
+              : lightTheme.colors.white
+          }
+          key={newKey}
+        >
+          <Like />
+        </LikeIcon>
+      );
+      setLikeView(likeViewCopy);
       setTimeout(() => {
-        setShowLike(false);
-      }, 200);
-    },
-    onError: (err: AxiosError<any>) => {
-      console.log(err);
+        likeViewCopy.pop();
+        setLikeView(likeViewCopy);
+      }, 500);
+      setTimeout(() => {
+        setLikeView([]);
+      }, 10000);
     },
   });
 
@@ -174,6 +191,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
                   : lightTheme.colors.text01
               }
             />
+            {likeView}
             <span>{likeCount}</span>
           </StLikesCount>
         ) : (
@@ -182,23 +200,14 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
             isMine={false}
             diskColor={diskColor}
           >
-            {showLike ? (
-              <LikeFilled
-                fill={
-                  diskColor === "NEON_ORANGE"
-                    ? lightTheme.colors.text01
-                    : lightTheme.colors.white
-                }
-              />
-            ) : (
-              <Like
-                fill={
-                  diskColor === "NEON_ORANGE"
-                    ? lightTheme.colors.text01
-                    : lightTheme.colors.white
-                }
-              />
-            )}
+            <Like
+              fill={
+                diskColor === "NEON_ORANGE"
+                  ? lightTheme.colors.text01
+                  : lightTheme.colors.white
+              }
+            />
+            {likeView}
             <span>{likeCount}</span>
           </StLikesCount>
         )}
@@ -215,7 +224,6 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
                         {IconConverter(
                           val as DiskBtnType,
                           showBookmark,
-                          showLike,
                           diskColor === "NEON_ORANGE"
                         )}
                       </StIconContainer>
@@ -361,7 +369,8 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   justify-content: flex-start;
   gap: ${({ isMine }) => (isMine ? calcRem(4) : calcRem(8))};
   cursor: pointer;
-  transition: all 0.5s ease-in-out;
+  position: relative;
+  /* transition: all 0.5s ease-in-out; */
 
   ${({ isMine, diskColor }) =>
     !isMine &&
@@ -369,7 +378,7 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
       padding: ${calcRem(8)} ${calcRem(16)};
       background-color: ${diskTheme[diskColor].border}};
       border-radius: ${calcRem(12)};
-    `};
+    `}
 
   svg {
     width: ${({ isMine }) => (isMine ? calcRem(16) : calcRem(24))};
@@ -480,5 +489,30 @@ const StIconContainer = styled.div<{
   svg {
     width: ${calcRem(24)};
     height: ${calcRem(24)};
+  }
+`;
+
+const floatAnimation = (fillColor: string) => keyframes`
+  0% {
+    opacity: 1;
+    fill: ${fillColor};
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    fill: transparent;
+    transform: translateY(-20px);
+  }
+`;
+
+const LikeIcon = styled.div<{ fillColor: string }>`
+  position: absolute;
+
+  svg {
+    cursor: pointer;
+    animation: ${({ fillColor }) => floatAnimation(fillColor)} 1s ease-in-out;
   }
 `;

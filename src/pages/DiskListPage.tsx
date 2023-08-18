@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import DiskHeader from "../components/layout/DiskHeader";
 import DiskListFeed from "../components/diskList/DiskListFeed";
 import DiskListGallery from "../components/diskList/DiskListGallery";
 import ToastModal from "../components/elements/ToastModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { getDiskList } from "../api/diskApi";
 import { getLoc } from "../utils/localStorage";
 import { createToastState, deleteToastState, pageState } from "../state/atom";
@@ -91,7 +92,7 @@ const DiskListPage = () => {
           )}
         </>
       ) : (
-        <></>
+        <LoadingSpinner text="디스크 불러오는 중" />
       )}
       {openDeleteToast ? (
         <ToastModal>

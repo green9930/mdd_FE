@@ -51,7 +51,6 @@ const MainPage = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [targetDisk, setTargetDisk] = useState<number>(0);
   const [like, setLike] = useState<number>(0);
-
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
 
@@ -137,7 +136,7 @@ const MainPage = () => {
 
   return (
     <>
-      {isLoading && <LoadingSpinner />}
+      {isLoading && <LoadingSpinner text="디스크 불러오는 중" />}
       {!isLoading && isSuccess && data ? (
         <AppLayout>
           <Header
