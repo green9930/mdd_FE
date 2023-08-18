@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
+import ReactGA from "react-ga";
 
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme, MOBILE_MAX_W, WINDOW_W } from "../styles/theme";
@@ -78,6 +79,13 @@ const MainPage = () => {
         })
         .catch(() => {});
     }
+
+    ReactGA.event({
+      category: "share",
+      action: "click",
+      label: "share my page",
+      value: 1,
+    });
   };
 
   const { id } = useParams();
@@ -276,9 +284,14 @@ const MainPage = () => {
                       <span>전체 디깅디스크</span>
                     </div>
                     <div
-                      className="guide-modal"
                       onClick={() => {
                         setModalOpen(true);
+                        ReactGA.event({
+                          category: "guide",
+                          action: "click",
+                          label: "open guide modal",
+                          value: 1,
+                        });
                       }}
                     >
                       <GuideIcon />
@@ -443,13 +456,14 @@ const StRowFlexText = styled.div`
     line-height: ${fontTheme.display01.lineHeight};
     letter-spacing: ${fontTheme.display01.letterSpacing};
     font-size: ${fontTheme.display01.fontSize};
-    white-space: pre-line;
   }
   span:nth-child(1) {
     font-weight: ${fontTheme.display01.fontWeight};
+    white-space: pre-line;
   }
   span:nth-child(2) {
     font-weight: ${fontTheme.headline01.fontWeight};
+    white-space: pre;
   }
 `;
 

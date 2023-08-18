@@ -93,14 +93,13 @@ const LoginPage = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !mutationIsLoading) {
       onClickLogin();
     }
   };
 
   return (
     <AppLayout>
-      {mutationIsLoading && <LoadingSpinner />}
       <StContainer>
         <StMonitor src={MonitorFilled} />
         <Input
@@ -145,6 +144,7 @@ const LoginPage = () => {
           ></PasswordInput>
         </StInputContainer>
         <Button
+          disabled={mutationIsLoading}
           btnStatus={validCheck() ? "primary01" : "disabled"}
           clickHandler={onClickLogin}
         >

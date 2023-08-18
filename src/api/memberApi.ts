@@ -22,8 +22,20 @@ export const postJoin = async (postData: AuthData) => {
     setLoc("memberName", data.memberName);
     setLoc("memberId", data.memberId);
     return res.data;
-  } catch (err: AxiosError | any) {
-    throw err;
+  } catch (error: AxiosError | any) {
+    const status = error.response.status;
+    const errorMessage = error.response.data.errorMessage;
+    // 이미 사용중인 MemberName error code = 409
+    if (status === 409) {
+      window.alert(
+        "이미 사용중인 MemberName 입니다. 회원가입을 다시 진행해 주세요."
+      );
+      window.location.reload();
+    } else if (status === 400) {
+      window.alert(errorMessage);
+      window.location.reload();
+    }
+    throw error;
   }
 };
 
