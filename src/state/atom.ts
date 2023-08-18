@@ -54,9 +54,25 @@ export const newDiskState = atom<NewDiskType>({
   },
 });
 
+export const createToastState = atom<boolean>({
+  key: "createToastState",
+  default: false,
+});
+
 export const deleteToastState = atom<boolean>({
   key: "deleteToastState",
   default: false,
+});
+
+export const bookmarkToastState = atom<{
+  open: boolean;
+  text: "대표 디스크로 설정되었어요" | "대표 디스크 자리가 꽉 찼어요!";
+}>({
+  key: "bookmarkToastState",
+  default: {
+    open: false,
+    text: "대표 디스크로 설정되었어요",
+  },
 });
 
 export const logoutToastState = atom<boolean>({
