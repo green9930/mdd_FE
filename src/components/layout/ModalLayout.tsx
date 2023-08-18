@@ -34,7 +34,7 @@ const StModalBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 11;
+  z-index: 60;
   background-color: ${({ theme }) => theme.colors.transparent02};
 `;
 

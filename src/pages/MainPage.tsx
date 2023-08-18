@@ -137,7 +137,7 @@ const MainPage = () => {
 
   return (
     <>
-      {isLoading && <LoadingSpinner />}
+      {isLoading && <LoadingSpinner text="디스크 불러오는 중" />}
       {!isLoading && isSuccess && data ? (
         <AppLayout>
           <Header

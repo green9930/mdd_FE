@@ -8,6 +8,7 @@ import { NewDiskProps } from "../../pages/NewDiskPage";
 import NewDiskCard from "./NewDiskCard";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
+import LoadingSpinner from "../LoadingSpinner";
 import { postDisk } from "../../api/diskApi";
 import {
   createToastState,
@@ -71,57 +72,65 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
   };
 
   return (
-    <StContainer>
-      <h2>{titleText}</h2>
-      <NewDiskCard
-        isNew={true}
-        disk={newDisk}
-        diskName={newDisk.diskName}
-        previewList={previewList}
-        mainImg={mainImg}
-        files={files}
-        setFiles={setFiles}
-        setPreviewList={setPreviewList}
-        setMainImg={setMainImg}
-      />
-      <StContent>
-        <Textarea
-          labelText="디스크 메모"
-          value={content}
-          setValue={setContent}
-          status={contentStatus}
-          setStatus={setContentStatus}
-          maxLength={DISK_CONTENT_MAX_LENGTH}
-          placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
-          jc="flex-start"
-          TopChildren={<StOptionText>선택사항</StOptionText>}
-          isMultiLine={true}
-        />
-      </StContent>
-      <StBtnContainer>
-        <Button
-          btnStatus={!postLoading && files.length ? "primary01" : "disabled"}
-          clickHandler={() => handleSubmit()}
-          disabled={!postLoading && files.length ? false : true}
-        >
-          <span>디스크 굽기</span>
-        </Button>
-        <StSkipBtn>
-          {step === "newDiskSignUp2" ? (
+    <>
+      {postLoading ? (
+        <LoadingSpinner text="디스크 굽는 중" />
+      ) : (
+        <StContainer>
+          <h2>{titleText}</h2>
+          <NewDiskCard
+            isNew={true}
+            disk={newDisk}
+            diskName={newDisk.diskName}
+            previewList={previewList}
+            mainImg={mainImg}
+            files={files}
+            setFiles={setFiles}
+            setPreviewList={setPreviewList}
+            setMainImg={setMainImg}
+          />
+          <StContent>
+            <Textarea
+              labelText="디스크 메모"
+              value={content}
+              setValue={setContent}
+              status={contentStatus}
+              setStatus={setContentStatus}
+              maxLength={DISK_CONTENT_MAX_LENGTH}
+              placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
+              jc="flex-start"
+              TopChildren={<StOptionText>선택사항</StOptionText>}
+              isMultiLine={true}
+            />
+          </StContent>
+          <StBtnContainer>
             <Button
-              btnStatus="transparent"
-              clickHandler={() =>
-                window.location.replace(`/home/${getLoc("memberId")}`)
+              btnStatus={
+                !postLoading && files.length ? "primary01" : "disabled"
               }
+              clickHandler={() => handleSubmit()}
+              disabled={!postLoading && files.length ? false : true}
             >
-              <span>나중에 만들기</span>
+              <span>디스크 굽기</span>
             </Button>
-          ) : (
-            <></>
-          )}
-        </StSkipBtn>
-      </StBtnContainer>
-    </StContainer>
+            <StSkipBtn>
+              {step === "newDiskSignUp2" ? (
+                <Button
+                  btnStatus="transparent"
+                  clickHandler={() =>
+                    window.location.replace(`/home/${getLoc("memberId")}`)
+                  }
+                >
+                  <span>나중에 만들기</span>
+                </Button>
+              ) : (
+                <></>
+              )}
+            </StSkipBtn>
+          </StBtnContainer>
+        </StContainer>
+      )}
+    </>
   );
 };
 

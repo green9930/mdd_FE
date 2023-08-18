@@ -8,6 +8,7 @@ import NewDiskCard from "../newDisk/NewDiskCard";
 import Input from "../elements/Input";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
+import LoadingSpinner from "../LoadingSpinner";
 import {
   DISK_CONTENT_MAX_LENGTH,
   DISK_NAME_MAX_LENGTH,
@@ -93,7 +94,7 @@ const EditDisk = ({ data }: EditDiskProps) => {
       : setUpdated(true);
   }, [diskName, content, diskNum, previewList]);
 
-  const { mutate: editDisk } = useMutation(patchDisk, {
+  const { mutate: editDisk, isLoading: editLoading } = useMutation(patchDisk, {
     onSuccess: () => {
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["diskById"]);
@@ -122,70 +123,78 @@ const EditDisk = ({ data }: EditDiskProps) => {
   };
 
   return (
-    <StContainer>
-      <StDiskCover>
-        <StDiskCarousel>
-          <DiskCarousel disk={data} setDiskNum={setDiskNum} />
-        </StDiskCarousel>
-        <StInputContainer>
-          <Input
-            labelText="디스크 이름"
-            bottomText="직접 수정할 수 있어요"
-            value={diskName}
-            setValue={setDiskName}
-            status={diskNameStatus}
-            setStatus={setDiskNameStatus}
-            placeholder=""
-            maxLength={DISK_NAME_MAX_LENGTH}
-            TopChildren={
-              <StRandomBtn onClick={() => setDiskName(getRandomName())}>
-                <span>랜덤추천</span>
-                <Dice />
-              </StRandomBtn>
-            }
-          ></Input>
-        </StInputContainer>
-      </StDiskCover>
-      <StDiskContent>
-        <NewDiskCard
-          isNew={false}
-          disk={data}
-          diskName={diskName}
-          diskColor={DISK_COLOR_LIST[diskNum]}
-          previewList={previewList}
-          mainImg={mainImg}
-          files={files}
-          setFiles={setFiles}
-          setPreviewList={setPreviewList}
-          setMainImg={setMainImg}
-          setDeleteImgList={setDeleteImgList}
-          defaultImgList={defaultImgList}
-        />
-        <StContent>
-          <Textarea
-            labelText="디스크 메모"
-            value={content}
-            setValue={setContent}
-            status={contentStatus}
-            setStatus={setContentStatus}
-            maxLength={DISK_CONTENT_MAX_LENGTH}
-            placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
-            jc="flex-start"
-            TopChildren={<StOptionText>선택사항</StOptionText>}
-            isMultiLine={true}
-          />
-        </StContent>
-      </StDiskContent>
-      <StBtnContainer>
-        <Button
-          btnStatus={valid && updated ? "primary01" : "disabled"}
-          clickHandler={() => handleSubmit()}
-          disabled={!(valid && updated)}
-        >
-          <span>디스크 굽기</span>
-        </Button>
-      </StBtnContainer>
-    </StContainer>
+    <>
+      {editLoading ? (
+        <LoadingSpinner text="디스크 굽는 중" />
+      ) : (
+        <StContainer>
+          <StDiskCover>
+            <StDiskCarousel>
+              <DiskCarousel disk={data} setDiskNum={setDiskNum} />
+            </StDiskCarousel>
+            <StInputContainer>
+              <Input
+                labelText="디스크 이름"
+                bottomText="직접 수정할 수 있어요"
+                value={diskName}
+                setValue={setDiskName}
+                status={diskNameStatus}
+                setStatus={setDiskNameStatus}
+                placeholder=""
+                maxLength={DISK_NAME_MAX_LENGTH}
+                TopChildren={
+                  <StRandomBtn onClick={() => setDiskName(getRandomName())}>
+                    <span>랜덤추천</span>
+                    <Dice />
+                  </StRandomBtn>
+                }
+              ></Input>
+            </StInputContainer>
+          </StDiskCover>
+          <StDiskContent>
+            <NewDiskCard
+              isNew={false}
+              disk={data}
+              diskName={diskName}
+              diskColor={DISK_COLOR_LIST[diskNum]}
+              previewList={previewList}
+              mainImg={mainImg}
+              files={files}
+              setFiles={setFiles}
+              setPreviewList={setPreviewList}
+              setMainImg={setMainImg}
+              setDeleteImgList={setDeleteImgList}
+              defaultImgList={defaultImgList}
+            />
+            <StContent>
+              <Textarea
+                labelText="디스크 메모"
+                value={content}
+                setValue={setContent}
+                status={contentStatus}
+                setStatus={setContentStatus}
+                maxLength={DISK_CONTENT_MAX_LENGTH}
+                placeholder="어떤 디깅 메모리를 담은 디스크인가요?"
+                jc="flex-start"
+                TopChildren={<StOptionText>선택사항</StOptionText>}
+                isMultiLine={true}
+              />
+            </StContent>
+          </StDiskContent>
+          <StBtnContainer>
+            <Button
+              btnStatus={
+                !editLoading && valid && updated ? "primary01" : "disabled"
+              }
+              clickHandler={() => handleSubmit()}
+              disabled={!editLoading && valid && updated ? false : true}
+            >
+              <span>디스크 굽기</span>
+            </Button>
+          </StBtnContainer>
+        </StContainer>
+      )}
+    </>
   );
 };
 

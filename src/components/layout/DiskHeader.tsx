@@ -146,7 +146,7 @@ const StHeader = styled.div<{ jc: string }>`
   padding: 0 32px;
   background-color: ${({ theme }) => theme.colors.bg};
   position: fixed;
-  z-index: 8;
+  z-index: 55;
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
     padding: 0 16px;
