@@ -16,6 +16,7 @@ const PreviewList = (
     target: number,
     targetUrl: string
   ) => void,
+  mainImg: string,
   handleMainImg: (target: number) => void
 ) => {
   const arr = [];
@@ -24,9 +25,15 @@ const PreviewList = (
       <li key={`${i}-${list[i]}`}>
         {list[i] ? (
           <StPreview onClick={() => handleMainImg(i)}>
-            <button onClick={(e) => handleDeleteImg(e, i, list[i].imgUrl)}>
-              <CloseCircle />
-            </button>
+            {list[i].imgUrl === mainImg ? (
+              <StDim>
+                <button onClick={(e) => handleDeleteImg(e, i, list[i].imgUrl)}>
+                  <CloseCircle />
+                </button>
+              </StDim>
+            ) : (
+              <></>
+            )}
             <img src={list[i].imgUrl} alt={`preview-${i}`} />
           </StPreview>
         ) : (
@@ -61,6 +68,16 @@ const StPreview = styled.div`
     height: 100%;
     object-fit: cover;
   }
+`;
+
+const StDim = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.transparent03};
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 
   button {
     display: flex;
