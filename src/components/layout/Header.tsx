@@ -72,7 +72,7 @@ const StHeader = styled.div<{ jc: string }>`
   align-items: center;
   justify-content: ${({ jc }) => jc};
   width: 100%;
-  height: 50px;
+  height: 62px;
   padding: 0 32px;
   background-color: ${({ theme }) => theme.colors.primary02};
   position: relative;
@@ -96,7 +96,7 @@ const StTitle = styled.div`
 `;
 
 const StTitleText = styled.h1`
-  color: ${({ theme }) => theme.colors.bg};
+  color: ${({ theme }) => theme.colors.white};
   line-height: ${calcRem(24)};
   letter-spacing: 0.15px;
   font-size: ${calcRem(16)};

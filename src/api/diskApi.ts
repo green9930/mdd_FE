@@ -79,9 +79,9 @@ export const likeDisk = async (diskId: number) => {
 
 export const getBookmarkDiskList = async (memberId: string) => {
   try {
-    const res = getLoc("accessToken")
-      ? await tokenInstance.get(`/api/v1/disks/all/bookmarked/${memberId}`)
-      : await instance.get(`/api/v1/disks/all/bookmarked/${memberId}`);
+    const res = await tokenInstance.get(
+      `/api/v1/disks/all/bookmarked/${memberId}`
+    );
     return res.data;
   } catch (err) {
     throw err;

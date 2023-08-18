@@ -6,6 +6,7 @@ import styled, { css } from "styled-components";
 
 import {
   lightThemeState,
+  loginState,
   routeState,
   signUpData,
   signUpState,
@@ -40,6 +41,7 @@ const SignUpPassword = ({
   const [passwordIndex, setPasswordIndex] = useState(0);
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
   const [data, setData] = useRecoilState(signUpData);
+  const setIsLogin = useSetRecoilState(loginState);
   const setIsSignUp = useSetRecoilState(signUpState);
   const setRoute = useSetRecoilState(routeState);
   const isLightTheme = useRecoilValue(lightThemeState);
@@ -65,11 +67,18 @@ const SignUpPassword = ({
       onSuccess(res) {
         setStep(4);
         setPercent(100);
+        setData({
+          memberName: "",
+          password: "",
+        });
         setTimeout(() => {
           setIsSignUp(true);
-          setRoute(true);
           navigate("/new-disk", { state: "signUp" });
         }, 800);
+        setTimeout(() => {
+          setRoute(true);
+          setIsLogin(true);
+        }, 1200);
       },
     }
   );
