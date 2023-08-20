@@ -22,14 +22,20 @@ import NotFound from "../pages/NotFound";
 import { initGA, logPageView } from "../utils/googleAnalytics";
 
 const Router = () => {
-  let location = useLocation();
+  const [gaInit, setGaInit] = useState(false);
 
   const [loading, setLoading] = useRecoilState(routeState);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
   const [isSignUp, setIsSignUp] = useRecoilState(signUpState);
 
+  let location = useLocation();
   const accessToken = getLoc("accessToken");
   const memberId = getLoc("memberId");
+
+  useEffect(() => {
+    initGA();
+    setGaInit(true);
+  }, []);
 
   useEffect(() => {
     // console.log("ROUTE RENDERING...", loading);
@@ -42,8 +48,8 @@ const Router = () => {
   }, [loading]);
 
   useEffect(() => {
-    logPageView();
-  }, [location]);
+    if (gaInit) logPageView();
+  }, [gaInit, location]);
 
   return (
     <>
