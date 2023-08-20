@@ -18,11 +18,13 @@ import {
 } from "../../state/atom";
 import { deleteUser } from "../../api/memberApi";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 import DiskMask3 from "../../assets/img/disk_mask_3.png";
+import { ReactComponent as Link } from "../../assets/svg/link.svg";
+import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 
 export type SettingIconType = "letter" | "heart" | "candles" | "logout";
-
 type SettingsListType = {
   title: string;
   content: string;
@@ -52,13 +54,69 @@ const SETTINGS_LIST: SettingsListType[] = [
   },
 ];
 
+const TEAM_POSITION = [
+  "PO",
+  "디자이너",
+  "프론트엔드 개발",
+  "백엔드 개발",
+] as const;
+
+type MemberType = {
+  name: string;
+  url: string;
+};
+
+type TeamListType = {
+  position: (typeof TEAM_POSITION)[number];
+  member: MemberType[];
+};
+
+const TEAM_LIST: TeamListType[] = [
+  {
+    position: "PO",
+    member: [
+      {
+        name: "조효은",
+        url: "",
+      },
+    ],
+  },
+  {
+    position: "디자이너",
+    member: [
+      {
+        name: "손하영",
+        url: "https://www.linkedin.com/in/hyeg/",
+      },
+    ],
+  },
+  {
+    position: "프론트엔드 개발",
+    member: [
+      {
+        name: "김미리",
+        url: "https://github.com/loveyoujgb",
+      },
+      {
+        name: "배근아",
+        url: "https://github.com/green9930",
+      },
+    ],
+  },
+  {
+    position: "백엔드 개발",
+    member: [{ name: "이태민", url: "https://github.com/philomonx1" }],
+  },
+];
+
 const Settings = () => {
   const [openUnregisterModal, setOpenUnregisterModal] = useState(false);
-  const [isLightTheme, setIsLightTheme] = useRecoilState(lightThemeState);
+  const [openTeamModal, setOpenTeamModal] = useState(false);
 
-  const setRoute = useSetRecoilState(routeState);
+  const [isLightTheme, setIsLightTheme] = useRecoilState(lightThemeState);
   const [isLogin, setIsLogin] = useRecoilState(loginState);
   const [isSignUp, setIsSignUp] = useRecoilState(signUpState);
+  const setRoute = useSetRecoilState(routeState);
   const setOpenLogoutToast = useSetRecoilState(logoutToastState);
   const setOpenUnregisterToast = useSetRecoilState(unregisterToastState);
 
@@ -83,10 +141,10 @@ const Settings = () => {
   const clickHandler = (name: SettingIconType) => {
     switch (name) {
       case "letter":
-        window.open("https://github.com/green9930/mdd_FE");
+        window.open("https://forms.gle/nQzwvDN6vDBHQNid6");
         return;
       case "heart":
-        console.log("제작팀 보기");
+        setOpenTeamModal(true);
         return;
       case "candles":
         setIsLightTheme((prev) => !prev);
@@ -111,6 +169,8 @@ const Settings = () => {
         return;
     }
   };
+
+  const handleLink = (target: string) => window.open(target);
 
   return (
     <StContainer>
@@ -149,6 +209,68 @@ const Settings = () => {
       ) : (
         <></>
       )}
+
+      {/* 제작팀 보기 */}
+      {openTeamModal ? (
+        <ModalLayout
+          width={WINDOW_W < MOBILE_MAX_W ? "358px" : "537px"}
+          height="auto"
+          bgc="transparent"
+        >
+          <div>
+            <StModal>
+              <h2>MDD 제작팀</h2>
+              <StTeamTable>
+                <tbody>
+                  {TEAM_LIST.map((val, idx) => {
+                    return (
+                      <tr key={idx}>
+                        <StPositionTd>{val.position}</StPositionTd>
+                        <StMemberTd>
+                          {val.member.map((el, i) => {
+                            const isClickable = el.url ? true : false;
+                            return (
+                              <StMember
+                                key={i}
+                                isClickable={isClickable}
+                                onClick={() =>
+                                  isClickable ? handleLink(el.url) : null
+                                }
+                              >
+                                <span>{el.name}</span>
+                                {isClickable ? (
+                                  <Link fill={lightTheme.colors.primary02} />
+                                ) : (
+                                  <></>
+                                )}
+                              </StMember>
+                            );
+                          })}
+                        </StMemberTd>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </StTeamTable>
+            </StModal>
+            <StBtnContainer>
+              <Button
+                btnStatus="primary02"
+                clickHandler={() => setOpenTeamModal(false)}
+              >
+                <StBtnText>
+                  <CloseCircle />
+                  <span>닫기</span>
+                </StBtnText>
+              </Button>
+            </StBtnContainer>
+          </div>
+        </ModalLayout>
+      ) : (
+        <></>
+      )}
+
+      {/* 회원탈퇴 */}
       {openUnregisterModal ? (
         <ModalLayout
           width={WINDOW_W < MOBILE_MAX_W ? "358px" : "537px"}
@@ -156,14 +278,14 @@ const Settings = () => {
           bgc="transparent"
         >
           <div>
-            <StUnregisterModal>
+            <StModal>
               <h2>회원탈퇴</h2>
               <img src={DiskMask3} alt="unregister-icon" />
-              <span>
+              <StUnregisterText>
                 탈퇴시 디스크와 좋아요 등 모든 데이터가 삭제되며 공유된 링크로
                 더이상 회원님의 홈을 볼 수 없어요. 그래도 탈퇴하시겠어요?
-              </span>
-            </StUnregisterModal>
+              </StUnregisterText>
+            </StModal>
             <StBtnContainer>
               <Button btnStatus="unregister" clickHandler={handleUnregister}>
                 <span>탈퇴하기</span>
@@ -233,19 +355,7 @@ const StContent = styled.span`
   font-weight: ${fontTheme.caption.fontWeight};
 `;
 
-const StUnregister = styled.div<{ isLightTheme: boolean }>`
-  padding: 0 ${calcRem(16)};
-  text-decoration: underline;
-  color: ${({ isLightTheme, theme }) =>
-    isLightTheme ? theme.colors.primary02 : theme.colors.primary01};
-  line-height: ${fontTheme.button.lineHeight};
-  letter-spacing: ${fontTheme.button.letterSpacing};
-  font-size: ${fontTheme.button.fontSize};
-  font-weight: ${fontTheme.button.fontWeight};
-  cursor: pointer;
-`;
-
-const StUnregisterModal = styled.div`
+const StModal = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -264,20 +374,74 @@ const StUnregisterModal = styled.div`
     font-family: "NanumSquareNeo";
   }
 
-  span {
-    text-align: center;
-    word-break: keep-all;
-    color: ${({ theme }) => theme.colors.text01};
-    line-height: ${fontTheme.body01.lineHeight};
-    letter-spacing: ${fontTheme.body01.letterSpacing};
-    font-size: ${fontTheme.body01.fontSize};
-    font-weight: ${fontTheme.body01.fontWeight};
-  }
-
   img {
     width: ${calcRem(68)};
     height: ${calcRem(68)};
   }
+`;
+
+const StTeamTable = styled.table`
+  border-collapse: separate;
+  border-spacing: ${calcRem(16)} ${calcRem(12)};
+`;
+
+const StPositionTd = styled.td`
+  color: ${({ theme }) => theme.colors.text03};
+  line-height: ${fontTheme.subtitle02.lineHeight};
+  letter-spacing: ${fontTheme.subtitle02.letterSpacing};
+  font-size: ${fontTheme.subtitle02.fontSize};
+  font-weight: ${fontTheme.subtitle02.fontWeight};
+`;
+
+const StMemberTd = styled.td`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: ${calcRem(8)};
+`;
+
+const StMember = styled.div<{ isClickable: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: ${calcRem(4)};
+  height: ${calcRem(24)};
+  cursor: ${({ isClickable }) => (isClickable ? "pointer" : "default")};
+
+  span {
+    color: ${({ theme }) => theme.colors.text01};
+    line-height: ${fontTheme.body02.lineHeight};
+    letter-spacing: ${fontTheme.body02.letterSpacing};
+    font-size: ${fontTheme.body02.fontSize};
+    font-weight: ${fontTheme.body02.fontWeight};
+  }
+
+  svg {
+    width: ${calcRem(24)};
+    height: ${calcRem(24)};
+  }
+`;
+
+const StUnregister = styled.div<{ isLightTheme: boolean }>`
+  padding: 0 ${calcRem(16)};
+  text-decoration: underline;
+  color: ${({ isLightTheme, theme }) =>
+    isLightTheme ? theme.colors.primary02 : theme.colors.primary01};
+  line-height: ${fontTheme.button.lineHeight};
+  letter-spacing: ${fontTheme.button.letterSpacing};
+  font-size: ${fontTheme.button.fontSize};
+  font-weight: ${fontTheme.button.fontWeight};
+  cursor: pointer;
+`;
+
+const StUnregisterText = styled.span`
+  text-align: center;
+  word-break: keep-all;
+  color: ${({ theme }) => theme.colors.text01};
+  line-height: ${fontTheme.body01.lineHeight};
+  letter-spacing: ${fontTheme.body01.letterSpacing};
+  font-size: ${fontTheme.body01.fontSize};
+  font-weight: ${fontTheme.body01.fontWeight};
 `;
 
 const StBtnContainer = styled.div`
@@ -286,4 +450,16 @@ const StBtnContainer = styled.div`
   justify-content: space-between;
   gap: ${calcRem(8)};
   margin-top: ${calcRem(16)};
+`;
+
+const StBtnText = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${calcRem(8)};
+
+  svg {
+    width: ${calcRem(24)};
+    height: ${calcRem(24)};
+  }
 `;
