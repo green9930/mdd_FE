@@ -8,9 +8,6 @@ import Router from "./router/Router";
 import { lightThemeState } from "./state/atom";
 import { getLoc, setLoc } from "./utils/localStorage";
 import { darkTheme, lightTheme } from "./styles/colors";
-import { initGA } from "./utils/googleAnalytics";
-
-initGA();
 
 function App() {
   const queryClient = new QueryClient();

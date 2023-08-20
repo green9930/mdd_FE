@@ -61,7 +61,7 @@ const Guide = ({ modalOpen, setModalOpen }: GuideProps) => {
         <ModalLayout
           width={`calc(${WINDOW_W}px - 24px)`}
           height="auto"
-          bgc={isLightTheme ? lightTheme.colors.bg : darkTheme.colors.bg}
+          bgc="transparent"
         >
           <StModalContainer>
             <StModal>
@@ -135,6 +135,7 @@ const StModalContainer = styled.div`
   padding: ${calcRem(24)};
   border: 2px solid ${({ theme }) => theme.colors.primary01};
   border-radius: 12px;
+  background-color: ${({ theme }) => theme.colors.bg};
 `;
 
 const StTextContainer = styled.div`

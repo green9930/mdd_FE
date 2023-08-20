@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { AxiosError } from "axios";
 import styled, { css, keyframes } from "styled-components";
 
 import DiskPreviewList from "./DiskPreviewList";
 import IconConverter from "./IconConverter";
-import ToastModal from "../elements/ToastModal";
+import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
 import {
   bookmarkToastState,
   deleteToastState,
@@ -25,8 +26,6 @@ import { calcRem, fontTheme } from "../../styles/theme";
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Gallery } from "../../assets/svg/gallery.svg";
 import { ReactComponent as Text } from "../../assets/svg/text.svg";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
 
 interface DiskCardProps {
   data: DiskType;
@@ -54,8 +53,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const [showBookmark, setShowBookmark] = useState(false);
   const [likeView, setLikeView] = useState<JSX.Element[]>([]);
 
-  const [openBookmarkToast, setOpenBookmarkToast] =
-    useRecoilState(bookmarkToastState);
+  const setOpenBookmarkToast = useSetRecoilState(bookmarkToastState);
   const setOpenDeleteToast = useSetRecoilState(deleteToastState);
   const page = useRecoilValue(pageState);
 
@@ -69,21 +67,12 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
     setShowBookmark(isBookmark);
   }, []);
 
-  useEffect(() => {
-    if (openBookmarkToast.open) {
-      setTimeout(() => {
-        setOpenBookmarkToast((prev) => ({ ...prev, open: false }));
-      }, 2000);
-    }
-  }, [openBookmarkToast.open]);
-
   // 디스크 삭제 =======================================================
   const { mutate: handleDelete } = useMutation(deleteDisk, {
     onSuccess: () => {
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["userBookmarkDisk"]);
       setOpen && setOpen();
-
       setOpenDeleteToast(true);
     },
   });
@@ -125,11 +114,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       likeViewCopy.push(
         <LikeIcon
           fillColor={
-            isMine
-              ? diskColor === "PURPLE"
-                ? lightTheme.colors.white
-                : lightTheme.colors.text01
-              : diskColor === "NEON_ORANGE"
+            diskColor === "NEON_ORANGE"
               ? lightTheme.colors.text01
               : lightTheme.colors.white
           }
@@ -191,7 +176,6 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
                   : lightTheme.colors.text01
               }
             />
-            {likeView}
             <span>{likeCount}</span>
           </StLikesCount>
         ) : (
@@ -226,6 +210,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
                           showBookmark,
                           diskColor === "NEON_ORANGE"
                         )}
+                        <>{val === "like" ? likeView : null}</>
                       </StIconContainer>
                     </li>
                   )}
@@ -269,13 +254,6 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
             />
           </StIconContainer>
         </StContentContainer>
-      ) : (
-        <></>
-      )}
-      {openBookmarkToast.open ? (
-        <ToastModal>
-          <span>{openBookmarkToast.text}</span>
-        </ToastModal>
       ) : (
         <></>
       )}

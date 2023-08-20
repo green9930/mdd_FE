@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-import ReactGA from "react-ga";
 
 import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme, MOBILE_MAX_W, WINDOW_W } from "../styles/theme";
@@ -15,6 +14,7 @@ import { getBookmarkDiskList } from "../api/diskApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DiskType } from "../types/diskTypes";
 import { numberFormat } from "../utils/numberFormat";
+import { logClickEvent } from "../utils/googleAnalytics";
 
 import DotBackground from "../assets/img/dot_background.png";
 import DotBackgroundDark from "../assets/img/dot_background_dark.png";
@@ -79,11 +79,10 @@ const MainPage = () => {
         .catch(() => {});
     }
 
-    ReactGA.event({
+    logClickEvent({
+      action: "CLICK TEST",
       category: "share",
-      action: "click",
-      label: "share my page",
-      value: 1,
+      label: "share my home",
     });
   };
 
@@ -285,11 +284,10 @@ const MainPage = () => {
                     <div
                       onClick={() => {
                         setModalOpen(true);
-                        ReactGA.event({
-                          category: "guide",
-                          action: "click",
+                        logClickEvent({
+                          action: "GUIDE CLICK",
+                          category: "guide modal",
                           label: "open guide modal",
-                          value: 1,
                         });
                       }}
                     >

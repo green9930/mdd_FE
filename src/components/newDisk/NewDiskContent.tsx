@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import { NewDiskProps } from "../../pages/NewDiskPage";
@@ -30,6 +30,7 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
     useState<InputStatusType>("default");
 
   const [newDisk, setNewDisk] = useRecoilState(newDiskState);
+  const resetNewDisk = useResetRecoilState(newDiskState);
   const [step, setStep] = useRecoilState(newDiskStepState);
   const setOpenCreateToast = useSetRecoilState(createToastState);
 
@@ -43,10 +44,13 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
 
   const { mutate: addDisk, isLoading: postLoading } = useMutation(postDisk, {
     onSuccess: () => {
+      resetNewDisk();
       setStep("newDisk1");
       setOpenCreateToast(true);
       queryClient.invalidateQueries(["diskList"]);
-      window.location.replace(`/disk-list/${getLoc("memberId")}`);
+      step === "newDiskSignUp2"
+        ? window.location.replace(`/home/${getLoc("memberId")}`)
+        : navigate(`/disk-list/${getLoc("memberId")}`);
     },
     onError: (err: any) => {
       err.response.data.ErrorCode === "NOT_SUPPORTED_FILE_TYPE"
@@ -141,11 +145,11 @@ const StContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 0;
+  padding: ${calcRem(50)} 0 0;
   background-color: ${({ theme }) => theme.colors.bg};
 
   @media screen and (max-width: ${MOBILE_MAX_W}px) {
-    padding: 0 ${calcRem(16)};
+    padding: ${calcRem(50)} ${calcRem(16)} 0;
   }
 
   h2 {
