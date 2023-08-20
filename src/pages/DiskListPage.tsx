@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
@@ -11,7 +11,12 @@ import ToastModal from "../components/elements/ToastModal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getDiskList } from "../api/diskApi";
 import { getLoc } from "../utils/localStorage";
-import { createToastState, deleteToastState, pageState } from "../state/atom";
+import {
+  bookmarkToastState,
+  createToastState,
+  deleteToastState,
+  pageState,
+} from "../state/atom";
 import { DiskListType, DiskType } from "../types/diskTypes";
 
 export interface DiskListProps {
@@ -23,30 +28,14 @@ const DiskListPage = () => {
   const [isMyPage, setIsMyPage] = useState<boolean>(false);
 
   const [page, setPage] = useRecoilState(pageState);
-  const [openDeleteToast, setOpenDeleteToast] =
-    useRecoilState(deleteToastState);
   const [openCreateToast, setOpenCreateToast] =
     useRecoilState(createToastState);
+  const [openBookmarkToast, setOpenBookmarkToast] =
+    useRecoilState(bookmarkToastState);
+  const [openDeleteToast, setOpenDeleteToast] =
+    useRecoilState(deleteToastState);
 
   const { id: paramsId } = useParams<{ id: string }>();
-
-  const { data, isLoading, isSuccess } = useQuery(
-    ["diskList"],
-    () => getDiskList(paramsId as string),
-    {
-      onSuccess: (data: DiskListType) => {
-        console.log("SUCCESS", data);
-      },
-      onError: (err: any) => {
-        if (err.response.data.ErrorCode === "NOT_FOUND_MEMBER") {
-          window.alert(err.response.data.errorMessage);
-          window.location.replace("/member_not_found");
-        }
-        console.log("GET DISK LIST FAIL", err);
-      },
-      staleTime: Infinity,
-    }
-  );
 
   useEffect(() => {
     setIsMyPage(paramsId === getLoc("memberId"));
@@ -58,14 +47,25 @@ const DiskListPage = () => {
   useEffect(() => {
     setTimeout(() => {
       if (openCreateToast) setOpenCreateToast(false);
-    }, 2000);
-  }, [openCreateToast]);
-
-  useEffect(() => {
-    setTimeout(() => {
+      if (openBookmarkToast)
+        setOpenBookmarkToast((prev) => ({ ...prev, open: false }));
       if (openDeleteToast) setOpenDeleteToast(false);
-    }, 2000);
-  }, [openDeleteToast]);
+    }, 7000);
+  }, [openCreateToast, openBookmarkToast.open, openDeleteToast]);
+
+  const { data, isLoading, isSuccess } = useQuery(
+    ["diskList"],
+    () => getDiskList(paramsId as string),
+    {
+      onSuccess: (data: DiskListType) => console.log("DISK LIST >> ", data),
+      onError: (err: any) => {
+        if (err.response.data.ErrorCode === "NOT_FOUND_MEMBER") {
+          window.alert(err.response.data.errorMessage);
+          window.location.replace("/member_not_found");
+        }
+      },
+    }
+  );
 
   return (
     <AppLayout>
@@ -90,23 +90,30 @@ const DiskListPage = () => {
           ) : (
             <></>
           )}
+          {openCreateToast ? (
+            <ToastModal>
+              <span>디스크 굽기 완료! 대표 디스크로 설정해보세요</span>
+            </ToastModal>
+          ) : (
+            <></>
+          )}
+          {openBookmarkToast.open ? (
+            <ToastModal>
+              <span>{openBookmarkToast.text}</span>
+            </ToastModal>
+          ) : (
+            <></>
+          )}
+          {openDeleteToast ? (
+            <ToastModal>
+              <span>디스크가 삭제되었어요 🗑</span>
+            </ToastModal>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <LoadingSpinner text="디스크 불러오는 중" />
-      )}
-      {openDeleteToast ? (
-        <ToastModal>
-          <span>디스크가 삭제되었어요 🗑</span>
-        </ToastModal>
-      ) : (
-        <></>
-      )}
-      {openCreateToast ? (
-        <ToastModal>
-          <span>디스크 굽기 완료! 대표 디스크로 설정해보세요</span>
-        </ToastModal>
-      ) : (
-        <></>
       )}
     </AppLayout>
   );

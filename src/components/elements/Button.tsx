@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
@@ -63,6 +63,22 @@ const StButton = styled.button<{ btnStatus: BtnStatusType }>`
   border-radius: ${calcRem(12)};
   cursor: ${({ btnStatus }) =>
     btnStatus === "disabled" ? "not-allowed" : "pointer"};
+  :hover {
+    background-color: ${({ theme, btnStatus }) => {
+      switch (btnStatus) {
+        case "primary01":
+          return theme.colors.blue02;
+        case "primary02":
+          return theme.colors.blue02;
+        case "disabled":
+          return theme.colors.primary04;
+        case "unregister":
+          return theme.colors.blue02;
+        case "transparent":
+          return "transparent";
+      }
+    }};
+  }
 `;
 
 const StContent = styled.div<{

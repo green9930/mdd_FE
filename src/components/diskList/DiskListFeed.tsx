@@ -39,7 +39,7 @@ const DiskListFeed = ({ isMine, data }: DiskListProps) => {
           );
         })}
       </StList>
-      {data.length > 3 ? (
+      {data.length > 2 ? (
         <StBtnContainer>
           <Button btnStatus="primary02" clickHandler={scrollToTop}>
             <BtnText>

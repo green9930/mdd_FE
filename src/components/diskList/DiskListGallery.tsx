@@ -50,7 +50,6 @@ const DiskListGallery = ({ isMine, data }: DiskListProps) => {
             likeCount,
             modifiedAt,
           } = val;
-          console.log(val);
 
           return (
             <StItem
