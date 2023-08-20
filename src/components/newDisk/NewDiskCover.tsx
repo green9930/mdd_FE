@@ -101,6 +101,7 @@ export default NewDiskCover;
 
 const StContainer = styled.div`
   min-height: calc(100vh - 50px);
+  padding-top: ${calcRem(50)};
   background-color: ${({ theme }) => theme.colors.bg};
 
   h2 {

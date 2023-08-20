@@ -1,11 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import { getLoc } from "../../utils/localStorage";
@@ -48,10 +43,8 @@ const DiskHeader = ({
 
   // status bar theme-color 변경
   useEffect(() => {
-    console.log("RENDERING");
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (themeColorMeta) {
-      console.log(getLoc("theme"));
       themeColorMeta.setAttribute(
         "content",
         getLoc("theme") === "lightMode"
