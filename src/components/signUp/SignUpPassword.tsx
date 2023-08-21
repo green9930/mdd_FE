@@ -1,8 +1,8 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
+import styled, { css } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import styled, { css } from "styled-components";
 
 import {
   lightThemeState,
@@ -13,18 +13,18 @@ import {
 } from "../../state/atom";
 import { postJoin } from "../../api/memberApi";
 import { isLightThemeType } from "../../types/etcTypes";
+import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
+import { PASSWORD_MAX_LENGTH } from "../../utils/validations";
+
 import { calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
-
-import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
 
 interface ButtonStyleProps {
   show?: boolean;
   status?: string;
 }
 
-export interface SignUpPasswordProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface SignUpPasswordProps extends React.HTMLAttributes<HTMLDivElement> {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
   setPercent: Dispatch<SetStateAction<number>>;
@@ -41,6 +41,7 @@ const SignUpPassword = ({
   const [passwordIndex, setPasswordIndex] = useState(0);
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
   const [data, setData] = useRecoilState(signUpData);
+
   const setIsLogin = useSetRecoilState(loginState);
   const setIsSignUp = useSetRecoilState(signUpState);
   const setRoute = useSetRecoilState(routeState);
@@ -56,22 +57,17 @@ const SignUpPassword = ({
   }, [error]);
 
   useEffect(() => {
-    return () => {
-      setPassword(["", "", "", "", "", ""]);
-      setPasswordIndex(0);
-    };
-  }, [step]);
-
-  useEffect(() => {
     if (step === 2) {
       setError(false);
     }
+    setPassword(["", "", "", "", "", ""]);
+    setPasswordIndex(0);
   }, [step]);
 
   const { mutate: mutationSignUp, isLoading } = useMutation(
     () => postJoin(data),
     {
-      onSuccess(res) {
+      onSuccess(data) {
         setStep(4);
         setPercent(100);
         setData({
@@ -81,7 +77,13 @@ const SignUpPassword = ({
         setTimeout(() => {
           setIsSignUp(true);
           navigate("/new-disk", { state: "signUp" });
-        }, 800);
+          if (data.memberId % 100 === 0) {
+            window.alert(
+              `${data.memberId}번째 회원이 되신 것을 축하합니다! \n현재 화면에 나온 메시지를 캡쳐한 후, 서비스 평가와 함께 제출해주시면 상품을 드려요!`
+            );
+          }
+        }, 1000);
+        // 로그인 페이지 이동 setTimeout함수
         setTimeout(() => {
           setRoute(true);
           setIsLogin(true);
@@ -113,7 +115,7 @@ const SignUpPassword = ({
       setPasswordIndex(passwordIndex + 1);
 
       // 6자릿수 일 때 다음 step
-      if (passwordCurrent.join("").length === 6) {
+      if (passwordCurrent.join("").length === PASSWORD_MAX_LENGTH) {
         setPasswordIndex(0);
         setPassword(["", "", "", "", "", ""]);
         setPercent(80);
@@ -130,8 +132,8 @@ const SignUpPassword = ({
       passwordCurrent[passwordIndex] = item;
       setPassword(passwordCurrent);
       setPasswordIndex(passwordIndex + 1);
-      if (passwordCurrent.join("").length === 6) {
-        //기존 password 동일 여부 확인
+      // 6자릿수 일 때 기존 password 동일 여부 확인
+      if (passwordCurrent.join("").length === PASSWORD_MAX_LENGTH) {
         if (data.password === passwordCurrent.join("")) {
           mutationSignUp();
         } else {
