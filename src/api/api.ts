@@ -1,8 +1,6 @@
 // REST API
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { clearLoc, getLoc, setLoc } from "../utils/localStorage";
-
-const accessToken = getLoc("accessToken");
+import axios, { AxiosError } from "axios";
+import { getLoc, removeLoc, setLoc } from "../utils/localStorage";
 
 /* REQUEST WITHOUT ACCESSTOKEN                                                */
 /* -------------------------------------------------------------------------- */
@@ -45,14 +43,9 @@ tokenInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log(error);
-    const status = error.response.status;
-    const removeInstance = () => {
-      delete axios.defaults.headers.common.Authorization;
-      delete tokenInstance.defaults.headers.common.Authorization;
-    };
+    const originalRequest = error.config;
     // 만료된 엑세스 토큰 error code = 401
-    if (status === 401) {
+    if (error.response.status === 401) {
       const refreshToken = getLoc("refreshToken");
       try {
         const response = await axios.get(
@@ -65,22 +58,26 @@ tokenInstance.interceptors.response.use(
         );
         const newAccessToken = response.headers.accesstoken;
         const data = response.data.memberInfo;
+
         setLoc("accessToken", newAccessToken);
         setLoc("nickname", data.nickname);
         setLoc("memberName", data.memberName);
         setLoc("memberId", data.memberId);
 
-        removeInstance();
-        tokenInstance.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
-        error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-        return await tokenInstance.request(error.config);
+        originalRequest.headers.authorization = `Bearer ${newAccessToken}`;
+
+        // 새로운 엑세스 토큰으로 새 요청 시도
+        return axios(originalRequest);
       } catch (error: AxiosError | any) {
         const status = error.response.status;
-        const errorMessage = error.response.data.errorMessage;
         // 잘못된 리프레시 토큰 error code = 401
         if (status === 401) {
-          window.alert(errorMessage);
-          clearLoc();
+          window.alert("로그인이 만료되었습니다. 로그인을 다시 해주세요.");
+          removeLoc("accessToken");
+          removeLoc("memberId");
+          removeLoc("nickname");
+          removeLoc("refreshToken");
+          removeLoc("memberName");
           window.location.href = "/login";
         }
       }
