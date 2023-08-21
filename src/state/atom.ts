@@ -49,7 +49,6 @@ export const newDiskState = atom<NewDiskType>({
     diskName: "",
     content: "",
     diskColor: "PINK",
-    // isPrivate: false,
     isBookmark: false,
   },
 });
