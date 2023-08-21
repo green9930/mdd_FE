@@ -1,44 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import AppLayout from "../components/layout/AppLayout";
 import { calcRem, fontTheme } from "../styles/theme";
 
 import Button from "../components/elements/Button";
+import AppLayout from "../components/layout/AppLayout";
 
 import DiskMask3 from "../assets/img/disk_mask_notfound.png";
 import { ReactComponent as HomeEmpty } from "../assets/svg/home_empty.svg";
 
-export interface NotFoundProps extends React.HTMLAttributes<HTMLDivElement> {
-  errorMessage?: string;
-}
-type ErrorMessageType = {
-  [key: number]: string;
-};
-
-const ERROR_MESSAGE: ErrorMessageType = {
-  404: "회원을 찾을 수 없습니다",
-  409: "탈퇴한 회원의 링크",
-};
-
-const NotFound = ({ errorMessage = "서버 접속 불가" }: NotFoundProps) => {
+const NotFound = () => {
   const navigate = useNavigate();
-
-  const { state } = useLocation();
-  console.log(state);
-
   return (
     <AppLayout>
       <StContainer>
         <StImageContainer>
           <StImage src={DiskMask3} />
-          <StErrorText>
-            {`페이지를 찾을 수 없어요.`}
-            {/* {`페이지를 찾을 수 없어요.\n\n 사유: ${
-              state ? `${ERROR_MESSAGE[state.errorStatus]}` : errorMessage
-            }`} */}
-          </StErrorText>
+          <StErrorText>{`페이지를 찾을 수 없어요.`}</StErrorText>
         </StImageContainer>
 
         <StButtonContainer>
@@ -46,11 +25,6 @@ const NotFound = ({ errorMessage = "서버 접속 불가" }: NotFoundProps) => {
             btnStatus={"primary01"}
             clickHandler={() => {
               navigate("/");
-              // navigate("/notFount", {
-              //   state: {
-              //     errorStatus: 404,
-              //   },
-              // });
             }}
           >
             <StButtonText>

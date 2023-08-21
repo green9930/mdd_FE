@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useRecoilValue } from "recoil";
-import { lightThemeState } from "../state/atom";
-import { GuideText, InputStatusType } from "../types/etcTypes";
 
 import { WINDOW_W, calcRem, fontTheme } from "../styles/theme";
-import { darkTheme, lightTheme } from "../styles/colors";
+import { lightTheme } from "../styles/colors";
+
+import ModalLayout from "./layout/ModalLayout";
+import { GuideText } from "../types/etcTypes";
 
 import DiskMask01 from "../assets/img/disk_mask_1.png";
 import DiskMask02 from "../assets/img/disk_mask_2.png";
@@ -13,7 +13,6 @@ import CloseCircle from "../assets/svg/close_circle.svg";
 import { ReactComponent as ArrowBox } from "../assets/svg/arrow_box.svg";
 
 import Button from "./elements/Button";
-import ModalLayout from "./layout/ModalLayout";
 
 const GUIDE_TEXT: GuideText = {
   1: [
@@ -35,7 +34,6 @@ interface GuideProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Guide = ({ modalOpen, setModalOpen }: GuideProps) => {
   const [page, setPage] = useState<number>(1);
-  const isLightTheme = useRecoilValue(lightThemeState);
 
   const [currentIcon, setCurrentIcon] = useState(DiskMask01);
 

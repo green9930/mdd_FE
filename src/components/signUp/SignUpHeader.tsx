@@ -1,26 +1,23 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styled, { keyframes } from "styled-components";
+import { useSetRecoilState } from "recoil";
 
 import { MOBILE_MAX_W, fontTheme } from "../../styles/theme";
 import { calcRem } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 import { StepType } from "../../types/etcTypes";
-
 import { ReactComponent as Arrow } from "../../assets/svg/arrow.svg";
-import { lightTheme } from "../../styles/colors";
 import { signUpData } from "../../state/atom";
-import { useRecoilState } from "recoil";
 
-export interface SignUpHeaderProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface SignUpHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   step: number;
   percent: number;
   setStep: Dispatch<SetStateAction<number>>;
   setPercent: Dispatch<SetStateAction<number>>;
 }
-export interface StProgressBarProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface StProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   percent: number;
   step: number;
 }
@@ -39,19 +36,13 @@ const SignUpHeader = ({
   percent = 0,
   setPercent,
 }: SignUpHeaderProps) => {
-  const [data, setData] = useRecoilState(signUpData);
+  const setData = useSetRecoilState(signUpData);
 
   return (
     <StContainer>
       {step !== 1 && (
         <StBack
           onClick={() => {
-            // if (step === 2) {
-            //   setData({
-            //     memberName: "",
-            //     password: "",
-            //   });
-            // }
             if (step === 3) {
               setData((prev) => ({
                 ...prev,
