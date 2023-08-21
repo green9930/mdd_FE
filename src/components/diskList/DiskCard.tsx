@@ -5,7 +5,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { AxiosError } from "axios";
 import styled, { css, keyframes } from "styled-components";
 
-import DiskPreviewList from "./DiskPreviewList";
 import IconConverter from "./IconConverter";
 import { bookmarkDisk, deleteDisk, likeDisk } from "../../api/diskApi";
 import {
@@ -165,7 +164,18 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
       <StPreviewContainer>
         <StMainImg src={mainImg} alt="main-preview" />
       </StPreviewContainer>
-      <StImgList>{DiskPreviewList(image, mainImg, handleMainImg)}</StImgList>
+      <StImgList>
+        {image.map((val, idx) => {
+          return (
+            <li key={`preview-${val.imgId}`}>
+              <StPreview visibile={true} onClick={() => handleMainImg(idx)}>
+                {val.imgUrl === mainImg ? <StDim /> : <></>}
+                <img src={val.imgUrl} alt={`preview-${val.imgId}`} />
+              </StPreview>
+            </li>
+          );
+        })}
+      </StImgList>
       <StSubContainer>
         {isMine ? (
           <StLikesCount isMine={true} diskColor={diskColor}>
@@ -309,9 +319,8 @@ const StMainImg = styled.img`
 `;
 
 const StImgList = styled.ul`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: ${calcRem(8)};
   width: 100%;
   height: auto;
@@ -325,13 +334,32 @@ const StImgList = styled.ul`
     background-color: transparent;
     border-radius: ${calcRem(8)};
     overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
   }
+`;
+
+const StPreview = styled.div<{ visibile: boolean }>`
+  opacity: ${({ visibile }) => (visibile ? 1 : 0)};
+  display: flex;
+  width: 100%;
+  aspect-ratio: 1;
+  position: relative;
+  cursor: ${({ visibile }) => (visibile ? "pointer" : "default")};
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const StDim = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.transparent03};
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 `;
 
 const StSubContainer = styled.div`
@@ -348,7 +376,6 @@ const StLikesCount = styled.div<{ isMine: boolean; diskColor: DiskColorType }>`
   gap: ${({ isMine }) => (isMine ? calcRem(4) : calcRem(8))};
   cursor: pointer;
   position: relative;
-  /* transition: all 0.5s ease-in-out; */
 
   ${({ isMine, diskColor }) =>
     !isMine &&

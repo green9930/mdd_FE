@@ -1,13 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 
+import { DiskListProps } from "../../pages/DiskListPage";
 import DiskCard from "./DiskCard";
 import Button from "../elements/Button";
 import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
 import { ReactComponent as ArrowCircle } from "../../assets/svg/arrow_circle.svg";
-import { DiskListProps } from "../../pages/DiskListPage";
 
 const DiskListFeed = ({ isMine, data }: DiskListProps) => {
   const scrollToTop = () => {

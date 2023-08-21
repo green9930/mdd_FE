@@ -1,6 +1,5 @@
 import axios, { Axios, AxiosResponse } from "axios";
 import { instance, tokenInstance } from "./api";
-import { getLoc } from "../utils/localStorage";
 
 export const getDiskList = async (diskId: string) => {
   try {

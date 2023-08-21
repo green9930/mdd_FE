@@ -7,13 +7,14 @@ import Input from "../elements/Input";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
 import { checkNicknameDuplicated, patchMyInfo } from "../../api/memberApi";
-import { MemberType } from "../../types/memberTypes";
-import { InputStatusType } from "../../types/etcTypes";
 import {
   INTEREST_MAX_LENGTH,
   INTRODUCE_MAX_LENGTH,
   NICKNAME_MAX_LENGTH,
 } from "../../utils/validations";
+import { setLoc } from "../../utils/localStorage";
+import { MemberType } from "../../types/memberTypes";
+import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
@@ -21,7 +22,6 @@ import DefaultProfile from "../../assets/img/default_profile.png";
 import { ReactComponent as GalleryAddOutline } from "../../assets/svg/gallery_add_outline.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 import { ReactComponent as Save } from "../../assets/svg/save.svg";
-import { setLoc } from "../../utils/localStorage";
 
 interface ProfileModalProps {
   data: MemberType;
@@ -90,7 +90,6 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
           setNicknameAlert("이미 존재하는 닉네임이에요 😭");
         }
       },
-      onError: (err) => console.log("ERROR", err),
       enabled: false,
       staleTime: Infinity,
     }
@@ -102,7 +101,6 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
       setLoc("nickname", nickname);
       setOpen(false);
     },
-    onError: (err) => console.log("FAILED", err),
   });
 
   const handleAddImg = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +143,6 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
     updateMyInfo(frm);
   };
 
-  console.log(interest);
   return (
     <ModalLayout
       width={WINDOW_W < MOBILE_MAX_W ? "358px" : "412px"}

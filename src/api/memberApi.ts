@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { getLoc, setLoc } from "../utils/localStorage";
+import { setLoc } from "../utils/localStorage";
 import { instance, tokenInstance } from "./api";
 
 export interface AuthData {

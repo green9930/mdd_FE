@@ -35,7 +35,6 @@ const DiskCarousel = ({ disk, setDiskNum }: DiskCarouselProps) => {
       </StNextBtn>
     ),
     initialSlide: DISK_COLOR_LIST.indexOf(disk.diskColor),
-    // initialSlide: 0,
   };
 
   return (

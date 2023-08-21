@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-import { DiskListProps } from "../../pages/DiskListPage";
 import DiskCard from "./DiskCard";
 import Disk from "../elements/Disk";
 import Button from "../elements/Button";
 import ModalLayout from "../layout/ModalLayout";
+import { newDiskStepState } from "../../state/atom";
 import { DiskColorType, DiskType } from "../../types/diskTypes";
+import { DiskListProps } from "../../pages/DiskListPage";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
 
@@ -15,8 +17,6 @@ import { ReactComponent as Bookmark } from "../../assets/svg/bookmark.svg";
 import { ReactComponent as PlusFilled } from "../../assets/svg/plus_filled.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 import { ReactComponent as Pen } from "../../assets/svg/pen.svg";
-import { useSetRecoilState } from "recoil";
-import { newDiskStepState } from "../../state/atom";
 
 const DiskListGallery = ({ isMine, data }: DiskListProps) => {
   const [openModal, setOpenModal] = useState(false);
@@ -31,7 +31,6 @@ const DiskListGallery = ({ isMine, data }: DiskListProps) => {
     navigate("/new-disk", { state: "newDisk" });
   };
 
-  // console.log("DATA >> ", data);
   return (
     <StContainer>
       <StList>
