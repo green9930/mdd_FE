@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
+import LoadingSpinner from "../LoadingSpinner";
 import { NewDiskProps } from "../../pages/NewDiskPage";
 import NewDiskCard from "./NewDiskCard";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
-import LoadingSpinner from "../LoadingSpinner";
 import { postDisk } from "../../api/diskApi";
 import {
   createToastState,

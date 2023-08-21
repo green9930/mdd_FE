@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { getLoc, setLoc } from "../utils/localStorage";
+import { setLoc } from "../utils/localStorage";
 import { instance, tokenInstance } from "./api";
 
 export interface AuthData {
@@ -21,7 +21,7 @@ export const postJoin = async (postData: AuthData) => {
     setLoc("nickname", data.nickname);
     setLoc("memberName", data.memberName);
     setLoc("memberId", data.memberId);
-    return res.data;
+    return res.data.memberInfo;
   } catch (error: AxiosError | any) {
     const status = error.response.status;
     const errorMessage = error.response.data.errorMessage;

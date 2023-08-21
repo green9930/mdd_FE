@@ -49,7 +49,6 @@ export const newDiskState = atom<NewDiskType>({
     diskName: "",
     content: "",
     diskColor: "PINK",
-    // isPrivate: false,
     isBookmark: false,
   },
 });
@@ -83,4 +82,9 @@ export const logoutToastState = atom<boolean>({
 export const unregisterToastState = atom<boolean>({
   key: "unregisterToastState",
   default: false,
+});
+
+export const debounceState = atom<string>({
+  key: "debounceState",
+  default: "default",
 });

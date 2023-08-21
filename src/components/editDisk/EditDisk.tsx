@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 
+import LoadingSpinner from "../LoadingSpinner";
 import DiskCarousel from "../newDisk/DiskCarousel";
 import NewDiskCard from "../newDisk/NewDiskCard";
 import Input from "../elements/Input";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
-import LoadingSpinner from "../LoadingSpinner";
 import {
   DISK_CONTENT_MAX_LENGTH,
   DISK_NAME_MAX_LENGTH,
@@ -51,7 +51,6 @@ const EditDisk = ({ data }: EditDiskProps) => {
     useState<InputStatusType>("default");
 
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -100,7 +99,13 @@ const EditDisk = ({ data }: EditDiskProps) => {
       queryClient.invalidateQueries(["diskById"]);
       navigate(`/disk-list/${getLoc("memberId")}`);
     },
-    onError: () => alert("디스크 편집에 실패했습니다."),
+    onError: (err: any) => {
+      err.response.data.ErrorCode === "NOT_SUPPORTED_FILE_TYPE"
+        ? alert(
+            "디스크 이미지는 현재 PNG, JPG, JPEG 확장자만 지원하고 있습니다."
+          )
+        : alert("디스크 편집에 실패했습니다.");
+    },
   });
 
   const handleSubmit = async () => {

@@ -9,6 +9,8 @@ import AppLayout from "../components/layout/AppLayout";
 import Input from "../components/elements/Input";
 import Button from "../components/elements/Button";
 import PasswordInput from "../components/elements/PasswordInput";
+import ToastModal from "../components/elements/ToastModal";
+
 import { loginState, logoutToastState, routeState } from "../state/atom";
 import { getCookie, setCookie } from "../utils/cookie";
 import { getLoc } from "../utils/localStorage";
@@ -17,11 +19,14 @@ import { InputStatusType } from "../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../styles/theme";
 
 import MonitorFilled from "../assets/img/monitor_filled.png";
-import ToastModal from "../components/elements/ToastModal";
-import LoadingSpinner from "../components/LoadingSpinner";
+import {
+  MEMBERNAME_MAX_LENGTH,
+  MEMBERNAME_MIN_LENGTH,
+} from "../utils/validations";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
   const [idStatus, setIdStatus] = useState<InputStatusType>("default");
   const [passwordStatus, setPasswordStatus] =
     useState<InputStatusType>("default");
@@ -43,8 +48,8 @@ const LoginPage = () => {
     return (
       /^[a-zA-Z0-9]*[a-zA-Z][a-zA-Z0-9]*$/.test(id) &&
       /\d/.test(id) &&
-      id.length >= 8 &&
-      id.length <= 20 &&
+      id.length >= MEMBERNAME_MIN_LENGTH &&
+      id.length <= MEMBERNAME_MAX_LENGTH &&
       password.length === 6
     );
   };

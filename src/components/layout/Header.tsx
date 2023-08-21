@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { getLoc } from "../../utils/localStorage";
 import { MOBILE_MAX_W, calcRem } from "../../styles/theme";
 import { darkTheme, lightTheme } from "../../styles/colors";
 
 import LogoMDDSimple from "../../assets/img/logo_mdd_simple.png";
 import { ReactComponent as Home } from "../../assets/svg/home.svg";
 import { ReactComponent as Setting } from "../../assets/svg/setting.svg";
-import { useNavigate } from "react-router-dom";
-import { getLoc } from "../../utils/localStorage";
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   isMyDisk: boolean;

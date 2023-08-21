@@ -6,12 +6,7 @@ import DiskHeader from "../components/layout/DiskHeader";
 import NewDiskCover from "../components/newDisk/NewDiskCover";
 import NewDiskContent from "../components/newDisk/NewDiskContent";
 import { newDiskStepState, pageState } from "../state/atom";
-import { useLocation, useParams } from "react-router-dom";
-
-const TEST_DATA = {
-  isMe: false,
-  userName: "testUser",
-};
+import { useLocation } from "react-router-dom";
 
 const TITLE_LIST = {
   newDiskSignUp1: `디스크 생성 완료! \n디스크 색상과 이름을 정해볼까요?`,
@@ -41,7 +36,7 @@ const NewDiskPage = () => {
     <AppLayout>
       {step === "newDisk1" || step === "newDisk2" ? (
         <DiskHeader
-          isMyDisk={TEST_DATA.isMe}
+          isMyDisk={true}
           titleText="디스크 생성하기"
           newDiskContent={step === "newDisk2"}
         />

@@ -11,7 +11,8 @@ export const initGA = () => {
 };
 
 export const logPageView = () => {
-  ReactGA.set({ page: window.location.pathname });
+  ReactGA.set({ page: window.location.pathname.split("/")[1] });
+  // ReactGA.set({ page: window.location.pathname });
   ReactGA.send("pageview");
 };
 

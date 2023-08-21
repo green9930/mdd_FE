@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import HomePage from "../pages/HomePage";
 import MainPage from "../pages/MainPage";
@@ -16,9 +10,9 @@ import DiskListPage from "../pages/DiskListPage";
 import NewDiskPage from "../pages/NewDiskPage";
 import EditDiskPage from "../pages/EditDiskPage";
 import SettingsPage from "../pages/SettingsPage";
-import { getLoc } from "../utils/localStorage";
-import { loginState, routeState, signUpState } from "../state/atom";
 import NotFound from "../pages/NotFound";
+import { loginState, routeState, signUpState } from "../state/atom";
+import { getLoc } from "../utils/localStorage";
 import { initGA, logPageView } from "../utils/googleAnalytics";
 
 const Router = () => {
@@ -38,9 +32,6 @@ const Router = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("ROUTE RENDERING...", loading);
-    // console.log("ISSIGNUP", isSignUp);
-    // console.log("ISLOGIN", isLogin);
     if (!isSignUp && !isLogin) {
       accessToken ? setIsLogin(true) : setIsLogin(false);
     }
@@ -82,13 +73,7 @@ const Router = () => {
           <Route
             path="/new-disk"
             element={
-              isLogin ? (
-                <NewDiskPage />
-              ) : isSignUp ? (
-                <NewDiskPage />
-              ) : (
-                <Navigate to="/" />
-              )
+              isLogin || isSignUp ? <NewDiskPage /> : <Navigate to="/" />
             }
           />
           <Route

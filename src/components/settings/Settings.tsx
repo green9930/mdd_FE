@@ -135,7 +135,6 @@ const Settings = () => {
       setOpenUnregisterToast(true);
       navigate("/");
     },
-    onError: (err) => console.log(err),
   });
 
   const clickHandler = (name: SettingIconType) => {

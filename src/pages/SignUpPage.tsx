@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+
+import { signUpData } from "../state/atom";
 
 import AppLayout from "../components/layout/AppLayout";
-import { signUpData } from "../state/atom";
-import { useRecoilState } from "recoil";
-
 import SignUpHeader from "../components/signUp/SignUpHeader";
 import SignUpId from "../components/signUp/SignUpId";
 import SignUpPassword from "../components/signUp/SignUpPassword";
-import { useLocation } from "react-router-dom";
 
 const SignUpPage = () => {
+  const location = useLocation();
+
   const [step, setStep] = useState<number>(1);
   const [percent, setPercent] = useState<number>(12);
-  const [data, setData] = useRecoilState(signUpData);
 
-  const location = useLocation();
+  const setData = useSetRecoilState(signUpData);
 
   useEffect(() => {
     return () => {

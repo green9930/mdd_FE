@@ -1,12 +1,13 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import styled, { css } from "styled-components";
 
 import { InputStatusType } from "../../types/etcTypes";
+
 import { calcRem, fontTheme } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
 import Eye from "../../assets/svg/eye.svg";
 import EyeSlash from "../../assets/svg/eye_slash.svg";
-import { lightTheme } from "../../styles/colors";
 
 interface PasswordInputProps extends React.HTMLAttributes<HTMLDivElement> {
   labelText: string;
@@ -19,7 +20,6 @@ interface PasswordInputProps extends React.HTMLAttributes<HTMLDivElement> {
   placeholder: string;
   jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
   TopChildren?: React.ReactNode;
-  children?: React.ReactNode;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -34,7 +34,6 @@ const PasswordInput = ({
   placeholder,
   jc = "space-between",
   TopChildren,
-  children,
   onKeyDown = () => {},
 }: PasswordInputProps) => {
   const [isMasked, setIsMasked] = useState(true);
