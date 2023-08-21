@@ -3,7 +3,10 @@ import styled from "styled-components";
 import { diskTheme, lightTheme } from "../../styles/colors";
 
 import PreviewList from "./PreviewList";
-import { DISK_IMG_MAX_LENGTH } from "../../utils/validations";
+import {
+  DISK_IMG_MAX_LENGTH,
+  DISK_IMG_MAX_SIZE,
+} from "../../utils/validations";
 import {
   DiskColorType,
   DiskImgType,
@@ -48,28 +51,38 @@ const NewDiskCard = ({
 
     if (target && target.length) {
       if (target.length + previewList.length > DISK_IMG_MAX_LENGTH) {
-        window.alert("사진은 최대 4개까지 등록할 수 있습니다.");
+        // 이미지 최대 개수 제한
+        window.alert(
+          `사진은 최대 ${DISK_IMG_MAX_LENGTH}개까지 등록할 수 있습니다.`
+        );
       } else {
         const newFiles: File[] = Array.from(target);
         newFiles.map(async (file) => {
-          try {
-            setFiles([...files, ...newFiles]);
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-              const previewImgUrl = reader.result;
-              setPreviewList((prev: DiskImgType[]) => [
-                ...prev,
-                { imgId: "new", imgUrl: previewImgUrl as string },
-              ]);
-              // setPreviewList((prev) => [...prev, previewImgUrl]);
-              if (!previewList.length) {
-                setMainImg(previewImgUrl as string);
-              }
-            };
-          } catch (err) {
-            window.alert("사진을 불러올 수 없습니다.");
-            throw err;
+          if (file.size > DISK_IMG_MAX_SIZE) {
+            window.alert(
+              `${Math.round(
+                DISK_IMG_MAX_SIZE / 1000000
+              )}MB 이하의 사진만 등록할 수 있습니다.`
+            );
+          } else {
+            try {
+              setFiles([...files, ...newFiles]);
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => {
+                const previewImgUrl = reader.result;
+                setPreviewList((prev: DiskImgType[]) => [
+                  ...prev,
+                  { imgId: "new", imgUrl: previewImgUrl as string },
+                ]);
+                if (!previewList.length) {
+                  setMainImg(previewImgUrl as string);
+                }
+              };
+            } catch (err) {
+              window.alert("사진을 불러올 수 없습니다.");
+              throw err;
+            }
           }
         });
       }
