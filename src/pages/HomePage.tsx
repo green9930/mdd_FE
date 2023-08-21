@@ -3,11 +3,13 @@ import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
+import { unregisterToastState } from "../state/atom";
+
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/elements/Button";
 import Guide from "../components/Guide";
 import ToastModal from "../components/elements/ToastModal";
-import { logoutToastState, unregisterToastState } from "../state/atom";
+
 import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 import { lightTheme } from "../styles/colors";
 
@@ -19,11 +21,17 @@ import DiskMask02 from "../assets/img/disk_mask_2.png";
 const MONITOR_TEXT =
   "당신의 디깅디스크를\n만들어드리는 MDD에 오신것을\n환영합니다.";
 
+export type StCurcorType = {
+  status: boolean;
+};
+
 const HomePage = () => {
   const navigate = useNavigate();
+
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [currentIcon, setCurrentIcon] = useState(DiskMask01);
   const [displayText, setDisplayText] = useState<string[]>([]);
+  const [cursurStatus, setCursurStatus] = useState<boolean>(false);
 
   const [openUnregisterToast, setOpenUnregisterToast] =
     useRecoilState(unregisterToastState);
@@ -35,16 +43,14 @@ const HomePage = () => {
   }, [openUnregisterToast]);
 
   setTimeout(() => {
-    const cursor = document.querySelector(".cursor") as HTMLElement | null;
-    if (cursor) {
-      cursor.style.display = "none";
-    }
-  }, 10000);
+    setCursurStatus(true);
+  }, 10300);
 
   let currentIndex = 0;
   let currentLine = 0;
 
   useEffect(() => {
+    // ui 지연 setTimeout
     const timeoutId = setTimeout(() => {
       const interval = setInterval(() => {
         setDisplayText((prev) => {
@@ -93,7 +99,7 @@ const HomePage = () => {
               <StDiskTextContainer key={`${item}_${index}`}>
                 <StDiskText>{item}</StDiskText>
                 {displayText.length === index + 1 && (
-                  <StCursor className="cursor"></StCursor>
+                  <StCursor className="cursor" status={cursurStatus}></StCursor>
                 )}
               </StDiskTextContainer>
             ))}
@@ -223,11 +229,12 @@ const blink = keyframes`
   }
 `;
 
-const StCursor = styled.span`
+const StCursor = styled.span<StCurcorType>`
   display: inline-block;
   animation: ${blink} 1s step-end infinite;
   height: 17px;
-  border-right: 2px solid ${lightTheme.colors.text01};
+  border-right: 2px solid
+    ${({ status }) => (status ? "transparent" : lightTheme.colors.text01)};
   position: relative;
   right: 1px;
 `;
