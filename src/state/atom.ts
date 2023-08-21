@@ -84,3 +84,8 @@ export const unregisterToastState = atom<boolean>({
   key: "unregisterToastState",
   default: false,
 });
+
+export const debounceState = atom<string>({
+  key: "debounceState",
+  default: "default",
+});

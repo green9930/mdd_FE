@@ -6,27 +6,31 @@ import React, {
   KeyboardEvent,
 } from "react";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
+import { useRecoilValue, useRecoilState } from "recoil";
+
 import { fontTheme } from "../../styles/theme";
 import { calcRem } from "../../styles/theme";
+import { lightTheme } from "../../styles/colors";
 
-import { useRecoilValue } from "recoil";
-
-import Input from "../elements/Input";
 import {
   InputStatusType,
   ValidationType,
   isLightThemeType,
 } from "../../types/etcTypes";
-import { useRecoilState } from "recoil";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDuplicatedId } from "../../api/memberApi";
+import { debounceState, lightThemeState, signUpData } from "../../state/atom";
+import {
+  MEMBERNAME_MIN_LENGTH,
+  MEMBERNAME_MAX_LENGTH,
+} from "../../utils/validations";
+
+import Input from "../elements/Input";
+import Button from "../elements/Button";
 
 import { ReactComponent as CheckCircle } from "../../assets/svg/check_circle.svg";
-import Button from "../elements/Button";
-import { lightThemeState, signUpData } from "../../state/atom";
-import { lightTheme } from "../../styles/colors";
 
-export interface SignUpIdrProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SignUpIdrProps extends React.HTMLAttributes<HTMLDivElement> {
   setStep: Dispatch<SetStateAction<number>>;
   setPercent: Dispatch<SetStateAction<number>>;
 }
@@ -41,8 +45,10 @@ const VALIDATION: ValidationType[] = [
     validation: /\d/,
   },
   {
-    text: "8-20자 이내",
-    validation: /^.{8,20}$/,
+    text: `${MEMBERNAME_MIN_LENGTH}-${MEMBERNAME_MAX_LENGTH}자 이내`,
+    validation: new RegExp(
+      `^.{${MEMBERNAME_MIN_LENGTH},${MEMBERNAME_MAX_LENGTH}}$`
+    ),
   },
 ];
 
@@ -51,20 +57,16 @@ type ValidType = {
   isLightTheme: boolean;
 };
 
-const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
-  const queryClient = useQueryClient();
-  const isLightTheme = useRecoilValue(lightThemeState);
+type DuplicatedType = "default" | "success" | "duplicated";
 
-  const [duplicated, setDupliceted] = useState(true);
-  const [status, setStatus] = useState<InputStatusType>("default");
-  const [value, setValue] = useState("");
+const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
+  const isLightTheme = useRecoilValue(lightThemeState);
+  const debounce = useRecoilValue(debounceState);
   const [data, setData] = useRecoilState(signUpData);
 
-  const checkValidation = () => {
-    return (
-      VALIDATION.every((item) => item.validation.test(value)) && duplicated
-    );
-  };
+  const [duplicated, setDuplicated] = useState<DuplicatedType>("default");
+  const [status, setStatus] = useState<InputStatusType>("default");
+  const [value, setValue] = useState<string>("");
 
   useEffect(() => {
     if (data.memberName) {
@@ -72,19 +74,33 @@ const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (value.length > 0) {
-      checkDuplicateNickname(value);
-    }
-  }, [value]);
-
-  const checkDuplicateNickname = async (memberName: string) => {
-    const result = await queryClient.fetchQuery(
-      ["nicknameCheck", memberName],
-      () => getDuplicatedId(memberName)
+  const checkValidation = () => {
+    return (
+      VALIDATION.every((item) => item.validation.test(value)) &&
+      duplicated === "success"
     );
-    result ? setDupliceted(true) : setDupliceted(false);
   };
+
+  const { data: duplicatedCheckData } = useQuery(
+    ["duplicatedCheck", debounce, value],
+    () => {
+      if (debounce === "check" && value.length > 0) {
+        return getDuplicatedId(value);
+      } else {
+        return "default";
+      }
+    },
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (duplicatedData) => {
+        if (duplicatedData === "default") {
+          setDuplicated("default");
+        } else {
+          setDuplicated(duplicatedData ? "success" : "duplicated");
+        }
+      },
+    }
+  );
 
   const onClickNextStep = () => {
     if (checkValidation()) {
@@ -113,7 +129,7 @@ const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
           value={value}
           setValue={setValue}
           maxLengthView={false}
-          maxLength={20}
+          maxLength={MEMBERNAME_MAX_LENGTH}
           placeholder="아이디를 입력해주세요"
           inputType="memberName"
           onKeyDown={handleKeyDown}
@@ -129,7 +145,10 @@ const SignUpId = ({ setStep, setPercent }: SignUpIdrProps) => {
               <StvalidText>{item.text}</StvalidText>
             </StValidFlex>
           ))}
-          <StValidFlex isLightTheme={isLightTheme} valid={duplicated}>
+          <StValidFlex
+            isLightTheme={isLightTheme}
+            valid={duplicated === "success" || duplicated === "default"}
+          >
             <CheckCircle width="16px" height="16px" />
             <StvalidText>중복되지 않은 아이디</StvalidText>
           </StValidFlex>

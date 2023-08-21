@@ -1,6 +1,8 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
+import { useSetRecoilState } from "recoil";
 
+import { debounceState } from "../../state/atom";
 import { InputStatusType } from "../../types/etcTypes";
 import { calcRem, fontTheme } from "../../styles/theme";
 import { lightTheme } from "../../styles/colors";
@@ -38,12 +40,31 @@ const Input = ({
   inputType = "",
   onKeyDown = () => {},
 }: InputProps) => {
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  const setDebounce = useSetRecoilState(debounceState);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (inputType === "memberName" || inputType === "nickname") {
-      setValue(e.target.value.replace(/\s+/g, "").substring(0, maxLength));
-    } else {
-      setValue(e.target.value.substring(0, maxLength));
+    if (inputType === "memberName") {
+      setDebounce("default");
     }
+
+    const inputValue = e.target.value;
+    if (inputType === "memberName" || inputType === "nickname") {
+      setValue(inputValue.replace(/\s+/g, "").substring(0, maxLength));
+    } else {
+      setValue(inputValue.substring(0, maxLength));
+    }
+
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    const newTimerId = setTimeout(() => {
+      if (value.length > 0 && inputType === "memberName") {
+        setDebounce("check");
+      }
+    }, 300);
+    setTimerId(newTimerId);
   };
 
   return (
@@ -90,21 +111,6 @@ const StContainer = styled.div<{ inputStatus: InputStatusType }>`
     font-size: ${fontTheme.subtitle02.fontSize};
     font-weight: ${fontTheme.subtitle02.fontWeight};
   }
-
-  /* span {
-    color: ${({ theme, inputStatus }) => {
-    switch (inputStatus) {
-      case "warning":
-        return theme.colors.error;
-      default:
-        return theme.colors.text02;
-    }
-  }};
-    line-height: ${calcRem(20)};
-    letter-spacing: 0.25px;
-    font-size: ${calcRem(14)};
-    font-weight: 400;
-  } */
 `;
 
 const StInputContainer = styled.div<{ inputStatus: InputStatusType }>`
