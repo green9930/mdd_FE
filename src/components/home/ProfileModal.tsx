@@ -8,6 +8,7 @@ import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
 import { checkNicknameDuplicated, patchMyInfo } from "../../api/memberApi";
 import {
+  IMG_MAX_SIZE,
   INTEREST_MAX_LENGTH,
   INTRODUCE_MAX_LENGTH,
   NICKNAME_MAX_LENGTH,
@@ -107,14 +108,21 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
     const target = e.target.files;
     if (target && target.length) {
       const newFiles: File[] = Array.from(target);
-      setFile(newFiles);
-
-      const reader = new FileReader();
-      reader.readAsDataURL(newFiles[0]);
-      reader.onload = () => {
-        const previewUrl = reader.result as string;
-        setPreview(previewUrl);
-      };
+      if (newFiles[0].size > IMG_MAX_SIZE) {
+        window.alert(
+          `${Math.round(
+            IMG_MAX_SIZE / 1000000
+          )}MB 이하의 사진만 등록할 수 있습니다.`
+        );
+      } else {
+        setFile(newFiles);
+        const reader = new FileReader();
+        reader.readAsDataURL(newFiles[0]);
+        reader.onload = () => {
+          const previewUrl = reader.result as string;
+          setPreview(previewUrl);
+        };
+      }
     }
   };
 
@@ -280,7 +288,7 @@ const StProfileImg = styled.div`
 
   img {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
   }
 `;

@@ -75,12 +75,14 @@ const DiskHeader = ({
         navigate(-1);
         return;
       case "newDisk":
-        resetNewDisk();
         if (step === "newDisk2") {
           setStep("newDisk1");
         } else if (step === "newDiskSignUp2") {
           setStep("newDiskSignUp1");
-        } else navigate(-1);
+        } else {
+          resetNewDisk();
+          navigate(-1);
+        }
         return;
       case "settings":
         navigate(`/home/${getLoc("memberId")}`);
