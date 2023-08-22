@@ -3,10 +3,7 @@ import styled from "styled-components";
 import { diskTheme, lightTheme } from "../../styles/colors";
 
 import PreviewList from "./PreviewList";
-import {
-  DISK_IMG_MAX_LENGTH,
-  DISK_IMG_MAX_SIZE,
-} from "../../utils/validations";
+import { DISK_IMG_MAX_LENGTH, IMG_MAX_SIZE } from "../../utils/validations";
 import {
   DiskColorType,
   DiskImgType,
@@ -58,10 +55,10 @@ const NewDiskCard = ({
       } else {
         const newFiles: File[] = Array.from(target);
         newFiles.map(async (file) => {
-          if (file.size > DISK_IMG_MAX_SIZE) {
+          if (file.size > IMG_MAX_SIZE) {
             window.alert(
               `${Math.round(
-                DISK_IMG_MAX_SIZE / 1000000
+                IMG_MAX_SIZE / 1000000
               )}MB 이하의 사진만 등록할 수 있습니다.`
             );
           } else {

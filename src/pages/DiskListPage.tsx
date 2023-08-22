@@ -57,7 +57,6 @@ const DiskListPage = () => {
     ["diskList"],
     () => getDiskList(paramsId as string),
     {
-      onSuccess: (data: DiskListType) => console.log("DISK LIST >> ", data),
       onError: (err: any) => {
         if (err.response.data.ErrorCode === "NOT_FOUND_MEMBER") {
           window.alert(err.response.data.errorMessage);

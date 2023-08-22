@@ -23,7 +23,7 @@ import { getLoc } from "../../utils/localStorage";
 
 const NewDiskCover = ({ titleText }: NewDiskProps) => {
   const [diskNum, setDiskNum] = useState<number>(0);
-  const [diskName, setDiskName] = useState<string>(RANDOM_DISK_NAME_LIST[0]);
+  const [diskName, setDiskName] = useState<string>("");
   const [inputStatus, setInputStatus] = useState<InputStatusType>("default");
 
   const [step, setStep] = useRecoilState(newDiskStepState);
@@ -33,6 +33,7 @@ const NewDiskCover = ({ titleText }: NewDiskProps) => {
 
   useEffect(() => {
     setDiskNum(DISK_COLOR_LIST.indexOf(newDisk.diskColor));
+    setDiskName(newDisk.diskName ? newDisk.diskName : RANDOM_DISK_NAME_LIST[0]);
   }, []);
 
   const handleNext = () => {
