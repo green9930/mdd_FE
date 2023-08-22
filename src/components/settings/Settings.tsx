@@ -24,7 +24,7 @@ import DiskMask3 from "../../assets/img/disk_mask_3.png";
 import { ReactComponent as Link } from "../../assets/svg/link.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
 
-export type SettingIconType = "letter" | "heart" | "candles" | "logout";
+export type SettingIconType = "letter" | "bug" | "heart" | "candles" | "logout";
 type SettingsListType = {
   title: string;
   content: string;
@@ -36,6 +36,11 @@ const SETTINGS_LIST: SettingsListType[] = [
     title: "서비스 평가하기",
     content: "개선해야 할 점이나 좋았던 점이 있으신가요?",
     icon: "letter",
+  },
+  {
+    title: "버그 제보하기",
+    content: "버그를 찾으셨다면 알려주세요!",
+    icon: "bug",
   },
   {
     title: "제작팀 보기",
@@ -141,6 +146,9 @@ const Settings = () => {
     switch (name) {
       case "letter":
         window.open("https://forms.gle/nQzwvDN6vDBHQNid6");
+        return;
+      case "bug":
+        window.open("https://forms.gle/VZZXzuVkgBWkBeRN9");
         return;
       case "heart":
         setOpenTeamModal(true);
