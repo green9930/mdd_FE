@@ -12,6 +12,7 @@ import {
   deleteToastState,
   pageState,
 } from "../../state/atom";
+import { logClickEvent } from "../../utils/googleAnalytics";
 import {
   DISK_BTN_LIST,
   DiskBtnType,
@@ -137,21 +138,37 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
   const handleMainImg = (target: number) => setMainImg(image[target].imgUrl);
 
   const clickHandler = (name: DiskBtnType) => {
+    const pathname = window.location.pathname.split("/")[1];
     switch (name) {
       case "like":
         handleLike(diskId);
         return;
       case "edit":
+        logClickEvent({
+          action: "EDIT_DISK",
+          category: pathname,
+          label: "Click Edit Disk Button",
+        });
         navigate(`/edit-disk/${diskId}`);
         return;
       case "delete":
         if (window.confirm("디스크를 삭제하실 건가요?")) handleDelete(diskId);
         return;
       case "bookmark":
+        logClickEvent({
+          action: "BOOKMARK",
+          category: pathname,
+          label: showBookmark ? "UnBookmark" : "Bookmark",
+        });
         handleBookmark(diskId);
         return;
       case "mode":
-        setMode("text");
+        logClickEvent({
+          action: "DISK_MODE",
+          category: pathname,
+          label: mode === "gallery" ? "View Disk Text" : "View Disk Image",
+        });
+        mode === "text" ? setMode("gallery") : setMode("text");
         return;
       default:
         return;
@@ -252,7 +269,7 @@ const DiskCard = ({ data, setOpen }: DiskCardProps) => {
           </Stcontent>
           <StIconContainer
             diskColor={diskColor}
-            onClick={() => setMode("gallery")}
+            onClick={() => clickHandler("mode")}
             isTextMode={true}
           >
             <Gallery
