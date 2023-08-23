@@ -76,7 +76,7 @@
 - 타인의 디스크 홈을 방문하여 '좋아요'를 누를 수 있습니다.
 - 나의 디스크 홈 페이지를 친구에게 공유할 수 있습니다. (모바일 ➡️ 공유하기, 데스크탑 ➡️ url 복사)
 - 나만의 대표 디스크 목록을 볼 수 있습니다.
-- 프로필 사진, 닉네임, 자기소개를 추가해 나만의 개성 넘치는 프로필을 만들 수 있습니다.
+- 프로필 사진, 닉네임, 자기소개를 추가해 나만의 개성 있는 프로필을 만들 수 있습니다.
 
 <img width="6019" alt="디스크 홈 페이지" src="https://github.com/green9930/mdd_FE/assets/107628613/cc40914f-b736-4371-aa78-c992664301e4">
 
@@ -163,11 +163,6 @@
 [🛠️ 기술 결정](https://github.com/green9930/mdd_FE/wiki/%F0%9F%9B%A0%EF%B8%8F-%EA%B8%B0%EC%88%A0-%EA%B2%B0%EC%A0%95) <br/>
 [🚨 coding convention](https://github.com/green9930/mdd_FE/wiki/%F0%9F%9A%A8-coding-convention) <br/>
 [💡 commit convention](https://github.com/green9930/mdd_FE/wiki/%F0%9F%92%A1-commit-convention) <br/>
-
-<br/>
-<br/>
-
-## 💥 트러블 슈팅
 
 <br/>
 <br/>
