@@ -9,6 +9,7 @@ import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 import { lightThemeState } from "../state/atom";
 import { getUserInfo } from "../api/memberApi";
 import { getBookmarkDiskList } from "../api/diskApi";
+import { logClickEvent } from "../utils/googleAnalytics";
 
 import AppLayout from "../components/layout/AppLayout";
 import Header from "../components/layout/Header";
@@ -110,7 +111,15 @@ const MainPage = () => {
           {openProfileModal ? (
             <ProfileModal
               data={data}
-              setOpen={() => setOpenProfileModal(false)}
+              setOpen={() => {
+                setOpenProfileModal(false);
+                // 프로필 편집하기 클릭
+                logClickEvent({
+                  action: "EDIT_PROFILE",
+                  category: "home",
+                  label: "Click Edit Profile",
+                });
+              }}
             />
           ) : (
             <></>

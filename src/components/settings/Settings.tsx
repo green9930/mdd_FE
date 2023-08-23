@@ -8,6 +8,7 @@ import ModalLayout from "../layout/ModalLayout";
 import IconConverter from "./IconConverter";
 import Button from "../elements/Button";
 import { getLoc, removeLoc, setLoc } from "../../utils/localStorage";
+import { logClickEvent } from "../../utils/googleAnalytics";
 import {
   lightThemeState,
   loginState,
@@ -138,6 +139,12 @@ const Settings = () => {
       setIsLogin(false);
       setIsSignUp(false);
       setOpenUnregisterToast(true);
+      // 탈퇴하기 완료
+      logClickEvent({
+        action: "CONFIRM_UNREGISTER",
+        category: "setting",
+        label: "Confirm Unregister ",
+      });
       navigate("/");
     },
   });
@@ -152,6 +159,12 @@ const Settings = () => {
         return;
       case "heart":
         setOpenTeamModal(true);
+        // 제작팀 보기
+        logClickEvent({
+          action: "VIEW_PRODUCTION_TEAM",
+          category: "setting",
+          label: "View Production Team",
+        });
         return;
       case "candles":
         setIsLightTheme((prev) => !prev);
@@ -171,6 +184,12 @@ const Settings = () => {
         setIsSignUp(false);
         setOpenLogoutToast(true);
         navigate("/login");
+        // 로그아웃
+        logClickEvent({
+          action: "LOUGOUT",
+          category: "setting",
+          label: "Click Logout Button",
+        });
         return;
       default:
         return;
@@ -209,7 +228,15 @@ const Settings = () => {
       {isLogin || isSignUp ? (
         <StUnregister
           isLightTheme={isLightTheme}
-          onClick={() => setOpenUnregisterModal(true)}
+          onClick={() => {
+            setOpenUnregisterModal(true);
+            // 탈퇴하기 버튼 클릭 시
+            logClickEvent({
+              action: "UNREGISTER_BUTTON",
+              category: "setting",
+              label: "Click Unregister Button",
+            });
+          }}
         >
           <span>회원탈퇴</span>
         </StUnregister>

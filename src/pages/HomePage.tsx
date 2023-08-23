@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
 import { unregisterToastState } from "../state/atom";
+import { logClickEvent } from "../utils/googleAnalytics";
 
 import AppLayout from "../components/layout/AppLayout";
 import Button from "../components/elements/Button";
@@ -111,6 +112,12 @@ const HomePage = () => {
             btnStatus="primary02"
             clickHandler={() => {
               setModalOpen(true);
+              // 랜딩 - 디깅디스크 사용법
+              logClickEvent({
+                action: "GUIDE_MODAL",
+                category: "landing",
+                label: "Open Guide Modal",
+              });
             }}
           >
             <span>그게 뭔데?</span>
