@@ -9,6 +9,7 @@ import NewDiskCard from "../newDisk/NewDiskCard";
 import Input from "../elements/Input";
 import Textarea from "../elements/Textarea";
 import Button from "../elements/Button";
+import { patchDisk } from "../../api/diskApi";
 import {
   DISK_CONTENT_MAX_LENGTH,
   DISK_NAME_MAX_LENGTH,
@@ -18,7 +19,7 @@ import {
   getRandomName,
 } from "../../utils/getRandomName";
 import { getLoc } from "../../utils/localStorage";
-import { patchDisk } from "../../api/diskApi";
+import { logClickEvent } from "../../utils/googleAnalytics";
 import { DISK_COLOR_LIST, DiskImgType, DiskType } from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
@@ -95,6 +96,11 @@ const EditDisk = ({ data }: EditDiskProps) => {
 
   const { mutate: editDisk, isLoading: editLoading } = useMutation(patchDisk, {
     onSuccess: () => {
+      logClickEvent({
+        action: "SUBMIT_EDIT_DISK",
+        category: "edit-disk",
+        label: "Submit Edit Disk",
+      });
       queryClient.invalidateQueries(["diskList"]);
       queryClient.invalidateQueries(["diskById"]);
       navigate(`/disk-list/${getLoc("memberId")}`);
@@ -191,7 +197,7 @@ const EditDisk = ({ data }: EditDiskProps) => {
               btnStatus={
                 !editLoading && valid && updated ? "primary01" : "disabled"
               }
-              clickHandler={() => handleSubmit()}
+              clickHandler={handleSubmit}
               disabled={!editLoading && valid && updated ? false : true}
             >
               <span>디스크 굽기</span>
