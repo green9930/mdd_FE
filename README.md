@@ -24,6 +24,24 @@
 <br/> 
 
 <b>🌐 [My Digging Disk 방문하기](https://www.mydiggingdisk.com/)</b> <br/>
+
+<details>
+ <summary>💡 PWA 설치하는 방법</summary>
+ 
+ <b>📲 ios</b> 
+ <br/>
+ 
+ ![pwa_ios](https://github.com/green9930/mdd_FE/assets/69451758/0aaf9ce4-600d-4c23-9b94-7c4b508ca2fa) 
+ 
+ <br/>
+ 
+ <b>📲 android</b> 
+ <br/>
+ 
+![pwa_android](https://github.com/green9930/mdd_FE/assets/69451758/65798495-af5c-4b26-93c3-c6d65b6ac959)
+ 
+</details>
+
 ➡️ [My Digging Disk Team Notion](https://www.notion.so/3c58db3b3c264afda3f88be457c78a39?pvs=4)  <br/>
 ➡️ [My Digging Disk FE WIKI](https://github.com/green9930/mdd_FE/wiki)<br/>
 ➡️ [My Digging Disk BackEnd github](https://github.com/PhiloMonx1/MyDiggingDiskBackEnd)<br/>
@@ -33,8 +51,8 @@
 
 |이름|포지션|깃허브 Or 블로그|담당 역할|
 |:-----:|:---:|:---:|:---|
-|배근아|`React / 프론트엔드`|[GitHub](https://github.com/green9930)|1. 프로젝트 환경 세팅 + PWA 세팅<br />2. 디스크 CRUD <br />3. 디스크 리스트/생성/편집 페이지 ui<br />4. 프로필 편집 <br />5. 라이트/다크모드 적용|
-|김미리|`React / 프론트엔드`|[GitHub](https://github.com/loveyoujgb)|1. 메인 페이지 </br>2. 로그인 페이지</br> 3. 사용자 홈 페이지</br> 4. 프론트 배포|
+|배근아|`React / 프론트엔드`|[GitHub](https://github.com/green9930)|1. 프로젝트 환경 세팅 + PWA 세팅<br />2. 디스크 CRUD <br />3. 디스크 리스트/생성/편집 페이지 ui<br />4. 프로필 편집 <br />5. 환경설정 페이지 <br/>6. Google Analytics|
+|김미리|`React / 프론트엔드`|[GitHub](https://github.com/loveyoujgb)|1. 메인 페이지 </br>2. 로그인 페이지</br> 3. 사용자 홈 페이지</br> 4. 프론트 배포 <br/>5. Google Analytics|
 
 <br/>
 <br/>
