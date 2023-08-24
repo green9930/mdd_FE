@@ -15,8 +15,9 @@ import {
   newDiskState,
   newDiskStepState,
 } from "../../state/atom";
-import { DISK_CONTENT_MAX_LENGTH } from "../../utils/validations";
 import { getLoc } from "../../utils/localStorage";
+import { DISK_CONTENT_MAX_LENGTH } from "../../utils/validations";
+import { logClickEvent } from "../../utils/googleAnalytics";
 import { DiskImgType } from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
@@ -44,6 +45,11 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
 
   const { mutate: addDisk, isLoading: postLoading } = useMutation(postDisk, {
     onSuccess: () => {
+      logClickEvent({
+        action: "SUBMIT_NEW_DISK",
+        category: "new-disk",
+        label: "Submit New Disk",
+      });
       resetNewDisk();
       setStep("newDisk1");
       setOpenCreateToast(true);
@@ -73,6 +79,15 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
     );
 
     addDisk(frm);
+  };
+
+  const handleSkip = () => {
+    logClickEvent({
+      action: "SKIP_NEW_DISK",
+      category: "new-disk",
+      label: "Skip New Disk",
+    });
+    window.location.replace(`/home/${getLoc("memberId")}`);
   };
 
   return (
@@ -119,12 +134,7 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
             </Button>
             <StSkipBtn>
               {step === "newDiskSignUp2" ? (
-                <Button
-                  btnStatus="transparent"
-                  clickHandler={() =>
-                    window.location.replace(`/home/${getLoc("memberId")}`)
-                  }
-                >
+                <Button btnStatus="transparent" clickHandler={handleSkip}>
                   <span>나중에 만들기</span>
                 </Button>
               ) : (

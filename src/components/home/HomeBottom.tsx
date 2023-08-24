@@ -42,6 +42,13 @@ const HomeBottom = ({
   const isLightTheme = useRecoilValue(lightThemeState);
 
   const handleShare = () => {
+    // 공유하기 클릭
+    logClickEvent({
+      action: "SHARE_BUTTON",
+      category: "home",
+      label: "Click Share Button",
+    });
+
     const nickname = getLoc("nickname");
     if (navigator.share) {
       navigator
@@ -61,12 +68,6 @@ const HomeBottom = ({
         })
         .catch(() => {});
     }
-
-    logClickEvent({
-      action: "CLICK TEST",
-      category: "share",
-      label: "share my home",
-    });
   };
 
   const { mutate: mutationUserLike } = useMutation(
@@ -113,10 +114,11 @@ const HomeBottom = ({
           <div
             onClick={() => {
               setOpenGuidemodal(true);
+              // 홈 - 디깅디스크 사용법
               logClickEvent({
-                action: "GUIDE CLICK",
-                category: "guide modal",
-                label: "open guide modal",
+                action: "GUIDE_MODAL",
+                category: "home",
+                label: "Open Guide Modal",
               });
             }}
           >

@@ -14,6 +14,7 @@ import {
   NICKNAME_MAX_LENGTH,
 } from "../../utils/validations";
 import { setLoc } from "../../utils/localStorage";
+import { logClickEvent } from "../../utils/googleAnalytics";
 import { MemberType } from "../../types/memberTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, WINDOW_W, calcRem, fontTheme } from "../../styles/theme";
@@ -98,6 +99,11 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
 
   const { mutate: updateMyInfo } = useMutation(patchMyInfo, {
     onSuccess: () => {
+      logClickEvent({
+        action: "SUBMIT_EDIT_PROFILE",
+        category: "home",
+        label: "Submit Edit Profile",
+      });
       queryClient.invalidateQueries(["userInfo"]);
       setLoc("nickname", nickname);
       setOpen(false);
