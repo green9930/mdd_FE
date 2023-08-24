@@ -268,6 +268,7 @@ const StContainer = styled.div`
   border-radius: ${calcRem(12)};
 
   h2 {
+    color: ${({ theme }) => theme.colors.text01};
     line-height: ${fontTheme.display01.lineHeight};
     letter-spacing: ${fontTheme.display01.letterSpacing};
     font-size: ${fontTheme.display01.fontSize};
