@@ -55,6 +55,13 @@
 |김미리|`React / 프론트엔드`|[GitHub](https://github.com/loveyoujgb)|1. 메인 페이지 </br>2. 로그인 페이지</br> 3. 사용자 홈 페이지</br> 4. 프론트 배포 <br/>5. Google Analytics|
 
 <br/>
+
+### 🙋 개발자들의 디스크에 놀러가볼까요? 🙋 
+
+[😎 배근아의 Digging Disk](https://www.mydiggingdisk.com/home/4) <br/>
+[😊 김미리의 Digging Disk](https://www.mydiggingdisk.com/home/5)
+
+<br/>
 <br/>
 
 ## 💡페이지 별 기능
