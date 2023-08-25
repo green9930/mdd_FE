@@ -70,10 +70,10 @@ const Input = ({
   return (
     <StContainer inputStatus={status}>
       <StFlex jc={jc}>
-        <label htmlFor="input-element">{labelText}</label>
+        <label>{labelText}</label>
         {TopChildren}
       </StFlex>
-      <StInputContainer id="input-element" inputStatus={status}>
+      <StInputContainer inputStatus={status}>
         <StInput
           placeholder={placeholder}
           type={type}
