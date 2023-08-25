@@ -36,7 +36,7 @@ const HomeBottom = ({
   setLike,
 }: HomeBottomProps) => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [likeView, setLikeView] = useState<JSX.Element[]>([]);
   const memberId = getLoc("memberId");
   const isLightTheme = useRecoilValue(lightThemeState);
@@ -71,7 +71,7 @@ const HomeBottom = ({
   };
 
   const { mutate: mutationUserLike } = useMutation(
-    () => postUserLike(id ? id : ""),
+    () => postUserLike(id as string),
     {
       onSuccess(res) {
         setLike(res);

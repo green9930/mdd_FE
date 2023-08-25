@@ -24,6 +24,7 @@ import { lightTheme } from "../../styles/colors";
 import DiskMask3 from "../../assets/img/disk_mask_3.png";
 import { ReactComponent as Link } from "../../assets/svg/link.svg";
 import { ReactComponent as CloseCircle } from "../../assets/svg/close_circle.svg";
+import { removeCookie } from "../../utils/cookie";
 
 export type SettingIconType = "letter" | "bug" | "heart" | "candles" | "logout";
 type SettingsListType = {
@@ -190,6 +191,7 @@ const Settings = () => {
           category: "setting",
           label: "Click Logout Button",
         });
+        removeCookie("visit");
         return;
       default:
         return;

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
 
 import { calcRem, MOBILE_MAX_W } from "../styles/theme";
 
 import { lightThemeState } from "../state/atom";
-import { getUserInfo } from "../api/memberApi";
+import { getUserInfo, postVisitCount } from "../api/memberApi";
 import { getBookmarkDiskList } from "../api/diskApi";
 import { logClickEvent } from "../utils/googleAnalytics";
+import { getCookie, setCookie } from "../utils/cookie";
+import { getLoc } from "../utils/localStorage";
 
 import AppLayout from "../components/layout/AppLayout";
 import Header from "../components/layout/Header";
@@ -40,14 +42,31 @@ const HomePage = () => {
 
   const isLightTheme = useRecoilValue(lightThemeState);
 
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+
+  const expiresIn = new Date(Date.now() + 60 * 60 * 1000);
 
   const { data, isLoading, isSuccess, isError } = useQuery(
     ["userInfo", id],
-    () => getUserInfo(id ? id : ""),
+    () => getUserInfo(id as string),
     {
-      onSuccess: (res) => setLike(res.likeCount),
+      onSuccess: (res) => {
+        setLike(res.likeCount);
+        if (getCookie("visit") !== id && getLoc("memberId") !== id) {
+          setCookie("visit", id as string, expiresIn);
+          mutationPostVisitCount();
+        }
+      },
       refetchOnWindowFocus: false,
+    }
+  );
+
+  const { mutate: mutationPostVisitCount } = useMutation(
+    () => postVisitCount(id as string),
+    {
+      onSuccess: (res) => {
+        queryClient.invalidateQueries(["userInfo"]);
+      },
     }
   );
 
@@ -56,17 +75,9 @@ const HomePage = () => {
     isLoading: bookmarkIsLoading,
     isSuccess: bookmarkIsSuccess,
     isError: bookmarkIsError,
-  } = useQuery(
-    ["userBookmarkDisk", id],
-    () => getBookmarkDiskList(id ? id : ""),
-    {
-      refetchOnWindowFocus: false,
-    }
+  } = useQuery(["userBookmarkDisk", id], () =>
+    getBookmarkDiskList(id as string)
   );
-
-  useEffect(() => {
-    queryClient.invalidateQueries(["userBookmarkDisk"]);
-  }, []);
 
   return (
     <>
