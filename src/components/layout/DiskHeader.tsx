@@ -123,7 +123,7 @@ const DiskHeader = ({
       </StTitle>
       {page === "diskListFeed" || page === "diskListGallery" ? (
         <StBtnContainer>
-          <button onClick={handleListMode}>
+          <button name="changeListMode" onClick={handleListMode}>
             {page === "diskListGallery" ? (
               <ListVertical fill={lightTheme.colors.primary01} />
             ) : (
@@ -131,7 +131,7 @@ const DiskHeader = ({
             )}
           </button>
           {isMyDisk ? (
-            <button onClick={handleNewDisk}>
+            <button name="goSettings" onClick={handleNewDisk}>
               <PlusFilled fill={lightTheme.colors.primary01} />
             </button>
           ) : (

@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import styled from "styled-components";
-import { diskTheme, lightTheme } from "../../styles/colors";
+import imageCompression from "browser-image-compression";
 
 import PreviewList from "./PreviewList";
 import { DISK_IMG_MAX_LENGTH, IMG_MAX_SIZE } from "../../utils/validations";
@@ -11,6 +11,7 @@ import {
   NewDiskType,
 } from "../../types/diskTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
+import { diskTheme, lightTheme } from "../../styles/colors";
 
 import { ReactComponent as EmptyRegisterDisk } from "../../assets/svg/empty_register_disk.svg";
 
@@ -62,11 +63,32 @@ const NewDiskCard = ({
               )}MB 이하의 사진만 등록할 수 있습니다.`
             );
           } else {
+            const options = {
+              maxSizeMB: 2, // 이미지 최대 용량
+              maxWidthOrHeight: 900, // 최대 넓이(혹은 높이)
+              fileType: "image/jpeg",
+              useWebWorker: true,
+            };
+            const previewOptions = {
+              maxSizeMB: 0.3, // 이미지 최대 용량
+              maxWidthOrHeight: 900, // 최대 넓이(혹은 높이)
+              fileType: "image/jpeg",
+              useWebWorker: true,
+            };
             try {
-              setFiles([...files, ...newFiles]);
+              const compressedBlob = await imageCompression(file, options);
+              const compressedFile = new File([compressedBlob], file.name, {
+                type: file.type,
+              });
+              setFiles((prev) => [...prev, compressedFile]);
+
+              const compressedPreview = await imageCompression(
+                file,
+                previewOptions
+              );
               const reader = new FileReader();
-              reader.readAsDataURL(file);
-              reader.onload = () => {
+              reader.readAsDataURL(compressedPreview);
+              reader.onloadend = () => {
                 const previewImgUrl = reader.result;
                 setPreviewList((prev: DiskImgType[]) => [
                   ...prev,
