@@ -69,6 +69,7 @@ const NewDiskCover = ({ titleText }: NewDiskProps) => {
               <Dice />
             </StRandomBtn>
           }
+          inputId="disk-name"
         ></Input>
       </StInputContainer>
       <StBtnContainer>

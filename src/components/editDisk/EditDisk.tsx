@@ -159,6 +159,7 @@ const EditDisk = ({ data }: EditDiskProps) => {
                     <Dice />
                   </StRandomBtn>
                 }
+                inputId="disk-name"
               ></Input>
             </StInputContainer>
           </StDiskCover>
