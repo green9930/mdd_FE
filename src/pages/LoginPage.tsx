@@ -124,7 +124,7 @@ const LoginPage = () => {
           maxLengthView={false}
           maxLength={20}
           placeholder="아이디를 입력해주세요"
-          inputType="memberName"
+          inputId="member-name"
           onKeyDown={handleKeyDown}
         ></Input>
         <StInputContainer>

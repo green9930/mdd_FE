@@ -199,7 +199,7 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
           placeholder=""
           jc="flex-start"
           TopChildren={<StOptionText>필수사항</StOptionText>}
-          inputType="nickname"
+          inputId="nickname"
         />
         <Input
           labelText="요즘 열심히 파고있는 관심사는? 🤔"
@@ -211,6 +211,7 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
           placeholder="무엇에 몰입하고 있나요?"
           jc="flex-start"
           TopChildren={<StOptionText>선택사항</StOptionText>}
+          inputId="interest"
         />
         <Textarea
           labelText="나를 한 줄로 표현해봐요 💬"
