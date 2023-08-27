@@ -48,10 +48,10 @@ const NewDiskCard = ({
     new Promise((res) => {
       Resizer.imageFileResizer(
         file,
-        1000,
-        1000,
+        1500,
+        1500,
         "JPEG",
-        100,
+        80,
         0,
         (uri) => res(uri),
         "file"
@@ -62,10 +62,10 @@ const NewDiskCard = ({
     new Promise((res) => {
       Resizer.imageFileResizer(
         file,
-        1000,
-        1000,
+        1500,
+        1500,
         "JPEG",
-        100,
+        60,
         0,
         (uri) => res(uri),
         "base64"
