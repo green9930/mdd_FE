@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import styled from "styled-components";
-import imageCompression from "browser-image-compression";
+import Resizer from "react-image-file-resizer";
 
 import PreviewList from "./PreviewList";
 import { DISK_IMG_MAX_LENGTH, IMG_MAX_SIZE } from "../../utils/validations";
@@ -44,6 +44,34 @@ const NewDiskCard = ({
   setDeleteImgList,
   defaultImgList = [],
 }: NewDiskCardProps) => {
+  const resizeFile = (file: File) =>
+    new Promise((res) => {
+      Resizer.imageFileResizer(
+        file,
+        1500,
+        1500,
+        "JPEG",
+        80,
+        0,
+        (uri) => res(uri),
+        "file"
+      );
+    });
+
+  const resizePreview = (file: File) =>
+    new Promise((res) => {
+      Resizer.imageFileResizer(
+        file,
+        1500,
+        1500,
+        "JPEG",
+        60,
+        0,
+        (uri) => res(uri),
+        "base64"
+      );
+    });
+
   const handleAddImg = async (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target.files;
 
@@ -57,47 +85,21 @@ const NewDiskCard = ({
         const newFiles: File[] = Array.from(target);
         newFiles.map(async (file) => {
           if (file.size > IMG_MAX_SIZE) {
+            // 이미지 최대 용량 제한
             window.alert(
               `${Math.round(
                 IMG_MAX_SIZE / 1000000
               )}MB 이하의 사진만 등록할 수 있습니다.`
             );
           } else {
-            const options = {
-              maxSizeMB: 2, // 이미지 최대 용량
-              maxWidthOrHeight: 900, // 최대 넓이(혹은 높이)
-              fileType: "image/jpeg",
-              useWebWorker: true,
-            };
-            const previewOptions = {
-              maxSizeMB: 0.3, // 이미지 최대 용량
-              maxWidthOrHeight: 900, // 최대 넓이(혹은 높이)
-              fileType: "image/jpeg",
-              useWebWorker: true,
-            };
             try {
-              const compressedBlob = await imageCompression(file, options);
-              const compressedFile = new File([compressedBlob], file.name, {
-                type: file.type,
-              });
+              const compressedFile = (await resizeFile(file)) as File;
+              const compressedPreview = (await resizePreview(file)) as string;
               setFiles((prev) => [...prev, compressedFile]);
-
-              const compressedPreview = await imageCompression(
-                file,
-                previewOptions
-              );
-              const reader = new FileReader();
-              reader.readAsDataURL(compressedPreview);
-              reader.onloadend = () => {
-                const previewImgUrl = reader.result;
-                setPreviewList((prev: DiskImgType[]) => [
-                  ...prev,
-                  { imgId: "new", imgUrl: previewImgUrl as string },
-                ]);
-                if (!previewList.length) {
-                  setMainImg(previewImgUrl as string);
-                }
-              };
+              setPreviewList((prev: DiskImgType[]) => [
+                ...prev,
+                { imgId: "new", imgUrl: compressedPreview },
+              ]);
             } catch (err) {
               window.alert("사진을 불러올 수 없습니다.");
               throw err;
