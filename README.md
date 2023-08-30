@@ -18,6 +18,7 @@
 <br/>
 
 ✅ MDD는 모바일 환경에 최적화된 서비스입니다. <br/> 
+✅ MDD는 반응형 UI로 제작되었습니다. <br/> 
 ✅ MDD는 PWA(Progressive Web Application)를 지원합니다. <br/> 
 ✅ 라이트 모드, 다크 모드를 지원합니다. 
 
@@ -180,6 +181,17 @@
   <img src="https://img.shields.io/badge/Google Analytics-E37400?style=for-the-badge&logo=Google+Analytics&logoColor=ffffff">
   <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=ffffff">
 </p>
+
+<br/>
+<br/>
+
+## 🤔 Trouble Shooting
+
+### 이미지 최적화 하기
+➡️ [react 이미지 최적화 하기 (react-image-file-resizer)](https://velog.io/@green9930/react-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B5%9C%EC%A0%81%ED%99%94-%ED%95%98%EA%B8%B0-react-image-file-resizer-%EC%8A%A4%EC%BC%88%EB%A0%88%ED%86%A4-UI)  
+
+### 사용성 개선 - skeleton UI
+➡️ [react skeleton component 만들기](https://velog.io/@green9930/react-skeleton-component-%EB%A7%8C%EB%93%A4%EA%B8%B0)  
 
 <br/>
 <br/>
