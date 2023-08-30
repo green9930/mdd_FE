@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
+import Resizer from "react-image-file-resizer";
 
 import ModalLayout from "../layout/ModalLayout";
 import Input from "../elements/Input";
@@ -110,6 +111,20 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
     },
   });
 
+  const resizeFile = (file: File) =>
+    new Promise((res) => {
+      Resizer.imageFileResizer(
+        file,
+        400,
+        400,
+        "JPEG",
+        80,
+        0,
+        (uri) => res(uri),
+        "file"
+      );
+    });
+
   const handleAddImg = async (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target.files;
     if (target && target.length) {
@@ -121,9 +136,10 @@ const ProfileModal = ({ data, setOpen }: ProfileModalProps) => {
           )}MB 이하의 사진만 등록할 수 있습니다.`
         );
       } else {
-        setFile(newFiles);
+        const compressedFile = (await resizeFile(newFiles[0])) as File;
+        setFile([compressedFile]);
         const reader = new FileReader();
-        reader.readAsDataURL(newFiles[0]);
+        reader.readAsDataURL(compressedFile);
         reader.onload = () => {
           const previewUrl = reader.result as string;
           setPreview(previewUrl);
