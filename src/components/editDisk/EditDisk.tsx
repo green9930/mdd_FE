@@ -20,7 +20,13 @@ import {
 } from "../../utils/getRandomName";
 import { getLoc } from "../../utils/localStorage";
 import { logClickEvent } from "../../utils/googleAnalytics";
-import { DISK_COLOR_LIST, DiskImgType, DiskType } from "../../types/diskTypes";
+import {
+  DISK_COLOR_LIST,
+  DiskImgType,
+  DiskMainImgType,
+  DiskPreviewType,
+  DiskType,
+} from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
@@ -45,8 +51,11 @@ const EditDisk = ({ data }: EditDiskProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [defaultImgList, setDefaultImgList] = useState<DiskImgType[]>([]);
   const [deleteImgList, setDeleteImgList] = useState<number[]>([]);
-  const [previewList, setPreviewList] = useState<DiskImgType[]>([]);
-  const [mainImg, setMainImg] = useState<string>("");
+  const [previewList, setPreviewList] = useState<DiskPreviewType[]>([]);
+  const [mainImg, setMainImg] = useState<DiskMainImgType>({
+    imgUrl: "",
+    index: 0,
+  });
   const [content, setContent] = useState("");
   const [contentStatus, setContentStatus] =
     useState<InputStatusType>("default");
@@ -58,9 +67,9 @@ const EditDisk = ({ data }: EditDiskProps) => {
     setDiskName(data.diskName);
     setDiskNum(DISK_COLOR_LIST.indexOf(data.diskColor));
     setContent(data.content);
-    setMainImg(data.image[0].imgUrl);
+    setMainImg({ imgUrl: data.image[0].imgUrl, index: 0 });
     setDefaultImgList(data.image);
-    setPreviewList(data.image);
+    setPreviewList(data.image.map((val, i) => ({ ...val, index: i })));
   }, []);
 
   useEffect(() => {

@@ -18,14 +18,17 @@ import {
 import { getLoc } from "../../utils/localStorage";
 import { DISK_CONTENT_MAX_LENGTH } from "../../utils/validations";
 import { logClickEvent } from "../../utils/googleAnalytics";
-import { DiskImgType } from "../../types/diskTypes";
+import { DiskMainImgType, DiskPreviewType } from "../../types/diskTypes";
 import { InputStatusType } from "../../types/etcTypes";
 import { MOBILE_MAX_W, calcRem, fontTheme } from "../../styles/theme";
 
 const NewDiskContent = ({ titleText }: NewDiskProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const [previewList, setPreviewList] = useState<DiskImgType[]>([]);
-  const [mainImg, setMainImg] = useState<string>("");
+  const [previewList, setPreviewList] = useState<DiskPreviewType[]>([]);
+  const [mainImg, setMainImg] = useState<DiskMainImgType>({
+    imgUrl: "",
+    index: 0,
+  });
   const [content, setContent] = useState("");
   const [contentStatus, setContentStatus] =
     useState<InputStatusType>("default");
@@ -40,7 +43,9 @@ const NewDiskContent = ({ titleText }: NewDiskProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    previewList.length ? setMainImg(previewList[0].imgUrl) : setMainImg("");
+    previewList.length
+      ? setMainImg({ imgUrl: previewList[0].imgUrl, index: 0 })
+      : setMainImg({ imgUrl: "", index: 0 });
   }, [previewList]);
 
   const { mutate: addDisk, isLoading: postLoading } = useMutation(postDisk, {
