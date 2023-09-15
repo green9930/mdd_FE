@@ -7,6 +7,8 @@ import { DISK_IMG_MAX_LENGTH, IMG_MAX_SIZE } from "../../utils/validations";
 import {
   DiskColorType,
   DiskImgType,
+  DiskMainImgType,
+  DiskPreviewType,
   DiskType,
   NewDiskType,
 } from "../../types/diskTypes";
@@ -22,10 +24,10 @@ interface NewDiskCardProps {
   diskColor?: DiskColorType;
   files: File[];
   setFiles: (value: React.SetStateAction<File[]>) => void;
-  previewList: DiskImgType[];
-  setPreviewList: (value: React.SetStateAction<DiskImgType[]>) => void;
-  mainImg: string;
-  setMainImg: (value: React.SetStateAction<string>) => void;
+  previewList: DiskPreviewType[];
+  setPreviewList: (value: React.SetStateAction<DiskPreviewType[]>) => void;
+  mainImg: DiskMainImgType;
+  setMainImg: (value: React.SetStateAction<DiskMainImgType>) => void;
   setDeleteImgList?: React.Dispatch<React.SetStateAction<number[]>>;
   defaultImgList?: DiskImgType[];
 }
@@ -96,9 +98,9 @@ const NewDiskCard = ({
               const compressedFile = (await resizeFile(file)) as File;
               const compressedPreview = (await resizePreview(file)) as string;
               setFiles((prev) => [...prev, compressedFile]);
-              setPreviewList((prev: DiskImgType[]) => [
+              setPreviewList((prev: DiskPreviewType[]) => [
                 ...prev,
-                { imgId: "new", imgUrl: compressedPreview },
+                { imgId: "new", imgUrl: compressedPreview, index: prev.length },
               ]);
             } catch (err) {
               window.alert("사진을 불러올 수 없습니다.");
@@ -116,6 +118,7 @@ const NewDiskCard = ({
     targetUrl: string
   ) => {
     e.stopPropagation();
+    // 이미지 데이터 업데이트
     if (isNew) {
       // 디스크 생성 페이지
       setFiles(files.filter((_, idx) => idx !== target));
@@ -138,21 +141,28 @@ const NewDiskCard = ({
       }
     }
 
-    setPreviewList((prev) => prev.filter((val) => val.imgUrl !== targetUrl));
+    // 이미지 미리보기 업데이트
+    setPreviewList((prev) =>
+      prev
+        .filter((val) => val.index !== target)
+        .map((el, i) => ({ ...el, index: i }))
+    );
 
-    if (mainImg === targetUrl) {
-      // 대표 이미지 삭제할 경우
-      const mainImgIndex = previewList
-        .map((val) => val.imgUrl)
-        .indexOf(mainImg);
-      mainImgIndex === 0
-        ? setMainImg(previewList.length > 1 ? previewList[1].imgUrl : "")
-        : setMainImg(previewList[0].imgUrl);
-    }
+    // 대표 이미지 변경
+
+    mainImg.index === 0
+      ? setMainImg({
+          imgUrl: previewList.length > 1 ? previewList[1].imgUrl : "",
+          index: 0,
+        })
+      : setMainImg({
+          imgUrl: previewList[0].imgUrl,
+          index: 0,
+        });
   };
 
   const handleMainImg = (target: number) =>
-    setMainImg(previewList[target].imgUrl);
+    setMainImg({ imgUrl: previewList[target].imgUrl, index: target });
 
   return (
     <StGallery diskColor={diskColor ? diskColor : disk.diskColor}>
@@ -161,7 +171,7 @@ const NewDiskCard = ({
       </StDiskName>
       <StPreviewContainer>
         {previewList.length ? (
-          <StMainImg src={mainImg} alt="main-preview" />
+          <StMainImg src={mainImg.imgUrl} alt="main-preview" />
         ) : (
           <StEmptyContainer>
             <EmptyRegisterDisk />

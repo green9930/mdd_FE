@@ -13,7 +13,7 @@ import { getLoc } from "../../utils/localStorage";
 
 import { postUserLike } from "../../api/memberApi";
 import { lightThemeState } from "../../state/atom";
-import { UserInfoData } from "../../types/memberTypes";
+import { MemberType } from "../../types/memberTypes";
 
 import { ReactComponent as Like } from "../../assets/svg/like.svg";
 import { ReactComponent as Share } from "../../assets/svg/share.svg";
@@ -23,7 +23,7 @@ import { ReactComponent as GuideIcon } from "../../assets/svg/guide.svg";
 import Button from "../elements/Button";
 
 interface HomeBottomProps {
-  data: UserInfoData;
+  data: MemberType;
   setOpenGuidemodal: Dispatch<SetStateAction<boolean>>;
   like: number;
   setLike: Dispatch<SetStateAction<number>>;
